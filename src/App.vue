@@ -1,7 +1,7 @@
 <template lang="pug">
   div(id="app")
     v-app
-      navbar(v-if="$route.path !== '/login'")
+      navbar(v-if="!$route.meta.hideNavbar")
       router-view
 </template>
 

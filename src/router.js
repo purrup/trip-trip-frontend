@@ -9,12 +9,19 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
+      meta: { hideNavbar: true },
       component: () => import('./views/Login.vue')
     },
     {
       path: '/signup',
       name: 'Signup',
+      meta: { hideNavbar: true },
       component: () => import('./views/Signup.vue')
+    },
+    {
+      path: '/trip',
+      name: 'Trip',
+      component: () => import('./views/Trip.vue')
     }
   ]
 })

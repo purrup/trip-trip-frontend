@@ -1,52 +1,52 @@
 <template lang="pug">
-  v-container.my-auto
-    v-row(justify="center"
-          align="center")
-      v-col#login(
+    v-card#login.mx-auto.my-auto.d-flex.flex-wrap.justify-center(
+    width="560"
+    max-width="560"
+    tile
+    height="650")
+      v-col.d-flex.flex-wrap.justify-center.align-content-space-around(
         cols="12"
         sm="10"
-        md="8"
-        lg="8"
+        md="10"
         )
-          .display-1.my-12 Login
-          #google-btn
-            v-btn.my-5(
+        v-card-title Login
+        v-card-text
+          #third-party-btn.d-flex.flex-column.flex-wrap.justify-center.align-content-space-around
+            v-btn(
               color="error"
               outlined
-              elevation="0") google
-          #facebook-btn
-            v-btn.my-5.mb-12(
+              large
+              min-width="380") google
+            v-btn.mt-7(
               color="info"
               outlined
-              elevation="0") facebook
-            v-divider.mt-5.mx-auto
-          v-row#input-area.mt-5(justify="center")
-            v-col(
-              cols="12"
-              sm="8"
-              md="8"
+              large
+              min-width="380") facebook
+          v-divider.my-8.mx-auto
+          v-form
+            v-text-field.my-3(
+              label="E-mail"
+              prepend-icon="email"
+              required
             )
-              v-form
-                v-text-field.my-7(
-                  label="E-mail"
-                  prepend-icon="email"
-                  required
-                )
-                v-text-field.mb-7(
-                :type="showPassword ? 'text' : 'password'"
-                label="Password"
-                prepend-icon="lock"
-                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                @click:append="showPassword = !showPassword"
-                )
+            v-text-field.mb-3(
+            :type="showPassword ? 'text' : 'password'"
+            label="Password"
+            prepend-icon="lock"
+            :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+            @click:append="showPassword = !showPassword"
+            required
+            )
 
-              v-btn.mt-6(
-              color="success"
-              outlined
-            ) 登入
-              v-col.d-flex.flex-row.justify-end.mt-12(cols="auto")
-                router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
-                router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
+          v-btn.mt-6(
+          color="success"
+          outlined
+          large
+          min-width="380"
+        ) 登入
+          v-col.d-flex.justify-end.mt-12(cols="auto")
+            router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
+            router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
 
 </template>
 
@@ -62,21 +62,21 @@ export default {
 
 <style lang="scss" scoped>
  #login {
-   border: 1px solid rgba($color: #707070, $alpha: 0.8);
+   border: 1px solid rgba($color: #707070, $alpha: 0.4);
    border-radius: 20px;
-   height: 820px;
+   height: 720px;
    max-width: 560px;
  }
-#input-area, #input-area > * {
-  height: 50%;
+// #input-area, #input-area > * {
+//   height: 50%;
+// }
+
+button {
+  width: 340px;
+  text-transform:capitalize;
 }
 
- button {
-   width: 340px;
-   text-transform:capitalize;
- }
-
- hr {
-   width: 430px;
- }
+hr {
+  width: 430px;
+}
 </style>
