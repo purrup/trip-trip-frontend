@@ -1,16 +1,19 @@
 <template lang="pug">
   div(id="app")
+    navbar(v-if="!$route.meta.hideNavbar")
     router-view
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue'
 
 export default {
-  name: 'App',
-  data: () => ({
-  })
+  components: {
+    Navbar
+  }
 }
-</script>
+</script>>
+
 <style lang="scss">
 html, body {
   margin: 0px;
