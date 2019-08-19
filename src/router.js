@@ -4,23 +4,24 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/',
       name: 'Home',
+      meta: { showNavbar: false },
       component: () => import('./views/Home.vue')
     },
     {
       path: '/login',
       name: 'Login',
-      meta: { hideNavbar: true },
+      meta: { showNavbar: false },
       component: () => import('./views/Login.vue')
     },
     {
       path: '/signup',
       name: 'Signup',
-      meta: { hideNavbar: true },
+      meta: { showNavbar: false },
       component: () => import('./views/Signup.vue')
     },
     {

@@ -5,14 +5,14 @@
       placeholder="Search..."
       @focus="$emit('showSearchPanel')"
     )
-    i(class="search-icon fas fa-search")
+    v-icon(class="search-icon") search
     div(v-if="isFocus" class="search-panel-container")
       v-tabs(
         v-model="tab"
         color="#666666"
         height='30'
       )
-        v-tabs-slider(color="yellow")
+        v-tabs-slider(color="grey")
         v-tab(v-for="tab in tabLists" :key="tab") {{ tab }}
       //- v-tabs-items(v-model="tab")
       //-   v-tab-item(
@@ -21,12 +21,16 @@
       //-   )
       div(class="search-panel")
         div(class="region-panel")
-          div(v-for="region in regions")
+          div(
+            v-for="region in regions"
+            @mouseover="mouseover(region, $event)"
+            @mouseout="mouseout"
+          )
             span {{ region }}
         div(class="cities-panel")
           div(v-for="city in cities[selectedRegion]")
             v-img(
-              :src="require('@/assets/image/1.jpg')"
+              :src="require('@/assets/image/2.jpg')"
               contain=true
             )
             span {{ city }}
@@ -54,12 +58,27 @@ export default {
         '東部': ['花蓮', '台東'],
         '離島': ['馬祖', '金門', '澎湖']
       },
-      selectedRegion: '北部'
+      selectedRegion: '北部',
+      timeStamp: '',
+      timer: null
     }
   },
   methods: {
     show (e) {
       console.log(e)
+    },
+    mouseover (region, e) {
+      this.timeStamp = Date.now()
+      this.timer = setInterval(this.toggle, 100, region)
+    },
+    mouseout (e) {
+      clearInterval(this.timer)
+    },
+    toggle (region) { // 如果滑鼠停留三毫秒就切換
+      if ((Date.now() - this.timeStamp) / 100 < 3) {
+        return
+      }
+      this.selectedRegion = region
     }
   }
 }
@@ -74,9 +93,9 @@ export default {
     background-color: #fcfcfc;
     padding: 0 13.5px;
     color: black;
-    width: 500px;
-    height: 38px;
-    font-size: 16px;
+    width: 650px;
+    height: 48px;
+    font-size: 20px;
     border: 1px solid #efefef;
     &::placeholder {
       color: #666666;
@@ -84,8 +103,8 @@ export default {
   }
   > .search-icon {
     position: absolute;
-    right: 15px;
-    top: 11px;
+    right: 12px;
+    top: 13px;
     color: #666666;
   }
   > .search-panel-container {
@@ -98,7 +117,7 @@ export default {
         flex-direction: column;
         > div {
           width: 100%;
-          height: 50px;
+          height: 45px;
           display: grid;
           align-items: center;
           border-right: 1px solid black;
@@ -106,17 +125,34 @@ export default {
           &:last-child {
             border-bottom: none;
           }
+          &:hover {
+            background-color: grey;
+            color: white;
+          }
         }
       }
       > .cities-panel {
         display: grid;
-        grid-template-columns: repeat(4, 80px);
-        grid-auto-rows: 100px;
+        grid-template-columns: repeat(4, 120px);
+        grid-auto-rows: 80px;
         justify-content: space-around;
-        align-content: space-around;
+        padding: 12px 0px;
+        grid-row-gap: 20px;
         > div {
           display: flex;
           flex-direction: column;
+          position: relative;
+          > span {
+            color: white;
+            position: absolute;
+            bottom: 0px;
+            width: 120px;
+            background: linear-gradient(
+              to top,
+              rgba(0, 0, 0, 0.65),
+              transparent 100%
+            );
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 <template lang="pug">
-  div(id="app")
-    navbar(v-if="!$route.meta.hideNavbar")
+  v-app
+    navbar(v-if="$route.meta.hideNavbar")
     router-view
 </template>
 
@@ -15,13 +15,10 @@ export default {
 </script>>
 
 <style lang="scss">
-html, body {
+html,
+body {
   margin: 0px;
   padding: 0px;
   height: 100%;
-}
-#app {
-  height: 100%;
-  color: black;
 }
 </style>

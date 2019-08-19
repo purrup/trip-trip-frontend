@@ -2,29 +2,42 @@
   div(id="home-root" @click="closeSearchPanel")
     v-carousel(
       cycle
-      height="788"
+      height="100vh"
       hide-delimiter-background
+      hide-delimiters
       show-arrows-on-hover
-      :interval="4000"
+      :interval="8000"
     )
       v-carousel-item(
         v-for="(slide, i) in slides"
         :key="slide"
         :src="slide"
+        height="100vh"
       )
     div(class="overlay")
       div
         h1 Trip Trip
         h2 People Don’t Take Trips, Trips Take People
         search-bar(:isFocus="isFocus" @showSearchPanel="isFocus = true")
-
+    div(class="container")
+      div
+        h3 Popular Sites
+        div
+          little-card(v-for="n in 4" :key="`little-card-${n}`")
+      div
+        h3 Popular Trips
+        div
+          little-card(v-for="n in 4" :key="`little-card-${n}`")
 </template>
 
 <script>
-import SearchBar from '@/components/SearchBar'
+import SearchBar from '@/components/SearchBar.vue'
+import LittleCard from '@/components/LittleCard.vue'
+
 export default {
   components: {
-    SearchBar
+    SearchBar,
+    LittleCard
   },
   data () {
     return {
@@ -54,15 +67,15 @@ export default {
   .overlay {
     background-color: rgba(0, 0, 0, 0.3);
     width: 100%;
-    height: 100%;
-    position: fixed;
+    height: 100vh;
+    position: absolute;
     top: 0px;
     > div {
       display: grid;
       justify-content: center;
       text-align: center;
-      position: fixed;
-      top: 262px;
+      position: absolute;
+      top: 220px;
       left: 50%;
       transform: translateX(-50%);
       > h1 {
@@ -74,6 +87,24 @@ export default {
       h2 {
         color: white;
         margin-bottom: 40px;
+      }
+    }
+  }
+  .container {
+    padding: 40px 88px 80px;
+    > div {
+      &:nth-child(1) {
+        margin-bottom: 115px;
+      }
+      > h3 {
+        font-size: 37px;
+        line-height: 37px;
+        margin-bottom: 50px;
+      }
+      > div {
+        display: grid;
+        grid-template-columns: repeat(4, 250px);
+        justify-content: space-between;
       }
     }
   }

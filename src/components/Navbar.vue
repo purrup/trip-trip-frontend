@@ -29,13 +29,12 @@ export default {
 #nav {
   min-height: 70px;
   #search {
-  margin-left: 30px;
-  height: 30px;
+    margin-left: 30px;
+    height: 30px;
   }
 }
 
 #login-btn {
   text-decoration: none;
 }
-
 </style>
