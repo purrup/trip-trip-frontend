@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(id="home-root" @click="closeSearchPanel")
+  div(id="home-root")
     v-carousel(
       cycle
       height="100vh"
@@ -18,7 +18,7 @@
       div
         h1 Trip Trip
         h2 People Don’t Take Trips, Trips Take People
-        search-bar(:isFocus="isFocus" @showSearchPanel="isFocus = true")
+        search-bar(:width="'650px'" :height="'48px'")
     div(class="container")
       div
         h3 Popular Sites
@@ -41,7 +41,6 @@ export default {
   },
   data () {
     return {
-      isFocus: false,
       slides: [
         require('@/assets/image/1.jpg'),
         require('@/assets/image/2.jpg'),
@@ -49,14 +48,6 @@ export default {
         require('@/assets/image/4.jpg'),
         require('@/assets/image/5.jpg')
       ]
-    }
-  },
-  methods: {
-    closeSearchPanel (e) {
-      if (e.target.closest('.search-bar-root')) {
-        return
-      }
-      this.isFocus = false
     }
   }
 }

@@ -1,12 +1,14 @@
 <template lang="pug">
-  form(class="search-bar-root")
+  form(class="search-bar-root" :style="{ 'width': width, 'height' : height }")
     input(
       type="searcn"
       placeholder="Search..."
-      @focus="$emit('showSearchPanel')"
+      @focus="SET_isFocusOnSearchBar(true)",
+      class="top-half-border-radius"
+      :class="{'bottom-half-border-radius': !isFocusOnSearchBar}"
     )
     v-icon(class="search-icon") search
-    div(v-if="isFocus" class="search-panel-container")
+    div(v-if="isFocusOnSearchBar" class="search-panel-container bottom-half-border-radius")
       v-tabs(
         v-model="tab"
         color="#666666"
@@ -37,12 +39,12 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   props: {
-    isFocus: {
-      type: Boolean,
-      default: false
-    }
+    width: String,
+    height: String
   },
   data () {
     return {
@@ -63,7 +65,11 @@ export default {
       timer: null
     }
   },
+  computed: {
+    ...mapGetters('feature', ['isFocusOnSearchBar'])
+  },
   methods: {
+    ...mapMutations('feature', ['SET_isFocusOnSearchBar']),
     show (e) {
       console.log(e)
     },
@@ -93,8 +99,8 @@ export default {
     background-color: #fcfcfc;
     padding: 0 13.5px;
     color: black;
-    width: 650px;
-    height: 48px;
+    width: 100%;
+    height: 100%;
     font-size: 20px;
     border: 1px solid #efefef;
     &::placeholder {
@@ -104,10 +110,14 @@ export default {
   > .search-icon {
     position: absolute;
     right: 12px;
-    top: 13px;
+    top: 50%;
+    transform: translateY(-40%);
     color: #666666;
   }
   > .search-panel-container {
+    width: 650px;
+    border: 1px solid #efefef;
+    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
     .search-panel {
       display: grid;
       grid-template-columns: 118px 1fr;
@@ -156,6 +166,15 @@ export default {
         }
       }
     }
+  }
+
+  .top-half-border-radius {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+  .bottom-half-border-radius {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
 }
 </style>

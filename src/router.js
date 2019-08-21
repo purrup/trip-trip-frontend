@@ -27,7 +27,14 @@ export default new Router({
     {
       path: '/trip',
       name: 'Trip',
+      meta: { showNavbar: true },
       component: () => import('./views/Trip.vue')
+    },
+    {
+      path: '/sites',
+      name: 'Sites',
+      meta: { showNavbar: true },
+      component: () => import('./views/Sites.vue')
     }
   ]
 })

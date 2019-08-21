@@ -1,40 +1,32 @@
 <template lang="pug">
-  div
-    v-app-bar#nav
-      v-layout(wrap)
+  div(class="nav-bar-root")
+    v-app-bar(height="70px" :style="{ 'box-shadow': 'none', 'border-bottom' : '1px solid rgba(102, 102, 102, 0.2)' }")
+      v-layout(wrap align-center)
         v-app-bar-nav-icon
-        v-flex#search(xs6 sm4 md3 lg3 xl3)
-          v-text-field(
-            hide-details
-            append-icon="search"
-            outlined
-            label="Search"
-            )
+        search-bar(class="ml-8" :width="'376px'" :height="'40px'")
         v-spacer
-        v-flex(xs1 align-self-center)
-          router-link#login-btn(:to="{ name: 'Login'}")
-            v-btn(
-              color="success"
-              outlined
-            ) 登入
+        v-btn(
+          to="/login"
+          color="success"
+          outlined
+        ) 登入
 </template>
 
 <script>
+import SearchBar from '@/components/SearchBar.vue'
+
 export default {
-  name: 'navbar'
+  name: 'navbar',
+  components: {
+    SearchBar
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-#nav {
-  min-height: 70px;
-  #search {
-    margin-left: 30px;
-    height: 30px;
-  }
-}
-
-#login-btn {
-  text-decoration: none;
+.nav-bar-root {
+  width: 100%;
+  position: fixed;
+  z-index: 10;
 }
 </style>

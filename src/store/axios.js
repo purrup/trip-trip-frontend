@@ -4,7 +4,6 @@ import Axios from 'axios'
 
 const options = {
   baseURL: 'http://localhost:3000',
-  baseURL: '',
   withCredentials: true
 }
 

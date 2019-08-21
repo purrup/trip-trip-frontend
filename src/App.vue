@@ -1,6 +1,6 @@
 <template lang="pug">
   v-app
-    navbar(v-if="$route.meta.hideNavbar")
+    navbar(v-if="$route.meta.showNavbar")
     router-view
 </template>
 
@@ -20,5 +20,6 @@ body {
   margin: 0px;
   padding: 0px;
   height: 100%;
+  text-align: center;
 }
 </style>
