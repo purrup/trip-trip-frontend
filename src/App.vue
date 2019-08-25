@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(id="app")
+  v-app#app
     navbar(v-if="!$route.meta.hideNavbar")
     router-view
 </template>
@@ -21,7 +21,6 @@ html, body {
   height: 100%;
 }
 #app {
-  height: 100%;
-  color: black;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 </style>

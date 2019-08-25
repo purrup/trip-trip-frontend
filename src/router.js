@@ -9,6 +9,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
+      meta: { hideNavbar: true },
       component: () => import('./views/Home.vue')
     },
     {
@@ -24,9 +25,9 @@ export default new Router({
       component: () => import('./views/Signup.vue')
     },
     {
-      path: '/trip',
-      name: 'Trip',
-      component: () => import('./views/Trip.vue')
+      path: '/trips',
+      name: 'Trips',
+      component: () => import('./views/Trips.vue')
     }
   ]
 })

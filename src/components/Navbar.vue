@@ -1,8 +1,9 @@
 <template lang="pug">
   div
-    v-app-bar#nav
+    v-app-bar(elevation="2")#nav
       v-layout(wrap)
-        v-app-bar-nav-icon
+        router-link(:to="{ name: 'Home'}" style="text-decoration: none;")
+          v-icon(size="45") mdi-alpha-t-circle-outline
         v-flex#search(xs6 sm4 md3 lg3 xl3)
           v-text-field(
             hide-details
