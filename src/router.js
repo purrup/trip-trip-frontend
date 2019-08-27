@@ -9,25 +9,32 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      meta: { hideNavbar: true },
+      meta: { showNavbar: false },
       component: () => import('./views/Home.vue')
     },
     {
       path: '/login',
       name: 'Login',
-      meta: { hideNavbar: true },
+      meta: { showNavbar: false },
       component: () => import('./views/Login.vue')
     },
     {
       path: '/signup',
       name: 'Signup',
-      meta: { hideNavbar: true },
+      meta: { showNavbar: false },
       component: () => import('./views/Signup.vue')
     },
     {
       path: '/trips',
       name: 'Trips',
+      meta: { showNavbar: true },
       component: () => import('./views/Trips.vue')
     }
+    // {
+    //   path: '/sites',
+    //   name: 'Sites',
+    //   meta: { showNavbar: true },
+    //   component: () => import('./views/Sites.vue')
+    // }
   ]
 })

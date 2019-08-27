@@ -13,3 +13,12 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+document.addEventListener('click', e => {
+  if (store.getters['feature/isFocusOnSearchBar']) {
+    if (e.target.closest('.search-bar-root')) {
+      return
+    }
+    store.commit('feature/SET_isFocusOnSearchBar', false)
+  }
+})

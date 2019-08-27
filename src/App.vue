@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-app#app
-    navbar(v-if="!$route.meta.hideNavbar")
+  v-app
+    navbar(v-if="$route.meta.showNavbar")
     router-view
 </template>
 
@@ -15,12 +15,14 @@ export default {
 </script>>
 
 <style lang="scss">
-html, body {
+html,
+body {
   margin: 0px;
   padding: 0px;
   height: 100%;
 }
 #app {
   font-family: 'Noto Sans TC', sans-serif;
+  // text-align: center;
 }
 </style>
