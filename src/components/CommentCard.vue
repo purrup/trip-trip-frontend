@@ -1,5 +1,5 @@
 <template lang="pug">
-  #comment-card-root.mb-5
+  .comment-card-root.mb-5
     v-card(
       width="550"
       min-width="456"
@@ -38,7 +38,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#comment-card-root > div {
+.comment-card-root > div {
   border-radius: 7px;
 }
 </style>

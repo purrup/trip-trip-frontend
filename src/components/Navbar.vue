@@ -2,7 +2,8 @@
   div(class="nav-bar-root")
     v-app-bar(height="70px" :style="{ 'box-shadow': 'none', 'border-bottom' : '1px solid rgba(102, 102, 102, 0.2)' }")
       v-layout(wrap align-center)
-        v-app-bar-nav-icon
+        router-link.ml-2(:to="{ name: 'Home'}" style="text-decoration:none;")
+          v-icon(large) mdi-alpha-t-circle-outline
         search-bar(class="ml-8" :width="'376px'" :height="'40px'")
         v-spacer
         v-btn(

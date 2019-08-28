@@ -1,5 +1,5 @@
 <template lang="pug">
-  #overview-root.d-flex.flex-wrap.justify-center
+  .overview-root.d-flex.flex-wrap.justify-center
     v-carousel#pictures(
       cycle
       height=360
@@ -12,7 +12,7 @@
         :key="image"
         :src="image"
       )
-    #journal.mx-auto.mt-5
+    .journal.mx-auto.mt-5
       .display-2.text-center {{trip.name}}
       br
       ul(style="list-style: none; padding: 0;")
@@ -24,9 +24,27 @@
         p {{trip.journal}}
       .article(v-else-if="!trip.journal")
         p 尚未新增
-      #comments
+      br
+      .comments
         comment.d-flex.flex-wrap.justify-start(:comments="trip.comments")
-      #timeline
+      br
+      .rating.d-flex.flex-column
+        v-row.d-flex.flex-column.align-center
+          .headline.mb-3 評分
+          p 分享您對此行程的看法供別人參考
+        v-row.d-flex.flex-column.align-center
+          v-col(cols="auto")
+            v-rating(
+            v-model="rating"
+            color="yellow darken-3"
+            half-increments
+            hover
+            large
+            )
+      br
+      br
+      br
+      .timeline
         timeline
 </template>
 
@@ -43,6 +61,11 @@ export default {
   props: {
     trip: Object
   },
+  data () {
+    return {
+      rating: 4.5
+    }
+  },
   computed: {
     cities () {
       return this.trip.cities.join('、')
@@ -53,14 +76,14 @@ export default {
 
 <style lang="scss" scoped>
 
-#pictures {
+.pictures {
   max-width: 686px;
 }
-#journal {
+.journal {
   width: 590px;
   height: 100%;
 }
-#comments {
+.comments {
   width: 542px;
   height : auto;
 }

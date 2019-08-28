@@ -70,7 +70,7 @@ export default {
     return {
       days: ['1天', '2天', '3天', '4天', '5天'],
       orders: ['收藏數', '留言數', '照片數'],
-      currentTrip: {},
+      currentTrip: {}, // 現在overview顯示的trip資料
       trips: [
         {
           id: 1,
