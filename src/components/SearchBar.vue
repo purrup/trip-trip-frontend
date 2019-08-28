@@ -25,7 +25,7 @@
         div(class="region-panel")
           div(
             v-for="region in regions"
-            @mouseover="mouseover(region, $event)"
+            @mouseover="mouseover(region)"
             @mouseout="mouseout"
           )
             span {{ region }}
@@ -70,14 +70,11 @@ export default {
   },
   methods: {
     ...mapMutations('feature', ['SET_isFocusOnSearchBar']),
-    show (e) {
-      console.log(e)
-    },
-    mouseover (region, e) {
+    mouseover (region) {
       this.timeStamp = Date.now()
       this.timer = setInterval(this.toggle, 100, region)
     },
-    mouseout (e) {
+    mouseout () {
       clearInterval(this.timer)
     },
     toggle (region) { // 如果滑鼠停留三毫秒就切換

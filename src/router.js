@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/',
@@ -29,12 +29,12 @@ export default new Router({
       name: 'Trips',
       meta: { showNavbar: true },
       component: () => import('./views/Trips.vue')
+    },
+    {
+      path: '/sites',
+      name: 'Sites',
+      meta: { showNavbar: true },
+      component: () => import('./views/Sites.vue')
     }
-    // {
-    //   path: '/sites',
-    //   name: 'Sites',
-    //   meta: { showNavbar: true },
-    //   component: () => import('./views/Sites.vue')
-    // }
   ]
 })
