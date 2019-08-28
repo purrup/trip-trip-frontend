@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash',
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -25,16 +25,16 @@ export default new Router({
       component: () => import('./views/Signup.vue')
     },
     {
-      path: '/trip',
-      name: 'Trip',
+      path: '/trips',
+      name: 'Trips',
       meta: { showNavbar: true },
-      component: () => import('./views/Trip.vue')
-    },
-    {
-      path: '/sites',
-      name: 'Sites',
-      meta: { showNavbar: true },
-      component: () => import('./views/Sites.vue')
+      component: () => import('./views/Trips.vue')
     }
+    // {
+    //   path: '/sites',
+    //   name: 'Sites',
+    //   meta: { showNavbar: true },
+    //   component: () => import('./views/Sites.vue')
+    // }
   ]
 })

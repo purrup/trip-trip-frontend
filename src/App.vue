@@ -20,6 +20,9 @@ body {
   margin: 0px;
   padding: 0px;
   height: 100%;
-  text-align: center;
+}
+#app {
+  font-family: 'Noto Sans TC', sans-serif;
+  // text-align: center;
 }
 </style>
