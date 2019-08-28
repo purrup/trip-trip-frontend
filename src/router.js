@@ -29,12 +29,12 @@ export default new Router({
       name: 'Trips',
       meta: { showNavbar: true },
       component: () => import('./views/Trips.vue')
+    },
+    {
+      path: '/sites',
+      name: 'Sites',
+      meta: { showNavbar: true },
+      component: () => import('./views/Sites.vue')
     }
-    // {
-    //   path: '/sites',
-    //   name: 'Sites',
-    //   meta: { showNavbar: true },
-    //   component: () => import('./views/Sites.vue')
-    // }
   ]
 })
