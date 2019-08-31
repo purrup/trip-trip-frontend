@@ -126,6 +126,7 @@ export default {
           width: 100%;
           height: 45px;
           display: grid;
+          justify-content: center;
           align-items: center;
           border-right: 1px solid black;
           border-bottom: 1px solid black;
@@ -154,6 +155,7 @@ export default {
             position: absolute;
             bottom: 0px;
             width: 120px;
+            text-align: center;
             background: linear-gradient(
               to top,
               rgba(0, 0, 0, 0.65),

@@ -27,6 +27,6 @@ export default {
 .nav-bar-root {
   width: 100%;
   position: fixed;
-  z-index: 10;
+  z-index: 100;
 }
 </style>

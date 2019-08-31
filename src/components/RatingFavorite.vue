@@ -1,6 +1,6 @@
 <template lang="pug">
   div(class="rating-favorite-root")
-    span 鹿野高台
+    span {{name}}
     v-rating(
       v-model="rating"
       color="#FB9026"
@@ -23,6 +23,7 @@
 
 export default {
   props: {
+    name: String
   },
   data () {
     return {

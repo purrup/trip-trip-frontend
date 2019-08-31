@@ -21,12 +21,55 @@
           solo
         )
         v-spacer
-        v-app-bar-nav-icon
+        v-app-bar-nav-icon(v-if="storageZone" @click="isShowStorageZone = !isShowStorageZone")
+    transition(name="fade")
+      div(v-show="isShowStorageZone" class="storage-zone" :style="storageZoneHeight")
+        div(:style="{'height': '100%'}")
+          draggable(
+            tag="div"
+            class="dragAreas"
+            group="sites"
+            :style="{'height': '100%'}"
+            :list="sites"
+          )
+            div(
+              class=""
+              v-for="(site, index) in sites"
+              :key="site.name + index"
+            ) {{ site.name }}
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 
 export default {
+  components: {
+    draggable
+  },
+  props: {
+    storageZone: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data () {
+    return {
+      isShowStorageZone: false,
+      sites: []
+    }
+  },
+  computed: {
+    storageZoneHeight () {
+      return {
+        height: window.innerHeight - 54 - 70 + 'px'
+      }
+    }
+  },
+  methods: {
+    log () {
+      console.log('child')
+    }
+  }
 }
 </script>>
 
@@ -36,15 +79,57 @@ export default {
   z-index: 10;
   top: 70px;
   width: 100%;
+  .v-input__control {
+    min-height: 32px !important;
+    font-size: 14px;
+  }
+  .custom-select-style {
+    position: relative;
+    top: 14px;
+    margin-left: 26px !important;
+    flex-grow: 0 !important;
+  }
+  .storage-zone {
+    width: 396px;
+    position: fixed;
+    background-color: #ffffff;
+    right: 0px;
+  }
 }
-.v-input__control {
-  min-height: 32px !important;
-  font-size: 14px;
+.fade-enter-active {
+  animation: fadeIn 0.6s;
+  animation-fill-mode: forwards;
 }
-.custom-select-style {
-  position: relative;
-  top: 14px;
-  margin-left: 26px !important;
-  flex-grow: 0 !important;
+
+.fade-leave-active {
+  animation: fadeOut 0.6s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    right: -396px;
+  }
+  to {
+    right: 0px;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    right: 0px;
+  }
+  to {
+    right: -396px;
+  }
+}
+
+.dragAreas {
+  > .site-card-root {
+    width: 241px !important;
+    > .content-wrapper {
+      display: none !important;
+    }
+  }
 }
 </style>
