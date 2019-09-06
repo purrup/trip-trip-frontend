@@ -1,12 +1,12 @@
 import Axios from 'axios'
-// import router from '../router'
-// import store from '../store/index'
 
 const options = {
-  // baseURL: 'http://localhost:3000',
-  baseURL: 'https://cors-anywhere.herokuapp.com/https://triptrip-backend.herokuapp.com',
+  baseURL: process.env.NODE_ENV === 'production'
+    ? 'https://triptrip-backend.herokuapp.com:3000'
+    : 'http://localhost:3000',
+  // baseURL: 'https://triptrip-backend.herokuapp.com',
   headers: {
-    'Content-Type': 'text/plain'
+    'Content-Type': 'application/json'
   },
   withCredentials: true
 }

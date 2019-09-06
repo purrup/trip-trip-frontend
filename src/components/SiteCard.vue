@@ -1,5 +1,8 @@
 <template lang="pug">
-  div(class="site-card-root")
+  v-card(
+    class="site-card-root"
+    hover
+    )
     div(class="carousel-wrapper")
       v-carousel(
         height="178"
@@ -12,7 +15,7 @@
           :src="image"
         )
     div(class="content-wrapper")
-      rating-favorite
+      rating-favorite(:name="site.name")
       div(v-for="info in infos" class="info-wrapper")
         v-icon {{info.icon}}
         span {{info.title}}: &nbsp

@@ -14,6 +14,16 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+router.beforeEach((to, from, next) => {
+  // const isLogin = localStorage.getItem('isLogin')
+  // console.log(isLogin)
+  // console.log(isLogin)
+  // if (!isLogin) {
+  //   next({ path: '/login' })
+  // }
+  next()
+})
+
 document.addEventListener('click', e => {
   if (store.getters['feature/isFocusOnSearchBar']) {
     if (e.target.closest('.search-bar-root')) {

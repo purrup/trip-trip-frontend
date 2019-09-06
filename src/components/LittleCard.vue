@@ -12,7 +12,7 @@
       )
     div(class="card-content")
       div
-        rating-favorite
+        rating-favorite(:name="'鹿野高台'")
       div
         span 收藏次數: {{ 10 }}
 </template>

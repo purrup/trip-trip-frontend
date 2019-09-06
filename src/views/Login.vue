@@ -23,57 +23,89 @@
               large
               min-width="380") facebook
           v-divider.my-8.mx-auto
-          v-form
+          v-form(
+            ref="form"
+            v-model="valid"
+            lazy-validation
+          )
             v-text-field.my-3(
+              v-model="email"
+              :rules="emailRules"
               label="E-mail"
               prepend-icon="email"
               required
             )
             v-text-field.mb-3(
-            :type="showPassword ? 'text' : 'password'"
-            label="Password"
-            prepend-icon="lock"
-            :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-            @click:append="showPassword = !showPassword"
-            required
+              v-model="password"
+              :rules="passwordRules"
+              :type="showPassword ? 'text' : 'password'"
+              label="Password"
+              prepend-icon="lock"
+              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              @click:append="showPassword = !showPassword"
+              required
             )
-
-          v-btn.mt-6(
+        v-btn(
           color="success"
           outlined
           large
           min-width="380"
+          @click="submit"
         ) 登入
-          v-col.d-flex.justify-end.mt-12(cols="auto")
-            router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
-            router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
+        v-col.d-flex.justify-end.mt-12(cols="auto")
+          router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
+          router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
 
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   data () {
     return {
+      valid: true,
+      email: '',
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ],
+      password: '',
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => (v && v.length >= 4) || 'Password must be more than 6 characters'
+      ],
       showPassword: false
+    }
+  },
+  methods: {
+    ...mapActions('account', ['signin']),
+    submit () {
+      if (this.$refs.form.validate()) {
+        this.signin({
+          email: this.email,
+          password: this.password
+        })
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
- #login {
-   border: 1px solid rgba($color: #707070, $alpha: 0.4);
-   border-radius: 20px;
-   height: 720px;
-   max-width: 560px;
- }
+#login {
+  border: 1px solid rgba($color: #707070, $alpha: 0.4);
+  border-radius: 20px;
+  height: 720px;
+  max-width: 560px;
+}
 // #input-area, #input-area > * {
 //   height: 50%;
 // }
 
 button {
   width: 340px;
-  text-transform:capitalize;
+  text-transform: capitalize;
 }
 
 hr {
