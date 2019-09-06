@@ -1,71 +1,49 @@
 <template lang="pug">
-  #trips
+  #trip
     v-row#toolbar
-        v-col.days-filter(
+        v-col.button-group(
               cols="12"
               offset="0")
-          v-menu.mr-5(offset-y)
-            template(v-slot:activator="{ on }")
               v-btn(
-                v-on="on"
                 outlined
-                ) 行程天數
-                  v-icon(right) arrow_drop_down
-            v-list
-              v-list-item(
-                v-for="(day, index) in days"
-                :key="index"
-                @click="")
-                v-list-item-title.d-flex.justify-center {{ day }}
-          v-menu(offset-y)
-            template(v-slot:activator="{ on }")
-              v-btn(
-                v-on="on"
+                ) 複製行程
+              v-btn.ml-5(
                 outlined
-                ) 排序
-                  v-icon(right) arrow_drop_down
-            v-list
-              v-list-item(
-                v-for="(order, index) in orders"
-                :key="index"
-                @click="")
-                v-list-item-title.d-flex.justify-center {{ order }}
-    .container
-      v-row
-        main
-          v-row#trips
-            v-col(
-              cols="auto"
-              )
-              template(v-for="trip in trips")
-                trip-card(
-                  :trip="trip"
-                  :key="trip"
-                  @mouseover.native="displayOverview(trip)"
-                  @mouseout="mouseout"
-                )
-          v-row#overview
-            v-col(
-              cols="auto"
+                ) 編輯模式
+              v-btn.ml-5(
+                outlined
+                ) 日期
+    main
+      #toggle-bar
+        v-list
+          v-list-item-group
+            v-list-item(
+              v-for="(item, i) in toggle"
+              :key="i"
+              style=" border: 0.5px solid rgba(102, 102, 102, 0.5); "
             )
-              overview(:trip="currentTrip")
+              v-list-item-content
+                v-list-item-title.text-center(v-text="item")
+      #overview
+        overview(:trip="trips[0]")
+      #google-map
+        p google map
+
 </template>
 
 <script>
-import TripCard from '@/components/TripCard.vue'
 import Overview from '@/components/Overview.vue'
 
 export default {
-  name: 'trips',
+  name: 'trip',
   components: {
-    TripCard,
     Overview
   },
   data () {
     return {
-      days: ['1天', '2天', '3天', '4天', '5天'],
-      orders: ['收藏數', '留言數', '照片數'],
-      currentTrip: {}, // 現在overview顯示的trip資料
+      toggle: [
+        '概覽', '8/1', '8/2', '8/3', '8/4', '+'
+      ],
       trips: [
         {
           id: 1,
@@ -216,41 +194,16 @@ export default {
             }
           ]
         }
-      ],
-      timeStamp: '',
-      timer: null
-    }
-  },
-  beforeMount () {
-    // overview預設資料
-    this.currentTrip = this.trips[0]
-  },
-  methods: {
-    displayOverview (trip) {
-      this.timeStamp = Date.now()
-      this.timer = setTimeout(this.toggle, 1000, trip)
-    },
-    mouseout () {
-      clearTimeout(this.timer)
-    },
-    toggle (trip) {
-      if ((Date.now() - this.timeStamp) / 100 < 5) {
-        return
-      }
-      this.currentTrip = trip
+      ]
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#trips {
+#trip {
   height: auto;
   overflow-y: auto;
-}
-
-.container {
-  margin: 130px 30px 0px 140px;
 }
 
 #toolbar {
@@ -261,23 +214,30 @@ export default {
   border-bottom: 1px solid rgb(235, 235, 235);
   width: 100%;
   background-color: #fff;
-}
-
-.days-filter {
-  margin-left: 95px;
+  .button-group {
+    margin-left: 40px;
+  }
 }
 
 main {
   width: 100%;
+  height: 100vh;
+  margin: 130px 0 0 47px;
   display: grid;
-  grid-template-columns: 0.77fr 50px 1.15fr;
-  grid-template-areas: "left . right";
-  #trips {
-    grid-area: left;
+  grid-template-columns: 84px 686px auto;
+  grid-template-areas: "toggle-bar overview google-map";
+  #toggle-bar {
+    margin-right: 9px;
+    // background-color: green;
+    grid-area: toggle-bar;
   }
   #overview {
-    grid-area: right;
-    max-width: 686px;
+    grid-area: overview;
+  }
+  #google-map {
+    // background-color: blue;
+    grid-area: google-map;
   }
 }
+
 </style>

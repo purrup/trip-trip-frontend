@@ -90,6 +90,7 @@ export default {
 <style lang="scss" scoped>
 .search-bar-root {
   position: relative;
+  z-index: 10;
   > input {
     box-sizing: border-box;
     outline: none;
