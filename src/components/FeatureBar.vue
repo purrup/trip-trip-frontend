@@ -24,6 +24,11 @@
         v-app-bar-nav-icon(v-if="storageZone" @click="isShowStorageZone = !isShowStorageZone")
     transition(name="fade")
       div(v-show="isShowStorageZone" class="storage-zone" :style="storageZoneHeight")
+        div(class="header")
+          v-btn(
+            outlined
+            color="secondary"
+          ) Create
         div(:style="{'height': '100%'}")
           draggable(
             tag="div"
@@ -90,10 +95,13 @@ export default {
     flex-grow: 0 !important;
   }
   .storage-zone {
-    width: 396px;
+    width: 360px;
     position: fixed;
     background-color: #ffffff;
     right: 0px;
+    .header {
+      // background-color: dodgerblue;
+    }
   }
 }
 .fade-enter-active {
@@ -108,7 +116,7 @@ export default {
 
 @keyframes fadeIn {
   from {
-    right: -396px;
+    right: -360px;
   }
   to {
     right: 0px;
@@ -120,7 +128,7 @@ export default {
     right: 0px;
   }
   to {
-    right: -396px;
+    right: -360px;
   }
 }
 

@@ -1,7 +1,7 @@
 <template lang="pug">
   form(class="search-bar-root" :style="{ 'width': width, 'height' : height }")
     input(
-      type="searcn"
+      type="search"
       placeholder="Search..."
       @focus="SET_isFocusOnSearchBar(true)",
       class="top-half-border-radius"

@@ -177,7 +177,7 @@ export default {
 }
 </script>>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #sites-root {
   .wrapper {
     margin-top: 124px;

@@ -35,6 +35,12 @@ export default new Router({
       name: 'Sites',
       meta: { showNavbar: true },
       component: () => import('./views/Sites.vue')
+    },
+    {
+      path: '/site',
+      name: 'Site',
+      meta: { showNavbar: true },
+      component: () => import('./views/Site.vue')
     }
   ]
 })
