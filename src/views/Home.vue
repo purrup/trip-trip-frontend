@@ -34,6 +34,8 @@
 import SearchBar from '@/components/SearchBar.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
+import siteApis from '@/utils/apis/site'
+
 export default {
   components: {
     SearchBar,
@@ -48,6 +50,16 @@ export default {
         require('@/assets/image/4.jpg'),
         require('@/assets/image/5.jpg')
       ]
+    }
+  },
+  methods: {
+    async getPopularSites () {
+      try {
+        const { data } = await siteApis.getPopularSites()
+        console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
