@@ -51,6 +51,25 @@ const actions = {
       console.log(error)
     }
   },
+  async facebookLogin (context, data) {
+    try {
+      await axios('/facebook', {
+        method: 'get'
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async googleLogin (context, data) {
+    try {
+      console.log('here')
+      await axios('/google', {
+        method: 'get'
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
   async getUser (context) {
     try {
       const { data } = await axios('/user', {

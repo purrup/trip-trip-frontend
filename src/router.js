@@ -13,10 +13,10 @@ export default new Router({
       component: () => import('./views/Home.vue')
     },
     {
-      path: '/login',
-      name: 'Login',
+      path: '/signin',
+      name: 'Signin',
       meta: { showNavbar: false },
-      component: () => import('./views/Login.vue')
+      component: () => import('./views/Signin.vue')
     },
     {
       path: '/signup',

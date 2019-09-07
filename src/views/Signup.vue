@@ -93,7 +93,7 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         this.signup({
-          firstname: this.username,
+          username: this.username,
           email: this.email,
           password: this.password
         })
