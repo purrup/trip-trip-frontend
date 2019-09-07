@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-card#trip-card.mb-5(
+  v-card.trip-card.mb-5(
     width="530"
     height="125"
     min-width="530"
     min-height="125"
     tile
     hover
+    :to="{ path: `trip/${ trip.id }` }"
     )
     v-list-item.pl-0
       v-list-item-avatar.img.ml-2(
@@ -14,8 +15,8 @@
         )
         v-img(src="https://source.unsplash.com/random/110x110")
       .content.my-auto
-        #trip-name.headline.pt-2 {{ trip.name }}
-        v-row#info
+        .trip-name.headline.pt-2 {{ trip.name }}
+        v-row.infomation
           v-col.pt-1(cols="6")
             ul(style="list-style: none;")
               li 作者：Saitama
@@ -43,7 +44,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#trip-card {
+.trip-card {
   border-radius: 7px;
   ul {
     padding: 0;

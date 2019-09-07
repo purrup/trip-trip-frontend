@@ -1,5 +1,5 @@
 <template lang="pug">
-  #timeline-root
+  .timeline-root
     v-timeline(
       align-top
       )

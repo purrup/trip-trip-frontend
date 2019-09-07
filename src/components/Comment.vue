@@ -1,13 +1,13 @@
 <template lang="pug">
-  #comment-root
+  .comment-root
     v-row
       v-col(cols="12")
         span 留言({{ comments.length }})
         br
-        #comments.mt-5
+        .comments.mt-5
           template(v-for="(comment, index) in comments")
             comment-card(:comment="comment")
-        #comment-textarea
+        .comment-textarea
           v-textarea(
             outlined
             name="comment"

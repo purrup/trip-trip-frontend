@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 Vue.use(Router)
 
@@ -29,6 +30,20 @@ export default new Router({
       name: 'Trips',
       meta: { showNavbar: true },
       component: () => import('./views/Trips.vue')
+      // async beforeEnter (to, from, next) {
+      //   try {
+      //     await store.dispatch('trips/getTrips')
+      //     next()
+      //   } catch (error) {
+      //     throw error
+      //   }
+      // }
+    },
+    {
+      path: '/trip/:id',
+      name: 'Trip',
+      meta: { showNavbar: true },
+      component: () => import('./views/Trip.vue')
     },
     {
       path: '/sites',
