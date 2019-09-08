@@ -9,10 +9,13 @@
     div(v-for="info in infos" class="info-wrapper")
       v-icon {{info.icon}}
       span {{info.title}}: &nbsp
-      template(v-if="info.title !== '官方網站'")
-        span {{info.content}}
+      template(v-if="info.title === '官方網站'")
+        a(:href="info.content") {{info.content}}
+      template(v-else-if="info.title === '營業時間'")
+        div(class="opening-hours")
+          span(v-for="dayTime in info.content") {{dayTime}}
       template(v-else)
-        a {{info.content}}
+        span {{info.content}}
 </template>
 
 <script>
@@ -40,23 +43,32 @@ export default {
           title: '聯絡電話',
           content: ''
         },
-        // {
-        //   type: 'openTime',
-        //   icon: 'access_time',
-        //   title: '營業時間',
-        //   content: ''
-        // },
         {
           type: 'website',
           icon: 'language',
           title: '官方網站',
           content: ''
         }
+      ],
+      moreInfos: [
+        {
+          type: 'opening_hours',
+          icon: 'access_time',
+          title: '營業時間',
+          content: ''
+        }
       ]
     }
   },
   created () {
+    if (this.$route.path === `/site/${this.site.place_id}`) {
+      this.infos = [...this.infos, ...this.moreInfos]
+    }
     this.infos.forEach((info, index) => {
+      if (info.type === 'opening_hours') {
+        info.content = this.site.opening_hours.weekday_text
+        return
+      }
       info.content = this.site[info.type]
     })
   }
@@ -68,8 +80,6 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-sizing: border-box;
-  padding: 15px 20px;
   > div:nth-child(1) {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -84,12 +94,20 @@ export default {
     padding-top: 7px;
     display: flex;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     font-size: 14px;
     width: 367px;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    > a,
+    span:nth-child(3) {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .opening-hours {
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 </style>

@@ -14,7 +14,7 @@
           :key="`image-${i}`"
           :src="image"
         )
-    site-info(:site="site")
+    site-info(:site="site" class="site-info-wrapper")
 </template>
 
 <script>
@@ -43,5 +43,8 @@ export default {
   height: 190px;
   display: grid;
   grid-template-columns: 232px 1fr;
+  .site-info-wrapper {
+    padding: 15px 20px;
+  }
 }
 </style>
