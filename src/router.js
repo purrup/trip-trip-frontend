@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from './store'
 
 Vue.use(Router)
 
@@ -52,7 +51,7 @@ export default new Router({
       component: () => import('./views/Sites.vue')
     },
     {
-      path: '/site',
+      path: '/site/:id',
       name: 'Site',
       meta: { showNavbar: true },
       component: () => import('./views/Site.vue')

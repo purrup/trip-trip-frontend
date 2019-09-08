@@ -7,12 +7,7 @@
       )
     div(class="main")
       div(class="content")
-        div(class="detail-wrapper")
-          rating-favorite(:name="site.name")
-          div(v-for="info in infos" class="info-wrapper")
-            v-icon {{info.icon}}
-            span {{info.title}}: &nbsp
-            span {{info.content}}
+        site-info(:site="site")
         div(class="comment-wrapper")
       div(class="recommendation-lits")
         p 包含此景點的行程
@@ -20,12 +15,12 @@
 </template>
 
 <script>
-import RatingFavorite from '@/components/RatingFavorite.vue'
+import SiteInfo from '@/components/SiteInfo.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 export default {
   components: {
-    RatingFavorite,
+    SiteInfo,
     LittleCard
   },
   data () {
@@ -119,19 +114,6 @@ export default {
     grid-template-columns: 1fr 250px;
     grid-column-gap: 180px;
     .content {
-      .detail-wrapper {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 15px 20px;
-        .info-wrapper {
-          padding-top: 15px;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          font-size: 14px;
-        }
-      }
     }
     .recommendation-lits {
       .little-card-root {

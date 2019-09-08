@@ -12,10 +12,10 @@
           @start="start"
         )
           site-card(
-            v-for="site in sites"
-            :key="`site-${site.id}`"
-            :site="site"
-            @mouseover.native="showSiteOnMap(site.position)"
+            v-for="(site, key) in sites"
+            :key="`site-${key}`"
+            :site="site.result"
+            @mouseover.native="showSiteOnMap(site.result.geometry.location)"
           )
       div(id="map")
 </template>
@@ -24,6 +24,8 @@
 import FeatureBar from '@/components/FeatureBar.vue'
 import SiteCard from '@/components/SiteCard.vue'
 import draggable from 'vuedraggable'
+import place from '@/assets/place.json'
+
 /* eslint-disable */
 export default {
   components: {
@@ -33,96 +35,16 @@ export default {
   },
   data () {
     return {
-      sites: [
-        {
-          id: 1,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: true,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 23.21321,
-            lng: 120.42918
-          }
-        },
-        {
-          id: 2,
-          name: '安平古堡',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 22.21321,
-            lng: 120.918
-          }
-        },
-        {
-          id: 3,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 22.71321,
-            lng: 120.42918
-          }
-        },
-        {
-          id: 4,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 23.21321,
-            lng: 120.42918
-          }
-        }
-      ],
+      placeData: place.data,
+      placeIds: ['ChIJraeA2rarQjQRPBBjyR3RxKw', 'ChIJ1ZrmCnZMXTQRV2jCWjAX0eQ', 'ChIJ7-fCX4SCaDQRMaqw4IX92d0'],
+      sites: [],
       map: null,
       myTainanHouse: { lat: 23.039808, lng: 120.211868 },
       marker: null
     }
+  },
+  created () {
+    this.sites = this.placeData.filter(place => (place.status === 'OK' && this.placeIds.includes(place.result.place_id)))
   },
   mounted () {
     // the initialize function must be written at mounted hook
@@ -131,10 +53,10 @@ export default {
   methods: {
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.myTainanHouse,
-        zoom: 12
+        center: this.sites[0].result.geometry.location,
+        zoom: 13
       })
-      this.marker = new google.maps.Marker({ map: this.map })
+      this.marker = new google.maps.Marker({ map: this.map, position: this.sites[0].result.geometry.location})
 
 
       this.marker.addListener('click', (e) => {
@@ -165,13 +87,6 @@ export default {
     },
     start (e) {
       console.log('start', e)
-    },
-    clone (e) {
-      console.log('clone', e)
-    },
-    move () {
-      console.log('move')
-      return 1
     }
   }
 }

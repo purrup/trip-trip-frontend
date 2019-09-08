@@ -57,8 +57,8 @@
           @click="submit"
         ) 登入
         v-col.d-flex.justify-end.mt-12(cols="auto")
-          router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
-          router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
+          router-link.body-2.mr-5(to="/signup") 註冊帳號
+          router-link.body-2(to="/signup'}") 忘記密碼？
 
 </template>
 

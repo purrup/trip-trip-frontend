@@ -1,4 +1,4 @@
-import axios from '../axios.js'
+import axios from '../../utils/axios'
 
 const state = {
   trips: {
