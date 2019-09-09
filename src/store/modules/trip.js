@@ -1,7 +1,7 @@
-import axios from '../axios.js'
+import axios from '../../utils/axios'
 
 const state = {
-  trips: {
+  trips: [{
     'name': '2019 花東行',
     'days': 3,
     'country': '臺灣',
@@ -83,6 +83,8 @@ const state = {
         'text': '台灣最美麗的地方'
       }
     ]
+  }],
+  trip: {
   }
 }
 
@@ -91,6 +93,9 @@ const getters = {}
 const mutations = {
   SET_TRIPS (state, data) {
     state.trips = data
+  },
+  SET_TRIP (state, data) {
+    state.trip = data
   }
 }
 
@@ -100,8 +105,18 @@ const actions = {
       const results = await axios('/trips/popular', {
         method: 'get'
       })
-      console.log('actions:', results)
-      context.commit('SET_TRIPS', results)
+
+      context.commit('SET_TRIPS', results.data)
+    } catch (error) {
+      throw error
+    }
+  },
+  async getTrip (context, id) {
+    try {
+      const results = await axios(`/trips/${id}`, {
+        method: 'get'
+      })
+      context.commit('SET_TRIP', results.data)
     } catch (error) {
       throw error
     }

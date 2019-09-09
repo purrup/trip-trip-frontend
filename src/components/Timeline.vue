@@ -5,7 +5,7 @@
       )
       v-timeline-item(
         v-for="(trip, i) in trips"
-        :key="trip"
+        :key="i"
         color="indigo lighten-2"
       )
         v-card(
@@ -16,7 +16,7 @@
             ul(
               style=" list-style: none; "
               v-for="(site, i) in trip.sites"
-              :key="site")
+              :key="i")
               li {{ site }}
 
 </template>

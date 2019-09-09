@@ -23,6 +23,5 @@ body {
 }
 #app {
   font-family: 'Noto Sans TC', sans-serif;
-  // text-align: center;
 }
 </style>

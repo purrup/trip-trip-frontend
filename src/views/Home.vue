@@ -18,7 +18,7 @@
       div
         h1 Trip Trip
         h2 People Don’t Take Trips, Trips Take People
-        search-bar(:width="'650px'" :height="'48px'")
+        search-bar(:width="'650px'" :height="'48px'" :home="true")
     div(class="container")
       div
         h3 Popular Sites

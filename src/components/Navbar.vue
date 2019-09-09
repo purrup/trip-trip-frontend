@@ -4,8 +4,37 @@
       v-layout(wrap align-center)
         router-link.ml-2(:to="{ name: 'Home'}" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
-        search-bar(class="ml-8" :width="'376px'" :height="'40px'")
+        v-select(
+          height="30px"
+          class="custom-select-style"
+          :style="{ 'width': '100px'} "
+          :items="['1天', '2天', '3天', '4天', '5天']"
+          :menu-props="{ top: false, offsetY: true }"
+          label="天數"
+          solo
+          v-if="$route.path ==='/trips' || '/sites' && $route.path !==`/trips/${$route.params.id}`"
+        )
+        v-select(
+          height="30px"
+          class="custom-select-style"
+          :style="{ 'width': '100px'} "
+          :items="['評分數', '評論數', '收藏數']"
+          :menu-props="{ top: false, offsetY: true }"
+          label="排序"
+          solo
+          v-if="$route.path ==='/trips' || '/sites' && $route.path !==`/trips/${$route.params.id}`"
+        )
+        v-btn.ml-8(
+          v-if="$route.path ===`/trips/${$route.params.id}`"
+        ) 複製行程
+        v-btn.ml-8(
+          v-if="$route.path ===`/trips/${$route.params.id}`"
+        ) 編輯模式
+        v-btn.ml-8(
+          v-if="$route.path ===`/trips/${$route.params.id}`"
+        ) 日期
         v-spacer
+        search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
           to="/login"
           color="success"
@@ -20,6 +49,10 @@ export default {
   name: 'navbar',
   components: {
     SearchBar
+  },
+  data () {
+    return {
+    }
   }
 }
 </script>
@@ -29,5 +62,11 @@ export default {
   width: 100%;
   position: fixed;
   z-index: 100;
+}
+.custom-select-style {
+  position: relative;
+  top: 14px;
+  margin-left: 26px !important;
+  flex-grow: 0 !important;
 }
 </style>

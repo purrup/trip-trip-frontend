@@ -6,7 +6,7 @@
     min-height="125"
     tile
     hover
-    :to="{ path: `trip/${ trip.id }` }"
+    :to="{ path: `trips/${ trip._id }` }"
     )
     v-list-item.pl-0
       v-list-item-avatar.img.ml-2(
