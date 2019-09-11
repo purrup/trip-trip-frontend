@@ -26,13 +26,20 @@
         )
         v-btn.ml-8(
           v-if="$route.path ===`/trips/${$route.params.id}`"
+          text
+          elevation=2
         ) 複製行程
         v-btn.ml-8(
           v-if="$route.path ===`/trips/${$route.params.id}`"
+          text
+          elevation=2
         ) 編輯模式
         v-btn.ml-8(
           v-if="$route.path ===`/trips/${$route.params.id}`"
+          text
+          elevation=2
         ) 日期
+        v-switch.ml-8.mt-7(v-model="publish" inset :label="`${privacySetting}`")
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
@@ -52,6 +59,12 @@ export default {
   },
   data () {
     return {
+      publish: false
+    }
+  },
+  computed: {
+    privacySetting () {
+      return this.publish ? '公開此行程' : '不公開此行程'
     }
   }
 }
