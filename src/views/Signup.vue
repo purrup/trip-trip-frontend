@@ -56,7 +56,7 @@
             @click="submit"
             ) 註冊
       v-col.d-flex.justify-end(cols="auto" offset="7")
-        router-link.body-2(:to="{ name: 'Login'}") 已有帳號，點此登入
+        router-link.body-2(to="/signin") 已有帳號，點此登入
 </template>
 
 <script>
@@ -93,7 +93,7 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         this.signup({
-          firstname: this.username,
+          username: this.username,
           email: this.email,
           password: this.password
         })

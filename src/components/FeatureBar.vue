@@ -94,50 +94,6 @@ export default {
     margin-left: 26px !important;
     flex-grow: 0 !important;
   }
-  .storage-zone {
-    width: 360px;
-    position: fixed;
-    background-color: #ffffff;
-    right: 0px;
-    .header {
-      // background-color: dodgerblue;
-    }
-  }
-}
-.fade-enter-active {
-  animation: fadeIn 0.6s;
-  animation-fill-mode: forwards;
 }
 
-.fade-leave-active {
-  animation: fadeOut 0.6s;
-  animation-fill-mode: forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    right: -360px;
-  }
-  to {
-    right: 0px;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    right: 0px;
-  }
-  to {
-    right: -360px;
-  }
-}
-
-.dragAreas {
-  > .site-card-root {
-    width: 241px !important;
-    > .content-wrapper {
-      display: none !important;
-    }
-  }
-}
 </style>

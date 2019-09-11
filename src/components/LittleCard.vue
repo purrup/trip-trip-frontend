@@ -12,7 +12,8 @@
       )
     div(class="card-content")
       div
-        rating-favorite(:name="'鹿野高台'")
+        span 鹿野高台
+        rating-favorite(:rating="4")
       div
         span 收藏次數: {{ 10 }}
 </template>
@@ -49,6 +50,16 @@ export default {
     justify-content: center;
     height: 66px;
     padding: 6px 10px;
+    > div:nth-child(1) {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      > span {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 20px;
+        padding-right: 5px;
+      }
+    }
     > div:nth-child(2) {
       text-align: left;
       span {

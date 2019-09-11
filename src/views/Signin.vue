@@ -16,12 +16,16 @@
               color="error"
               outlined
               large
-              min-width="380") google
+              min-width="380"
+              @click="googleLogin"
+            ) google
             v-btn.mt-7(
               color="info"
               outlined
               large
-              min-width="380") facebook
+              min-width="380"
+              @click="facebook"
+            ) facebook
           v-divider.my-8.mx-auto
           v-form(
             ref="form"
@@ -53,8 +57,8 @@
           @click="submit"
         ) 登入
         v-col.d-flex.justify-end.mt-12(cols="auto")
-          router-link.body-2.mr-5(:to="{ name: 'Signup'}") 註冊帳號
-          router-link.body-2(:to="{ name: 'Signup'}") 忘記密碼？
+          router-link.body-2.mr-5(to="/signup") 註冊帳號
+          router-link.body-2(to="/signup'}") 忘記密碼？
 
 </template>
 
@@ -79,7 +83,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('account', ['signin']),
+    ...mapActions('account', ['signin', 'facebookLogin', 'googleLogin']),
     submit () {
       if (this.$refs.form.validate()) {
         this.signin({
@@ -87,6 +91,9 @@ export default {
           password: this.password
         })
       }
+    },
+    facebook () {
+      window.location = 'http://localhost:3000/facebook'
     }
   }
 }

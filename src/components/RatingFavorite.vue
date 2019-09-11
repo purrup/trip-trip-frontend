@@ -1,6 +1,5 @@
 <template lang="pug">
   div(class="rating-favorite-root")
-    span {{name}}
     v-rating(
       v-model="rating"
       color="#FB9026"
@@ -10,7 +9,9 @@
       hover
       size="15px"
       dense
+      readonly
     )
+    span ({{ratingNum}})
     v-icon(
       class="favorite-icon"
       :style="{ 'color' : showWhichIcon ? 'red' : 'grey' }"
@@ -23,11 +24,11 @@
 
 export default {
   props: {
-    name: String
+    rating: Number,
+    ratingNum: Number
   },
   data () {
     return {
-      rating: 4,
       isOnHover: false
     }
   },
@@ -49,12 +50,8 @@ export default {
 .rating-favorite-root {
   display: flex;
   position: relative;
-  > span {
-    color: black;
-    font-weight: bold;
-    font-size: 20px;
-    line-height: 20px;
-    padding-right: 5px;
+  span {
+    font-size: 12px;
   }
   .favorite-icon {
     position: absolute;

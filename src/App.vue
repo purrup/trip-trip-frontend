@@ -21,6 +21,9 @@ body {
   padding: 0px;
   height: 100%;
 }
+p {
+  margin: 0px !important;
+}
 #app {
   font-family: 'Noto Sans TC', sans-serif;
 }

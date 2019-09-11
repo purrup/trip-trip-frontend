@@ -1,6 +1,5 @@
 <template lang="pug">
   div(id="sites-root")
-    feature-bar(:storage-zone="true")
     div(class="wrapper")
       div(class="sites-container")
         div 台北
@@ -12,18 +11,63 @@
           @start="start"
         )
           site-card(
-            v-for="site in sites"
-            :key="`site-${site.id}`"
-            :site="site"
-            @mouseover.native="showSiteOnMap(site.position)"
+            v-for="(site, key) in sites"
+            :key="`site-${key}`"
+            :site="site.result"
+            @mouseover.native="showSiteOnMap(site.result.geometry.location)"
           )
       div(id="map")
+      div(
+        class="storage-zone"
+        :class="{ 'fade-in': isShowStorageZone}")
+        button(@click="isShowStorageZone = !isShowStorageZone")
+          v-icon(:class="{ 'arrow-rotate': isShowStorageZone}") keyboard_arrow_left
+        div(:style="storageZoneHeight")
+          div(v-if="!isOnDraggable" class="no-draggable")
+            p(v-if="trips.length === 0") 你還沒有屬於自己的旅程，趕快新增吧！
+            v-btn(
+              outlined
+              color="secondary"
+              @click="isOnDraggable = true") Create
+          div(v-else class="on-draggable")
+            div
+              v-icon(@click="isOnDraggable = false") reply
+              span {{storageTrip.name}}
+              v-spacer
+              v-icon save
+              v-icon edit
+            div
+              div(v-for="(activities, index) in storageTrip.activities" class="day-activities")
+                div
+                  v-icon today
+                  span Day {{index + 1}}
+                  v-spacer
+                  v-icon arrow_drop_down
+                draggable(
+                  tag="div"
+                  class="dragAreas"
+                  group="sites"
+                  :list="activities")
+                  div(v-for="(site, index) in activities"
+                    :key="site.result.name + index"
+                    class="storage-site")
+                    v-icon drag_handle
+                    span {{ site.result.name }}
+                    v-spacer
+                    v-icon(@click="activities.splice(index, 1)") close
+              v-btn(
+                outlined
+                color="secondary"
+                @click="storageTrip.activities.push([])")
+                v-icon add
 </template>
 
 <script>
 import FeatureBar from '@/components/FeatureBar.vue'
 import SiteCard from '@/components/SiteCard.vue'
 import draggable from 'vuedraggable'
+import place from '@/assets/place.json'
+
 /* eslint-disable */
 export default {
   components: {
@@ -33,108 +77,47 @@ export default {
   },
   data () {
     return {
-      sites: [
-        {
-          id: 1,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: true,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 23.21321,
-            lng: 120.42918
-          }
-        },
-        {
-          id: 2,
-          name: '安平古堡',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 22.21321,
-            lng: 120.918
-          }
-        },
-        {
-          id: 3,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 22.71321,
-            lng: 120.42918
-          }
-        },
-        {
-          id: 4,
-          name: '鹿野高台',
-          rating: 4,
-          isFavorite: false,
-          address: '955台東縣鹿野鄉永安村高台路42巷145號',
-          phone: '08 955 1637',
-          openTime: '24小時營業',
-          website: 'https://www.youtube.com',
-          images: [
-            require('@/assets/image/1.jpg'),
-            require('@/assets/image/2.jpg'),
-            require('@/assets/image/3.jpg'),
-            require('@/assets/image/4.jpg'),
-            require('@/assets/image/5.jpg')
-          ],
-          position: {
-            lat: 23.21321,
-            lng: 120.42918
-          }
-        }
-      ],
+      isShowStorageZone: false,
+      placeData: place.data,
+      placeIds: ['ChIJraeA2rarQjQRPBBjyR3RxKw', 'ChIJ1ZrmCnZMXTQRV2jCWjAX0eQ', 'ChIJ7-fCX4SCaDQRMaqw4IX92d0'],
+      sites: [],
+      trips: [],
+      isOnDraggable: false,
+      storageTrip: {
+        name: 'XXX的快樂之旅',
+        activities: [[]]
+      },
       map: null,
       myTainanHouse: { lat: 23.039808, lng: 120.211868 },
       marker: null
     }
   },
+  created () {
+    this.sites = this.placeData.filter(place => (place.status === 'OK' && this.placeIds.includes(place.result.place_id)))
+  },
   mounted () {
     // the initialize function must be written at mounted hook
     this.initMap()
   },
+  computed: {
+    storageZoneHeight () {
+      return {
+        height: window.innerHeight - 70 + 'px'
+      }
+    }
+  },
   methods: {
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.myTainanHouse,
-        zoom: 12
+        center: this.sites[0].result.geometry.location,
+        zoom: 13,
+        mapTypeControl: false,
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+        }
       })
-      this.marker = new google.maps.Marker({ map: this.map })
+      this.marker = new google.maps.Marker({ map: this.map, position: this.sites[0].result.geometry.location })
 
 
       this.marker.addListener('click', (e) => {
@@ -166,12 +149,7 @@ export default {
     start (e) {
       console.log('start', e)
     },
-    clone (e) {
-      console.log('clone', e)
-    },
-    move () {
-      console.log('move')
-      return 1
+    create () {
     }
   }
 }
@@ -180,7 +158,7 @@ export default {
 <style lang="scss" scoped>
 #sites-root {
   .wrapper {
-    margin-top: 124px;
+    margin-top: 70px;
     > .sites-container {
       margin-right: 720px;
       padding: 20px 36.5px;
@@ -199,18 +177,106 @@ export default {
     }
     > #map {
       width: 720px;
-      height: 664px;
+      height: 718px;
       position: fixed !important;
-      top: 124px;
+      top: 70px;
       right: 0px;
     }
   }
 }
-.ghost {
-  background-color: black;
-  width: 241px;
-  > .content-wrapper {
-    display: none !important;
+.storage-zone {
+  width: 360px;
+  position: fixed;
+  top: 70px;
+  right: -330px;
+  opacity: 1;
+  transition: all 1s;
+  display: flex;
+  > button {
+    width: 30px;
+    height: 30px;
+    outline: none;
+    background-color: orange;
   }
+  > div {
+    width: 330px;
+    background-color: white;
+    .no-draggable {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .on-draggable {
+      height: 100%;
+      > div:nth-child(1) {
+        display: flex;
+        align-items: center;
+        border: 1px solid black;
+        height: 40px;
+        padding: 0 10px;
+        span {
+          font-size: 24px;
+        }
+        i:nth-child(1) {
+          padding-right: 10px;
+        }
+        i:last-child {
+          padding-left: 10px;
+        }
+      }
+      > div:nth-child(2) {
+        display: grid;
+        width: 100%;
+        justify-items: center;
+        > .day-activities {
+          width: 100%;
+          margin-bottom: 10px;
+          > div:nth-child(1) {
+            display: flex;
+            align-items: center;
+            background-color: lightgray;
+            height: 30px;
+            padding: 0 10px;
+            i:nth-child(1) {
+              padding-right: 10px;
+            }
+            i:last-child {
+              padding-left: 10px;
+            }
+          }
+          > .dragAreas {
+            width: 100%;
+            .storage-site {
+              display: flex;
+              padding: 0 10px;
+              i:nth-child(1) {
+                padding-right: 10px;
+              }
+              i:last-child {
+                padding-left: 10px;
+              }
+            }
+            > .site-card-root {
+              width: 241px !important;
+              .site-info-wrapper {
+                display: none !important;
+              }
+            }
+          }
+        }
+        > button {
+          width: 90%;
+          border-style: dashed;
+        }
+      }
+    }
+  }
+}
+
+.fade-in {
+  transform: translateX(-330px);
+}
+.arrow-rotate {
+  transform: rotateZ(180deg);
 }
 </style>
