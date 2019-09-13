@@ -2,6 +2,8 @@ import axios from '../../utils/axios'
 
 const state = {
   isLogin: localStorage.getItem('isLogin') || false,
+  expiration: new Date(localStorage.getItem('expiration')) || false,
+  /** ***********/
   id: 1,
   username: 'MiaYang',
   introduction: "Hello I'm Mia",
@@ -27,35 +29,45 @@ const mutations = {
     Object.keys(data).forEach(key => {
       state[key] = data[key]
     })
+  },
+  SET_login (state) {
+    localStorage.setItem('expiration', new Date(Date.now() + 1000 * 3600 * 24))
+    localStorage.setItem('isLogin', true)
+    state.isLogin = true
+  },
+  SET_logout (state) {
+    state.isLogin = false
+    localStorage.setItem('isLogin', false)
   }
 }
 
 const actions = {
-  async signup (context, data) {
+  async signup (context, params) {
     try {
-      await axios('/signup', {
+      const { data } = await axios('/signup', {
         method: 'post',
-        data: data
+        data: params
       })
+      context.commit('SET_user', data)
+      context.commit('SET_login')
     } catch (error) {
       console.log(error)
     }
   },
-  async signin (context, data) {
+  async signin (context, params) {
     try {
-      await axios('/signin', {
+      const { data } = await axios('/signin', {
         method: 'post',
-        data: data
+        data: params
       })
+      context.commit('SET_user', data)
+      context.commit('SET_login')
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
   async facebookLogin (context, data) {
     try {
-      await axios('/facebook', {
-        method: 'get'
-      })
     } catch (error) {
       console.log(error)
     }
@@ -72,11 +84,13 @@ const actions = {
   },
   async getUser (context) {
     try {
-      const { data } = await axios('/user', {
+      const { data } = await axios('/users', {
         method: 'get'
       })
       context.commit('SET_user', data)
+      context.commit('SET_login')
     } catch (error) {
+      context.commit('SET_logout')
       console.log(error)
     }
   }

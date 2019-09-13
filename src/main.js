@@ -14,13 +14,18 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-router.beforeEach((to, from, next) => {
-  // const isLogin = localStorage.getItem('isLogin')
-  // console.log(isLogin)
-  // console.log(isLogin)
-  // if (!isLogin) {
-  //   next({ path: '/login' })
-  // }
+router.beforeResolve((to, from, next) => {
+  const isLogin = localStorage.getItem('isLogin')
+  const expiration = new Date(localStorage.getItem('expiration'))
+  const currentDate = new Date()
+  if (isLogin === 'true') {
+    if (expiration > currentDate) {
+      store.dispatch('account/getUser')
+      store.commit('account/SET_login')
+    } else {
+      store.commit('account/SET_logout')
+    }
+  }
   next()
 })
 

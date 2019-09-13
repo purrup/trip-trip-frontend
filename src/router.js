@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 Vue.use(Router)
 
@@ -16,13 +17,25 @@ export default new Router({
       path: '/signin',
       name: 'Signin',
       meta: { showNavbar: false },
-      component: () => import('./views/Signin.vue')
+      component: () => import('./views/Signin.vue'),
+      beforeEnter: function (to, from, next) {
+        if (store.getters['account/getIsLogin'] === true) {
+          return next({ path: from.path })
+        }
+        next()
+      }
     },
     {
       path: '/signup',
       name: 'Signup',
       meta: { showNavbar: false },
-      component: () => import('./views/Signup.vue')
+      component: () => import('./views/Signup.vue'),
+      beforeEnter: function (to, from, next) {
+        if (store.getters['account/getIsLogin'] === true) {
+          return next({ path: from.path })
+        }
+        next()
+      }
     },
     {
       path: '/trips',

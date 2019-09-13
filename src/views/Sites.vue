@@ -88,8 +88,8 @@ export default {
         activities: [[]]
       },
       map: null,
-      myTainanHouse: { lat: 23.039808, lng: 120.211868 },
-      marker: null
+      marker: null,
+      myTainanHouse: { lat: 23.039808, lng: 120.211868 }
     }
   },
   created () {
@@ -129,27 +129,9 @@ export default {
     showSiteOnMap (pos) {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
-      /*
-      const upper = new google.maps.Marker({
-        position: {
-          lat: location.ha.g,
-          lng: location.da.g
-        },
-        map: this.map
-      })
-      const lowpper = new google.maps.Marker({
-        position: {
-          lat: location.ha.h,
-          lng: location.da.h
-        },
-        map: this.map
-      })
-      */
     },
     start (e) {
       console.log('start', e)
-    },
-    create () {
     }
   }
 }

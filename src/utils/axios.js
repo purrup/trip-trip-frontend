@@ -4,7 +4,6 @@ const options = {
   baseURL: process.env.NODE_ENV === 'production'
     ? 'https://triptrip-backend.herokuapp.com:3000'
     : 'http://localhost:3000',
-  // baseURL: 'https://triptrip-backend.herokuapp.com',
   headers: {
     'Content-Type': 'application/json'
   },

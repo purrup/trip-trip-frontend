@@ -90,13 +90,18 @@ export default {
   },
   methods: {
     ...mapActions('account', ['signup']),
-    submit () {
-      if (this.$refs.form.validate()) {
-        this.signup({
-          username: this.username,
-          email: this.email,
-          password: this.password
-        })
+    async submit () {
+      try {
+        if (this.$refs.form.validate()) {
+          await this.signup({
+            username: this.username,
+            email: this.email,
+            password: this.password
+          })
+          this.$router.push('/')
+        }
+      } catch (error) {
+        console.log(error)
       }
     }
   }

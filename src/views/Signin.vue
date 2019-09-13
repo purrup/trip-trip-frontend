@@ -84,12 +84,21 @@ export default {
   },
   methods: {
     ...mapActions('account', ['signin', 'facebookLogin', 'googleLogin']),
-    submit () {
-      if (this.$refs.form.validate()) {
-        this.signin({
-          email: this.email,
-          password: this.password
-        })
+    async submit () {
+      try {
+        if (this.$refs.form.validate()) {
+          await this.signin({
+            email: this.email,
+            password: this.password
+          })
+          this.$router.push('/')
+        }
+      } catch (error) {
+        if (error.response.status === 401) {
+          console.log('密碼錯')
+        } else {
+          console.log(error.response)
+        }
       }
     },
     facebook () {
