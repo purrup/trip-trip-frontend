@@ -41,21 +41,29 @@ export default new Router({
       path: '/trips',
       name: 'Trips',
       meta: { showNavbar: true },
-      component: () => import('./views/Trips.vue')
-      // async beforeEnter (to, from, next) {
-      //   try {
-      //     await store.dispatch('trips/getTrips')
-      //     next()
-      //   } catch (error) {
-      //     throw error
-      //   }
-      // }
+      component: () => import('./views/Trips.vue'),
+      async beforeEnter (to, from, next) {
+        try {
+          await store.dispatch('trip/getTrips')
+          next()
+        } catch (error) {
+          throw error
+        }
+      }
     },
     {
-      path: '/trip/:id',
+      path: '/trips/:id',
       name: 'Trip',
       meta: { showNavbar: true },
-      component: () => import('./views/Trip.vue')
+      component: () => import('./views/Trip.vue'),
+      async beforeEnter (to, from, next) {
+        try {
+          await store.dispatch('trip/getTrip', to.params.id)
+          next()
+        } catch (error) {
+          throw error
+        }
+      }
     },
     {
       path: '/sites',

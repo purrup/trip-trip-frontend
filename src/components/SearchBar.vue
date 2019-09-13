@@ -8,11 +8,14 @@
       :class="{'bottom-half-border-radius': !isFocusOnSearchBar}"
     )
     v-icon(class="search-icon") search
-    div(v-if="isFocusOnSearchBar" class="search-panel-container bottom-half-border-radius")
+    div.bottomHalfBorderRadius(
+      v-if="isFocusOnSearchBar"
+      v-bind:class="{ searchPanelContainerHome: home, searchPanelContainerNavbar: !home}")
       v-tabs(
         v-model="tab"
         color="#666666"
         height='30'
+        grow
       )
         v-tabs-slider(color="grey")
         v-tab(v-for="tab in tabLists" :key="tab") {{ tab }}
@@ -44,7 +47,8 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   props: {
     width: String,
-    height: String
+    height: String,
+    home: Boolean // 如果這個component是用在home，傳入true，用在searchbar，傳入false
   },
   data () {
     return {
@@ -112,7 +116,7 @@ export default {
     transform: translateY(-40%);
     color: #666666;
   }
-  > .search-panel-container {
+  > .searchPanelContainerHome {
     width: 650px;
     border: 1px solid #efefef;
     box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
@@ -168,11 +172,67 @@ export default {
     }
   }
 
+  > .searchPanelContainerNavbar {
+    width: 480px;
+    border: 1px solid #efefef;
+    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
+    .search-panel {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      background-color: #ffffff;
+      > .region-panel {
+        display: flex;
+        flex-direction: column;
+        > div {
+          width: 100%;
+          height: 45px;
+          display: grid;
+          justify-content: center;
+          align-items: center;
+          border-right: 1px solid black;
+          border-bottom: 1px solid black;
+          &:last-child {
+            border-bottom: none;
+          }
+          &:hover {
+            background-color: grey;
+            color: white;
+          }
+        }
+      }
+      > .cities-panel {
+        display: grid;
+        grid-template-columns: repeat(3, 120px);
+        grid-auto-rows: 80px;
+        justify-content: space-around;
+        padding: 12px 0px;
+        grid-row-gap: 20px;
+        > div {
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          > span {
+            color: white;
+            position: absolute;
+            bottom: 0px;
+            width: 120px;
+            text-align: center;
+            background: linear-gradient(
+              to top,
+              rgba(0, 0, 0, 0.65),
+              transparent 100%
+            );
+          }
+        }
+      }
+    }
+  }
+
   .top-half-border-radius {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
-  .bottom-half-border-radius {
+  .bottomHalfBorderRadius {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
   }

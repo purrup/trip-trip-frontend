@@ -1,6 +1,6 @@
 <template lang="pug">
   .overview-root.d-flex.flex-wrap.justify-center
-    v-carousel#pictures(
+    v-carousel.pictures(
       cycle
       height=360
       hide-delimiters
@@ -8,8 +8,8 @@
       interval=6000
     )
       v-carousel-item(
-        v-for="(image, i) in trip.images"
-        :key="image"
+        v-for="(image, i) in images"
+        :key="i"
         :src="image"
       )
     .journal.mx-auto.mt-5
@@ -63,7 +63,14 @@ export default {
   },
   data () {
     return {
-      rating: 4.5
+      rating: 4.5,
+      images: [
+        'https://source.unsplash.com/random/686x360',
+        'https://source.unsplash.com/random/686x360',
+        'https://source.unsplash.com/random/686x360',
+        'https://source.unsplash.com/random/686x360',
+        'https://source.unsplash.com/random/686x360'
+      ]
     }
   },
   computed: {
@@ -78,6 +85,9 @@ export default {
 
 .pictures {
   max-width: 686px;
+  > :nth-child(1) {
+    height: 100%;
+  }
 }
 .journal {
   width: 590px;

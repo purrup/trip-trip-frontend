@@ -20,8 +20,8 @@
           label="排序"
           solo
         )
-        v-spacer
-        v-app-bar-nav-icon(v-if="storageZone" @click="isShowStorageZone = !isShowStorageZone")
+        //- v-spacer
+        //- v-app-bar-nav-icon(v-if="storageZone" @click="isShowStorageZone = !isShowStorageZone")
     transition(name="fade")
       div(v-show="isShowStorageZone" class="storage-zone" :style="storageZoneHeight")
         div(class="header")
