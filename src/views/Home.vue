@@ -23,11 +23,17 @@
       div
         h3 Popular Sites
         div
-          little-card(v-for="n in 4" :key="`little-card-${n}`")
+          little-card(
+            v-for="site in popularSites"
+            :key="`little-card-${site.name}`"
+            :site="site")
       div
         h3 Popular Trips
         div
-          little-card(v-for="n in 4" :key="`little-card-${n}`")
+          little-card(
+            v-for="site in popularSites"
+            :key="`little-card-${site.name}`"
+            :site="site")
 </template>
 
 <script>
@@ -49,14 +55,18 @@ export default {
         require('@/assets/image/3.jpg'),
         require('@/assets/image/4.jpg'),
         require('@/assets/image/5.jpg')
-      ]
+      ],
+      popularSites: [],
+      popularTrips: []
     }
+  },
+  created () {
+    this.getPopularSites()
   },
   methods: {
     async getPopularSites () {
       try {
-        const { data } = await siteApis.getPopularSites()
-        console.log(data)
+        this.popularSites = await siteApis.getPopularSites()
       } catch (error) {
         console.log(error)
       }
@@ -73,6 +83,7 @@ export default {
     height: 100vh;
     position: absolute;
     top: 0px;
+    z-index: 10;
     > div {
       display: grid;
       justify-content: center;

@@ -53,11 +53,7 @@ export default {
     }
   },
   created () {
-    this.site = this.placeData.filter(place => place.status === 'OK' && place.result.place_id === this.placeId)[0].result
-  },
-  mounted () {
-  },
-  methods: {
+    this.site = this.placeData.filter(place => place.placeId === this.placeId)[0]
   }
 }
 </script>>

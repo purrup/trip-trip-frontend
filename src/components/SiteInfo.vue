@@ -2,10 +2,10 @@
   div(class="site-info-root")
     div
       template(v-if="$route.path === '/sites'")
-        router-link(tag="span" :to="`/site/${site.place_id}`") {{site.name}}
+        router-link(tag="span" :to="`/site/${site.placeId}`") {{site.name}}
       template(v-else)
         span {{site.name}}
-      rating-favorite(:rating="site.rating" :ratingNum="site.reviews.length")
+      rating-favorite(:rating="site.rating" :ratingNum="site.reviews.length" :placeId="site.placeId")
     div(v-for="info in infos" class="info-wrapper")
       v-icon {{info.icon}}
       span {{info.title}}: &nbsp
@@ -96,6 +96,7 @@ export default {
     justify-content: flex-start;
     align-items: flex-start;
     font-size: 14px;
+    line-height: 24px;
     width: 367px;
     white-space: nowrap;
     > a,

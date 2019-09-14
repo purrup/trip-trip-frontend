@@ -17,15 +17,18 @@
       :style="{ 'color' : showWhichIcon ? 'red' : 'grey' }"
       @mouseover="isOnHover = true"
       @mouseout="isOnHover = false"
+      @click="toggle(placeId)"
     ) {{ showWhichIcon ? "favorite" : "favorite_border" }}
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
     rating: Number,
-    ratingNum: Number
+    ratingNum: Number,
+    placeId: String
   },
   data () {
     return {
@@ -33,14 +36,24 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('account', {
+      collectedSites: 'getCollectedSites'
+    }),
     isFavorite () {
-      return false
+      return this.collectedSites.includes(this.placeId)
     },
     showWhichIcon () {
       if (this.isFavorite) {
         return !this.isOnHover
       }
       return this.isOnHover
+    }
+  },
+  methods: {
+    ...mapActions('account', ['toggleCollectedSites']),
+    toggle (placeId) {
+      this.toggleCollectedSites(placeId)
+      this.$emit('toggleCollectingCounts', this.isFavorite)
     }
   }
 }

@@ -1,4 +1,5 @@
 import axios from '../../utils/axios'
+import siteApis from '@/utils/apis/site'
 
 const state = {
   isLogin: localStorage.getItem('isLogin') || false,
@@ -21,6 +22,9 @@ const state = {
 const getters = {
   getIsLogin (state) {
     return state.isLogin
+  },
+  getCollectedSites (state) {
+    return state.collectedSites
   }
 }
 
@@ -38,6 +42,13 @@ const mutations = {
   SET_logout (state) {
     state.isLogin = false
     localStorage.setItem('isLogin', false)
+  },
+  TOGGLE_collectedSites (state, placeId) {
+    if (state.collectedSites.includes(placeId)) {
+      state.collectedSites = state.collectedSites.filter(siteId => siteId !== placeId)
+    } else {
+      state.collectedSites.push(placeId)
+    }
   }
 }
 
@@ -66,22 +77,6 @@ const actions = {
       throw error
     }
   },
-  async facebookLogin (context, data) {
-    try {
-    } catch (error) {
-      console.log(error)
-    }
-  },
-  async googleLogin (context, data) {
-    try {
-      console.log('here')
-      await axios('/google', {
-        method: 'get'
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  },
   async getUser (context) {
     try {
       const { data } = await axios('/users', {
@@ -91,6 +86,14 @@ const actions = {
       context.commit('SET_login')
     } catch (error) {
       context.commit('SET_logout')
+      console.log(error)
+    }
+  },
+  async toggleCollectedSites ({ commit }, placeId) {
+    try {
+      commit('TOGGLE_collectedSites', placeId)
+      await siteApis.toggleCollectedSites(placeId)
+    } catch (error) {
       console.log(error)
     }
   }

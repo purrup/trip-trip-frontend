@@ -6,16 +6,20 @@
       hide-delimiters
     )
       v-carousel-item(
-        v-for="(image, i) in images"
+        v-for="image in site.photos"
         :key="image"
         :src="image"
       )
     div(class="card-content")
       div
-        span 鹿野高台
-        rating-favorite(:rating="4")
+        span {{site.name}}
+        rating-favorite(
+          :rating="site.rating"
+          :ratingNum="site.reviews.length"
+          :placeId="site.placeId"
+          @toggleCollectingCounts="toggleCollectingCounts")
       div
-        span 收藏次數: {{ 10 }}
+        span 收藏次數: {{ site.collectingCounts + counts }}
 </template>
 
 <script>
@@ -26,6 +30,7 @@ export default {
     RatingFavorite
   },
   props: {
+    site: Object
   },
   data () {
     return {
@@ -35,7 +40,13 @@ export default {
         require('@/assets/image/3.jpg'),
         require('@/assets/image/4.jpg'),
         require('@/assets/image/5.jpg')
-      ]
+      ],
+      counts: 0
+    }
+  },
+  methods: {
+    toggleCollectingCounts (isFavorite) {
+      isFavorite ? this.counts += 1 : this.counts -= 1
     }
   }
 }

@@ -1,69 +1,67 @@
 <template lang="pug">
   div(id="sites-root")
-    div(class="wrapper")
-      div(class="sites-container")
-        div 台北
-        draggable(
-          tag="div"
-          class="sites-wrapper"
-          :group="{ name: 'sites', pull: 'clone', put: false }"
-          :list="sites"
-          @start="start"
+    div(class="sites-container")
+      div 台北
+      draggable(
+        tag="div"
+        class="sites-wrapper"
+        :group="{ name: 'sites', pull: 'clone', put: false }"
+        :list="sites"
+        @start="start"
+      )
+        site-card(
+          v-for="site in sites"
+          :key="`site-${site.name}`"
+          :site="site"
+          @mouseover.native="showSiteOnMap(site.geometry)"
         )
-          site-card(
-            v-for="(site, key) in sites"
-            :key="`site-${key}`"
-            :site="site.result"
-            @mouseover.native="showSiteOnMap(site.result.geometry.location)"
-          )
-      div(id="map")
-      div(
-        class="storage-zone"
-        :class="{ 'fade-in': isShowStorageZone}")
-        button(@click="isShowStorageZone = !isShowStorageZone")
-          v-icon(:class="{ 'arrow-rotate': isShowStorageZone}") keyboard_arrow_left
-        div(:style="storageZoneHeight")
-          div(v-if="!isOnDraggable" class="no-draggable")
-            p(v-if="trips.length === 0") 你還沒有屬於自己的旅程，趕快新增吧！
+    div(id="map")
+    div(
+      class="storage-zone"
+      :class="{ 'fade-in': isShowStorageZone}")
+      button(@click="isShowStorageZone = !isShowStorageZone")
+        v-icon(:class="{ 'arrow-rotate': isShowStorageZone}") keyboard_arrow_left
+      div(:style="storageZoneHeight")
+        div(v-if="!isOnDraggable" class="no-draggable")
+          p(v-if="trips.length === 0") 你還沒有屬於自己的旅程，趕快新增吧！
+          v-btn(
+            outlined
+            color="secondary"
+            @click="isOnDraggable = true") Create
+        div(v-else class="on-draggable")
+          div
+            v-icon(@click="isOnDraggable = false") reply
+            span {{storageTrip.name}}
+            v-spacer
+            v-icon save
+            v-icon edit
+          div
+            div(v-for="(activities, index) in storageTrip.activities" class="day-activities")
+              div
+                v-icon today
+                span Day {{index + 1}}
+                v-spacer
+                v-icon arrow_drop_down
+              draggable(
+                tag="div"
+                class="dragAreas"
+                group="sites"
+                :list="activities")
+                div(v-for="(site, index) in activities"
+                  :key="site.result.name + index"
+                  class="storage-site")
+                  v-icon drag_handle
+                  span {{ site.result.name }}
+                  v-spacer
+                  v-icon(@click="activities.splice(index, 1)") close
             v-btn(
               outlined
               color="secondary"
-              @click="isOnDraggable = true") Create
-          div(v-else class="on-draggable")
-            div
-              v-icon(@click="isOnDraggable = false") reply
-              span {{storageTrip.name}}
-              v-spacer
-              v-icon save
-              v-icon edit
-            div
-              div(v-for="(activities, index) in storageTrip.activities" class="day-activities")
-                div
-                  v-icon today
-                  span Day {{index + 1}}
-                  v-spacer
-                  v-icon arrow_drop_down
-                draggable(
-                  tag="div"
-                  class="dragAreas"
-                  group="sites"
-                  :list="activities")
-                  div(v-for="(site, index) in activities"
-                    :key="site.result.name + index"
-                    class="storage-site")
-                    v-icon drag_handle
-                    span {{ site.result.name }}
-                    v-spacer
-                    v-icon(@click="activities.splice(index, 1)") close
-              v-btn(
-                outlined
-                color="secondary"
-                @click="storageTrip.activities.push([])")
-                v-icon add
+              @click="storageTrip.activities.push([])")
+              v-icon add
 </template>
 
 <script>
-import FeatureBar from '@/components/FeatureBar.vue'
 import SiteCard from '@/components/SiteCard.vue'
 import draggable from 'vuedraggable'
 import place from '@/assets/place.json'
@@ -71,7 +69,6 @@ import place from '@/assets/place.json'
 /* eslint-disable */
 export default {
   components: {
-    FeatureBar,
     SiteCard,
     draggable
   },
@@ -93,7 +90,7 @@ export default {
     }
   },
   created () {
-    this.sites = this.placeData.filter(place => (place.status === 'OK' && this.placeIds.includes(place.result.place_id)))
+    this.sites = this.placeData.filter(place => (this.placeIds.includes(place.placeId)))
   },
   mounted () {
     // the initialize function must be written at mounted hook
@@ -109,7 +106,7 @@ export default {
   methods: {
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.sites[0].result.geometry.location,
+        center: this.sites[0].geometry,
         zoom: 13,
         mapTypeControl: false,
         fullscreenControl: true,
@@ -117,8 +114,7 @@ export default {
           position: google.maps.ControlPosition.RIGHT_BOTTOM
         }
       })
-      this.marker = new google.maps.Marker({ map: this.map, position: this.sites[0].result.geometry.location })
-
+      this.marker = new google.maps.Marker({ map: this.map, position: this.sites[0].geometry })
 
       this.marker.addListener('click', (e) => {
         console.log(e)
@@ -139,31 +135,29 @@ export default {
 
 <style lang="scss" scoped>
 #sites-root {
-  .wrapper {
-    margin-top: 70px;
-    > .sites-container {
-      margin-right: 720px;
-      padding: 20px 36.5px;
-      > div:nth-child(1) {
-        font-size: 21px;
-        line-height: 21px;
-        text-align: left;
-        padding-bottom: 38px;
-      }
-      > .sites-wrapper {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 190px;
-        grid-row-gap: 29px;
-      }
+  margin-top: 70px;
+  .sites-container {
+    margin-right: 720px;
+    padding: 20px 36.5px;
+    > div:nth-child(1) {
+      font-size: 21px;
+      line-height: 21px;
+      text-align: left;
+      padding-bottom: 38px;
     }
-    > #map {
-      width: 720px;
-      height: 718px;
-      position: fixed !important;
-      top: 70px;
-      right: 0px;
+    > .sites-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 190px;
+      grid-row-gap: 29px;
     }
+  }
+  #map {
+    width: 720px;
+    height: 718px;
+    position: fixed !important;
+    top: 70px;
+    right: 0px;
   }
 }
 .storage-zone {

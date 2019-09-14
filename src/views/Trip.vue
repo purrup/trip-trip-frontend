@@ -47,15 +47,14 @@
             color="grey lighten-2"
           )
             span.text-center(style=" width: 100%; cursor: default; ") 景點資訊
-      #google-map
-        p google map
-
+    #map
 </template>
 
 <script>
 import Overview from '@/components/Overview.vue'
 import { mapState } from 'vuex'
 
+/* eslint-disable */
 export default {
   name: 'trip',
   components: {
@@ -65,7 +64,9 @@ export default {
     return {
       dates: [
       ],
-      currentDisplay: null
+      currentDisplay: null,
+      map: null,
+      marker: null
     }
   },
   beforeMount () {
@@ -81,12 +82,36 @@ export default {
     }
     // console.log(this.dates)
   },
+  mounted () {
+    this.initMap()
+  },
   computed: {
     ...mapState('trip', {
       trip: state => state.trip
     })
   },
   methods: {
+    initMap () {
+      this.map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 23.039808, lng: 120.211868 },
+        zoom: 13,
+        mapTypeControl: false,
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+        }
+      })
+      this.marker = new google.maps.Marker({ map: this.map, position: { lat: 23.039808, lng: 120.211868 } })
+
+      this.marker.addListener('click', (e) => {
+        this.map.setZoom(8)
+        this.map.setCenter(this.myTainanHouse)
+      })
+    },
+    showSiteOnMap (pos) {
+      this.marker.setPosition(pos)
+      this.map.setCenter(pos)
+    },
     toggleContent (item) {
       this.currentDisplay = item
       // console.log(item)
@@ -100,41 +125,34 @@ export default {
 
 <style lang="scss" scoped>
 #trip {
-  height: auto;
-  overflow-y: auto;
-}
-
-main {
-  width: 100%;
-  height: 100vh;
-  margin: 80px 0 0 47px;
-  display: grid;
-  grid-template-columns: 84px 686px auto;
-  grid-template-areas: "toggle-bar currentDisplay google-map";
-  #toggle-bar {
-    margin-right: 9px;
-    // background-color: green;
-    grid-area: toggle-bar;
-  }
-  #overview {
-    grid-area: currentDisplay;
-  }
-  #trip-schedule {
-    grid-area: currentDisplay;
+  margin-top: 70px;
+  main {
+    width: 100%;
+    height: 100vh;
     display: grid;
-    grid-template-columns: 370px 10px auto;
-    grid-template-areas: "schedule . site";
-    .schedule {
-      grid-area: schedule;
+    grid-template-columns: 1fr 686px 628px;
+    #toggle-bar {
+      width: 75px;
+      justify-self: center;
     }
-    .site {
-      grid-area: site;
+    #trip-schedule {
+      display: grid;
+      grid-template-columns: 370px 10px auto;
+      grid-template-areas: "schedule . site";
+      .schedule {
+        grid-area: schedule;
+      }
+      .site {
+        grid-area: site;
+      }
     }
   }
-  #google-map {
-    // background-color: blue;
-    grid-area: google-map;
+  #map {
+    width: 628px;
+    height: 718px;
+    position: fixed !important;
+    top: 70px;
+    right: 0px;
   }
 }
-
 </style>

@@ -5,6 +5,7 @@
         router-link.ml-2(to="/" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
         v-select(
+          v-if="$route.name === 'Trips' || $route.name === 'Sites' "
           height="30px"
           class="custom-select-style"
           :style="{ 'width': '100px'} "
@@ -12,9 +13,9 @@
           :menu-props="{ top: false, offsetY: true }"
           label="天數"
           solo
-          v-if="$route.path ==='/trips' || '/sites' && $route.path !==`/trips/${$route.params.id}`"
         )
         v-select(
+          v-if="$route.name === 'Trips' || $route.name === 'Sites' "
           height="30px"
           class="custom-select-style"
           :style="{ 'width': '100px'} "
@@ -22,7 +23,6 @@
           :menu-props="{ top: false, offsetY: true }"
           label="排序"
           solo
-          v-if="$route.path ==='/trips' || '/sites' && $route.path !==`/trips/${$route.params.id}`"
         )
         v-btn.ml-8(
           v-if="$route.path ===`/trips/${$route.params.id}`"
@@ -39,7 +39,11 @@
           text
           elevation=2
         ) 日期
-        v-switch.ml-8.mt-7(v-model="publish" inset :label="`${privacySetting}`")
+        v-switch.ml-8.mt-7(
+          v-if="$route.path ===`/trips/${$route.params.id}`"
+          v-model="publish"
+          inset
+          :label="`${privacySetting}`")
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(

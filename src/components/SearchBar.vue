@@ -10,7 +10,7 @@
     v-icon(class="search-icon") search
     div.bottomHalfBorderRadius(
       v-if="isFocusOnSearchBar"
-      v-bind:class="{ searchPanelContainerHome: home, searchPanelContainerNavbar: !home}")
+      :class=" home ? 'search-panel-container-home' : 'search-panel-container-navbar'")
       v-tabs(
         v-model="tab"
         color="#666666"
@@ -116,113 +116,64 @@ export default {
     transform: translateY(-40%);
     color: #666666;
   }
-  > .searchPanelContainerHome {
+  .search-panel-container-home {
     width: 650px;
     border: 1px solid #efefef;
     box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
-    .search-panel {
-      display: grid;
-      grid-template-columns: 118px 1fr;
-      background-color: #ffffff;
-      > .region-panel {
-        display: flex;
-        flex-direction: column;
-        > div {
-          width: 100%;
-          height: 45px;
-          display: grid;
-          justify-content: center;
-          align-items: center;
-          border-right: 1px solid black;
-          border-bottom: 1px solid black;
-          &:last-child {
-            border-bottom: none;
-          }
-          &:hover {
-            background-color: grey;
-            color: white;
-          }
-        }
-      }
-      > .cities-panel {
+  }
+  .search-panel-container-navbar {
+    width: 650px;
+    border: 1px solid #efefef;
+    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    right: 0px;
+  }
+  .search-panel {
+    display: grid;
+    grid-template-columns: 118px 1fr;
+    background-color: #ffffff;
+    > .region-panel {
+      display: flex;
+      flex-direction: column;
+      > div {
+        width: 100%;
+        height: 45px;
         display: grid;
-        grid-template-columns: repeat(4, 120px);
-        grid-auto-rows: 80px;
-        justify-content: space-around;
-        padding: 12px 0px;
-        grid-row-gap: 20px;
-        > div {
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          > span {
-            color: white;
-            position: absolute;
-            bottom: 0px;
-            width: 120px;
-            text-align: center;
-            background: linear-gradient(
-              to top,
-              rgba(0, 0, 0, 0.65),
-              transparent 100%
-            );
-          }
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        &:last-child {
+          border-bottom: none;
+        }
+        &:hover {
+          background-color: grey;
+          color: white;
         }
       }
     }
-  }
-
-  > .searchPanelContainerNavbar {
-    width: 480px;
-    border: 1px solid #efefef;
-    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
-    .search-panel {
+    > .cities-panel {
       display: grid;
-      grid-template-columns: 90px 1fr;
-      background-color: #ffffff;
-      > .region-panel {
+      grid-template-columns: repeat(4, 120px);
+      grid-auto-rows: 80px;
+      justify-content: space-around;
+      padding: 12px 0px;
+      grid-row-gap: 20px;
+      > div {
         display: flex;
         flex-direction: column;
-        > div {
-          width: 100%;
-          height: 45px;
-          display: grid;
-          justify-content: center;
-          align-items: center;
-          border-right: 1px solid black;
-          border-bottom: 1px solid black;
-          &:last-child {
-            border-bottom: none;
-          }
-          &:hover {
-            background-color: grey;
-            color: white;
-          }
-        }
-      }
-      > .cities-panel {
-        display: grid;
-        grid-template-columns: repeat(3, 120px);
-        grid-auto-rows: 80px;
-        justify-content: space-around;
-        padding: 12px 0px;
-        grid-row-gap: 20px;
-        > div {
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          > span {
-            color: white;
-            position: absolute;
-            bottom: 0px;
-            width: 120px;
-            text-align: center;
-            background: linear-gradient(
-              to top,
-              rgba(0, 0, 0, 0.65),
-              transparent 100%
-            );
-          }
+        position: relative;
+        > span {
+          color: white;
+          position: absolute;
+          bottom: 0px;
+          width: 120px;
+          text-align: center;
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.65),
+            transparent 100%
+          );
         }
       }
     }
