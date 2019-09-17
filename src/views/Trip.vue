@@ -19,10 +19,10 @@
               @click="toggleContent(date)"
             )
               v-list-item-content
-                v-list-item-title.text-center(v-text="date")
+                v-list-item-title.text-center(v-text="`${ date.getMonth() + 1 + '/' + date.getDate() }`")
             v-list-item(
               style=" border: 0.5px solid rgba(102, 102, 102, 0.5);"
-              @click="toggleContent('+')"
+              @click="addNewDate()"
             )
               v-list-item-content
                   v-list-item-title.text-center(v-text="'+'")
@@ -31,7 +31,7 @@
           v-if="currentDisplay === 'overview'"
           :trip="trip")
         #trip-schedule(
-          v-else-if="currentDisplay === dates[0]")
+          v-else-if="currentDisplay !== 'overview'")
           v-sheet.schedule.d-flex.justify-start.align-center(
             width=370
             height=47
@@ -39,8 +39,8 @@
           )
             v-icon(
               @click="control"
-              style=" width: 40px; border-right: 1px solid rgb(172, 172, 172); padding: 10px 0px;") mdi-dots-vertical
-            span.text-center(style=" width: calc(100% - 40px); cursor: default; ") {{ dates[0] }}
+              style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
+            span.text-center(style=" width: calc(100% - 40px); cursor: default; ") {{ changeDateType }}
           v-sheet.site.d-flex.justify-start.align-center(
             width=250
             height=47
@@ -77,10 +77,8 @@ export default {
     for (let i = 0; i < this.trip.days; i++) {
       let newDate = new Date(firstDate)
       newDate.setDate(newDate.getDate() + i)
-      this.dates.push(newDate.getMonth() + 1 + '/' + newDate.getDate())
-      // console.log('newDate:', newDate)
+      this.dates.push(newDate)
     }
-    // console.log(this.dates)
   },
   mounted () {
     this.initMap()
@@ -88,7 +86,13 @@ export default {
   computed: {
     ...mapState('trip', {
       trip: state => state.trip
-    })
+    }),
+    changeDateType() {
+      return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.getMonth() + 1 + '/' + this.currentDisplay.getDate()
+    },
+    date() {
+      return date
+    }
   },
   methods: {
     initMap () {
@@ -112,9 +116,15 @@ export default {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
     },
-    toggleContent (item) {
-      this.currentDisplay = item
-      // console.log(item)
+    toggleContent (content) {
+      this.currentDisplay = content
+    },
+    addNewDate() {
+    // 新增旅遊日期
+      let lastDate = this.dates[this.dates.length - 1]
+      let nextDate = new Date(lastDate)
+      nextDate.setDate(nextDate.getDate() + 1)
+      this.dates.push(nextDate)
     },
     control () {
       console.log('control')
@@ -134,6 +144,9 @@ export default {
     #toggle-bar {
       width: 75px;
       justify-self: center;
+    }
+    #content {
+      margin-top: 10px;
     }
     #trip-schedule {
       display: grid;
