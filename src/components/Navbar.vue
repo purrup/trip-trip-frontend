@@ -30,17 +30,17 @@
           elevation=2
         ) 複製行程
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}`"
+          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
           text
           elevation=2
         ) 編輯模式
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}`"
+          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
           text
           elevation=2
         ) 日期
         v-switch.ml-8.mt-7(
-          v-if="$route.path ===`/trips/${$route.params.id}`"
+          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
           v-model="publish"
           inset
           :label="`${privacySetting}`")

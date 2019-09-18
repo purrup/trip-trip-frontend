@@ -63,7 +63,7 @@ export default {
   },
   data () {
     return {
-      rating: 4.5,
+      rating: this.trip.rating,
       images: [
         'https://source.unsplash.com/random/686x360',
         'https://source.unsplash.com/random/686x360',
