@@ -42,6 +42,7 @@ const mutations = {
   SET_logout (state) {
     state.isLogin = false
     localStorage.setItem('isLogin', false)
+    alert('logout')
   },
   TOGGLE_collectedSites (state, placeId) {
     if (state.collectedSites.includes(placeId)) {

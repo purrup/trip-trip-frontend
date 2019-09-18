@@ -1,11 +1,7 @@
 <template lang="pug">
   div(class="site-info-root")
     div
-      template(v-if="$route.path === '/sites'")
-        router-link(tag="span" :to="`/site/${site.placeId}`") {{site.name}}
-      template(v-else)
-        span {{site.name}}
-      rating-favorite(:rating="site.rating" :ratingNum="site.reviews.length" :placeId="site.placeId")
+      rating-favorite(:item="site" :type="'site'")
     div(v-for="info in infos" class="info-wrapper")
       v-icon {{info.icon}}
       span {{info.title}}: &nbsp
@@ -61,12 +57,12 @@ export default {
     }
   },
   created () {
-    if (this.$route.path === `/site/${this.site.place_id}`) {
+    if (this.$route.path === `/sites/${this.site.placeId}`) {
       this.infos = [...this.infos, ...this.moreInfos]
     }
     this.infos.forEach((info, index) => {
       if (info.type === 'opening_hours') {
-        info.content = this.site.opening_hours.weekday_text
+        info.content = this.site.opening_hours
         return
       }
       info.content = this.site[info.type]
@@ -80,18 +76,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  > div:nth-child(1) {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    > span {
-      font-weight: bold;
-      font-size: 18px;
-      line-height: 20px;
-      padding-right: 5px;
-    }
-  }
   .info-wrapper {
-    padding-top: 7px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;

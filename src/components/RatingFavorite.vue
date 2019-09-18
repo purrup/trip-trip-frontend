@@ -1,23 +1,16 @@
 <template lang="pug">
   div(class="rating-favorite-root")
-    v-rating(
-      v-model="rating"
-      color="#FB9026"
-      background-color="#7F7F7F"
-      empty-icon="$vuetify.icons.ratingFull"
-      half-increments
-      hover
-      size="15px"
-      dense
-      readonly
-    )
-    span ({{ratingNum}})
+    h4(@click="changeRouter(id)") {{name}}
+    div
+      v-icon(size="15" color="#FB9026") star
+      span(:style="{ 'color': '#FB9026' }") {{rating}}
+      span(:style="{ 'color': '#999999' }") &nbsp ( {{ratingCounts}}則評論 | {{collectingCounts + counts}} 人將此收藏 )
     v-icon(
       class="favorite-icon"
       :style="{ 'color' : showWhichIcon ? 'red' : 'grey' }"
       @mouseover="isOnHover = true"
       @mouseout="isOnHover = false"
-      @click="toggle(placeId)"
+      @click="toggle(id)"
     ) {{ showWhichIcon ? "favorite" : "favorite_border" }}
 </template>
 
@@ -26,13 +19,30 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
-    rating: Number,
-    ratingNum: Number,
-    placeId: String
+    item: Object,
+    type: String
   },
   data () {
     return {
-      isOnHover: false
+      isOnHover: false,
+      name: '',
+      rating: 0,
+      ratingCounts: 0,
+      collectingCounts: 0,
+      counts: 0,
+      id: ''
+    }
+  },
+  created () {
+    this.name = this.item.name
+    this.rating = this.item.rating
+    this.collectingCounts = this.item.collectingCounts
+    if (this.type === 'site') {
+      this.ratingCounts = this.item.reviews.length
+      this.id = this.item.placeId
+    } else {
+      this.ratingCounts = this.item.ratingCounts
+      this.id = this.item._id
     }
   },
   computed: {
@@ -40,7 +50,7 @@ export default {
       collectedSites: 'getCollectedSites'
     }),
     isFavorite () {
-      return this.collectedSites.includes(this.placeId)
+      return this.collectedSites.includes(this.id)
     },
     showWhichIcon () {
       if (this.isFavorite) {
@@ -51,9 +61,21 @@ export default {
   },
   methods: {
     ...mapActions('account', ['toggleCollectedSites']),
-    toggle (placeId) {
-      this.toggleCollectedSites(placeId)
-      this.$emit('toggleCollectingCounts', this.isFavorite)
+    toggle (id) {
+      if (this.type === 'site') {
+        this.toggleCollectedSites(id)
+      }
+      this.isFavorite ? this.counts += 1 : this.counts -= 1
+    },
+    changeRouter (id) {
+      if (this.type === 'site') {
+        if (this.$route.name === 'Site') {
+          return
+        }
+        this.$router.push(`/sites/${id}`)
+      } else {
+        this.$router.push(`/trips/${id}`)
+      }
     }
   }
 }
@@ -62,13 +84,25 @@ export default {
 <style lang="scss">
 .rating-favorite-root {
   display: flex;
+  flex-direction: column;
   position: relative;
+  h4:nth-child(1) {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 20px;
+    width: 90%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+  }
   span {
     font-size: 12px;
   }
   .favorite-icon {
     position: absolute;
     right: 0px;
+    top: -2px;
   }
 }
 </style>

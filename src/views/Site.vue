@@ -30,15 +30,19 @@
                 )
             div
               p {{comment.text}}
-      div(class="recommendation-lits")
+      div(v-if="trips.length !== 0" class="recommendation-lits")
         p 包含此景點的行程
-        little-card(v-for="n in 4" :key="`little-card-${n}`")
+        little-card(v-for="trip in trips"
+          :key="`little-card-${trip.name}`"
+          :item="trip"
+          :type="'trip'")
 </template>
 
 <script>
 import SiteInfo from '@/components/SiteInfo.vue'
 import LittleCard from '@/components/LittleCard.vue'
-import place from '@/assets/place.json'
+
+import siteApis from '@/utils/apis/site.js'
 
 export default {
   components: {
@@ -47,13 +51,23 @@ export default {
   },
   data () {
     return {
-      placeData: place.data,
-      placeId: this.$route.params.id,
-      site: {}
+      site: {},
+      trips: []
     }
   },
-  created () {
-    this.site = this.placeData.filter(place => place.placeId === this.placeId)[0]
+  async created () {
+    await this.getSite()
+  },
+  methods: {
+    async getSite () {
+      try {
+        const { site, trips } = await siteApis.getSite(this.$route.params.id)
+        this.site = site
+        this.trips = trips
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>>

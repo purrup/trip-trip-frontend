@@ -6,20 +6,14 @@
       hide-delimiters
     )
       v-carousel-item(
-        v-for="image in site.photos"
+        v-for="image in images"
         :key="image"
         :src="image"
       )
     div(class="card-content")
-      div
-        span {{site.name}}
-        rating-favorite(
-          :rating="site.rating"
-          :ratingNum="site.reviews.length"
-          :placeId="site.placeId"
-          @toggleCollectingCounts="toggleCollectingCounts")
-      div
-        span 收藏次數: {{ site.collectingCounts + counts }}
+      rating-favorite(
+        :item="item"
+        :type="type")
 </template>
 
 <script>
@@ -30,23 +24,22 @@ export default {
     RatingFavorite
   },
   props: {
-    site: Object
+    item: Object,
+    type: String
   },
   data () {
     return {
-      images: [
-        require('@/assets/image/1.jpg'),
-        require('@/assets/image/2.jpg'),
-        require('@/assets/image/3.jpg'),
-        require('@/assets/image/4.jpg'),
-        require('@/assets/image/5.jpg')
-      ],
-      counts: 0
+      images: []
     }
   },
-  methods: {
-    toggleCollectingCounts (isFavorite) {
-      isFavorite ? this.counts += 1 : this.counts -= 1
+  created () {
+    if (this.type === 'site') {
+      this.images = this.item.photos
+    } else {
+      this.images = this.item.images
+    }
+    if (this.images.length === 0) {
+      this.images.push(require('@/assets/image/5.jpg'))
     }
   }
 }
@@ -61,23 +54,6 @@ export default {
     justify-content: center;
     height: 66px;
     padding: 6px 10px;
-    > div:nth-child(1) {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      > span {
-        font-weight: bold;
-        font-size: 18px;
-        line-height: 20px;
-        padding-right: 5px;
-      }
-    }
-    > div:nth-child(2) {
-      text-align: left;
-      span {
-        font-size: 12px;
-        line-height: 12px;
-      }
-    }
   }
 }
 </style>

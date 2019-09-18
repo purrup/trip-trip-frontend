@@ -72,10 +72,16 @@ export default new Router({
       component: () => import('./views/Sites.vue')
     },
     {
-      path: '/site/:id',
+      path: '/sites/:id',
       name: 'Site',
       meta: { showNavbar: true },
       component: () => import('./views/Site.vue')
+    },
+    {
+      path: '/users/:id',
+      name: 'User',
+      meta: { showNavbar: true },
+      component: () => import('./views/User.vue')
     }
   ]
 })

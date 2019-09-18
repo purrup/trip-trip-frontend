@@ -26,14 +26,16 @@
           little-card(
             v-for="site in popularSites"
             :key="`little-card-${site.name}`"
-            :site="site")
+            :item="site"
+            :type="'site'")
       div
         h3 Popular Trips
         div
           little-card(
             v-for="site in popularSites"
             :key="`little-card-${site.name}`"
-            :site="site")
+            :item="site"
+            :type="'site'")
 </template>
 
 <script>
@@ -60,8 +62,8 @@ export default {
       popularTrips: []
     }
   },
-  created () {
-    this.getPopularSites()
+  async created () {
+    await this.getPopularSites()
   },
   methods: {
     async getPopularSites () {
