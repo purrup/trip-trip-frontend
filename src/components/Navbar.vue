@@ -5,7 +5,7 @@
         router-link.ml-2(to="/" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
         v-select(
-          v-if="$route.name === 'Trips' || $route.name === 'Sites' "
+          v-if="$route.name === 'Trips'"
           height="30px"
           class="custom-select-style"
           :style="{ 'width': '100px'} "

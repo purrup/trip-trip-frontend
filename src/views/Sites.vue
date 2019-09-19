@@ -1,7 +1,7 @@
 <template lang="pug">
   div(id="sites-root")
     div(class="sites-container")
-      div 台北
+      div {{this.$route.query['cities[]']}}
       draggable(
         tag="div"
         class="sites-wrapper"
@@ -48,10 +48,10 @@
                 group="sites"
                 :list="activities")
                 div(v-for="(site, index) in activities"
-                  :key="site.result.name + index"
+                  :key="site.name + index"
                   class="storage-site")
                   v-icon drag_handle
-                  span {{ site.result.name }}
+                  span {{ site.name }}
                   v-spacer
                   v-icon(@click="activities.splice(index, 1)") close
             v-btn(
@@ -64,7 +64,8 @@
 <script>
 import SiteCard from '@/components/SiteCard.vue'
 import draggable from 'vuedraggable'
-import place from '@/assets/place.json'
+
+import siteApis from '@/utils/apis/site.js'
 
 /* eslint-disable */
 export default {
@@ -75,8 +76,6 @@ export default {
   data () {
     return {
       isShowStorageZone: false,
-      placeData: place.data,
-      placeIds: ['ChIJraeA2rarQjQRPBBjyR3RxKw', 'ChIJ1ZrmCnZMXTQRV2jCWjAX0eQ', 'ChIJ7-fCX4SCaDQRMaqw4IX92d0'],
       sites: [],
       trips: [],
       isOnDraggable: false,
@@ -89,11 +88,9 @@ export default {
       myTainanHouse: { lat: 23.039808, lng: 120.211868 }
     }
   },
-  created () {
-    this.sites = this.placeData.filter(place => (this.placeIds.includes(place.placeId)))
-  },
-  mounted () {
+  async mounted () {
     // the initialize function must be written at mounted hook
+    await this.search()
     this.initMap()
   },
   computed: {
@@ -128,10 +125,38 @@ export default {
     },
     start (e) {
       console.log('start', e)
+    },
+    async search () {
+      if (this.$route.query.hasOwnProperty('keyword')) {
+        await this.getSitesByKeyword()
+      } else {
+        await this.getSitesByCountryAndCities()
+      }
+    },
+    async getSitesByCountryAndCities () {
+      try {
+        const city = this.$route.query['cities[]']
+        this.sites = await siteApis.getSitesByCountryAndCities(city)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getSitesByKeyword () {
+      try {
+        const keyword = this.$route.query.keyword
+        this.sites = await siteApis.getSitesByKeyword(keyword)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.search()
     }
   }
 }
-</script>>
+</script>
 
 <style lang="scss" scoped>
 #sites-root {

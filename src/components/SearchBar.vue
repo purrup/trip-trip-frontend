@@ -1,22 +1,22 @@
 <template lang="pug">
-  form(class="search-bar-root" :style="{ 'width': width, 'height' : height }")
+  form(@submit="getSitesByKeyword(keyword)" class="search-bar-root" :style="{ 'width': width, 'height' : height }")
     input(
+      v-model="keyword"
       type="search"
       placeholder="Search..."
       @focus="SET_isFocusOnSearchBar(true)",
       class="top-half-border-radius"
-      :class="{'bottom-half-border-radius': !isFocusOnSearchBar}"
-    )
+      :class="{'bottom-half-border-radius': !isFocusOnSearchBar}")
     v-icon(class="search-icon") search
-    div.bottomHalfBorderRadius(
+    div(
       v-if="isFocusOnSearchBar"
+      class="bottom-half-border-radius"
       :class=" home ? 'search-panel-container-home' : 'search-panel-container-navbar'")
       v-tabs(
         v-model="tab"
         color="#666666"
         height='30'
-        grow
-      )
+        grow)
         v-tabs-slider(color="grey")
         v-tab(v-for="tab in tabLists" :key="tab") {{ tab }}
       //- v-tabs-items(v-model="tab")
@@ -26,18 +26,14 @@
       //-   )
       div(class="search-panel")
         div(class="region-panel")
-          div(
-            v-for="region in regions"
+          div(v-for="region in regions"
             @mouseover="mouseover(region)"
-            @mouseout="mouseout"
-          )
+            @mouseout="mouseout")
             span {{ region }}
         div(class="cities-panel")
-          div(v-for="city in cities[selectedRegion]")
-            v-img(
-              :src="require('@/assets/image/2.jpg')"
-              contain=true
-            )
+          div(v-for="city in cities[selectedRegion]"
+            @click="getSitesByCountryAndCities(city)")
+            v-img(:src="require('@/assets/image/2.jpg')" contain=true)
             span {{ city }}
 </template>
 
@@ -52,13 +48,14 @@ export default {
   },
   data () {
     return {
+      keyword: '',
       tab: null,
       tabLists: [
         '找景點', '找行程'
       ],
       regions: ['北部', '中部', '南部', '東部', '離島'],
       cities: {
-        '北部': ['基隆', '台北', '新北', '宜蘭', '桃園', '新竹', '苗栗'],
+        '北部': ['基隆', '台北市', '新北市', '宜蘭', '桃園', '新竹', '苗栗'],
         '中部': ['台中', '南投', '彰化', '雲林'],
         '南部': ['嘉義', '台南', '高雄', '屏東'],
         '東部': ['花蓮', '台東'],
@@ -86,6 +83,22 @@ export default {
         return
       }
       this.selectedRegion = region
+    },
+    getSitesByCountryAndCities (city) {
+      this.SET_isFocusOnSearchBar(false)
+      if (this.tab === 0) {
+        this.$router.push(`/sites/?country=台灣&cities[]=${city}`)
+      } else {
+        this.$router.push(`/trips/?country=台灣&cities[]=${city}`)
+      }
+    },
+    getSitesByKeyword (keyword) {
+      this.SET_isFocusOnSearchBar(false)
+      if (this.tab === 0) {
+        this.$router.push(`/sites/?keyword=${keyword}`)
+      } else {
+        this.$router.push(`/trips/?keyword=${keyword}`)
+      }
     }
   }
 }
@@ -183,7 +196,7 @@ export default {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
   }
-  .bottomHalfBorderRadius {
+  .bottom-half-border-radius {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
   }
