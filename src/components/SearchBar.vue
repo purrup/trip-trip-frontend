@@ -1,5 +1,5 @@
 <template lang="pug">
-  form(@submit="getSitesByKeyword(keyword)" class="search-bar-root" :style="{ 'width': width, 'height' : height }")
+  form(@submit="searchByKeyword(keyword)" class="search-bar-root" :style="{ 'width': width, 'height' : height }")
     input(
       v-model="keyword"
       type="search"
@@ -32,7 +32,7 @@
             span {{ region }}
         div(class="cities-panel")
           div(v-for="city in cities[selectedRegion]"
-            @click="getSitesByCountryAndCities(city)")
+            @click="searchByCountryAndCities(city)")
             v-img(:src="require('@/assets/image/2.jpg')" contain=true)
             span {{ city }}
 </template>
@@ -84,7 +84,7 @@ export default {
       }
       this.selectedRegion = region
     },
-    getSitesByCountryAndCities (city) {
+    searchByCountryAndCities (city) {
       this.SET_isFocusOnSearchBar(false)
       if (this.tab === 0) {
         this.$router.push(`/sites/?country=台灣&cities[]=${city}`)
@@ -92,7 +92,7 @@ export default {
         this.$router.push(`/trips/?country=台灣&cities[]=${city}`)
       }
     },
-    getSitesByKeyword (keyword) {
+    searchByKeyword (keyword) {
       this.SET_isFocusOnSearchBar(false)
       if (this.tab === 0) {
         this.$router.push(`/sites/?keyword=${keyword}`)

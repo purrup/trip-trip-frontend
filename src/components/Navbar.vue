@@ -1,6 +1,7 @@
 <template lang="pug">
-  div(class="nav-bar-root")
-    v-app-bar(height="70px" :style="{ 'box-shadow': 'none', 'border-bottom' : '1px solid rgba(102, 102, 102, 0.2)' }")
+  div(class="navbar-root")
+    div(class="margin-top-space")
+    v-app-bar(class="navbar-container" height="70px")
       v-layout(wrap align-center)
         router-link.ml-2(to="/" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
@@ -47,14 +48,18 @@
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
-          to="/login"
+          v-if="!account.isLogin"
+          to="/signin"
           color="success"
           outlined
         ) 登入
+        v-avatar(v-else)
+          router-link(tag="img" :to="`/users/${account._id}`" src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John")
 </template>
 
 <script>
 import SearchBar from '@/components/SearchBar.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'navbar',
@@ -67,6 +72,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('account', {
+      account: state => state
+    }),
     privacySetting () {
       return this.publish ? '公開此行程' : '不公開此行程'
     }
@@ -75,11 +83,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.nav-bar-root {
-  width: 100%;
-  position: fixed;
-  z-index: 100;
+.navbar-root {
+  .margin-top-space {
+    width: 100vw;
+    height: 70px;
+  }
+  .navbar-container {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0px;
+    z-index: 100;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.2);
+  }
 }
+
 .custom-select-style {
   position: relative;
   top: 14px;

@@ -160,7 +160,6 @@ export default {
 
 <style lang="scss" scoped>
 #sites-root {
-  margin-top: 70px;
   .sites-container {
     margin-right: 720px;
     padding: 20px 36.5px;
@@ -179,7 +178,7 @@ export default {
   }
   #map {
     width: 720px;
-    height: 718px;
+    height: 100vh;
     position: fixed !important;
     top: 70px;
     right: 0px;

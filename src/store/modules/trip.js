@@ -120,6 +120,13 @@ const actions = {
     } catch (error) {
       throw error
     }
+  },
+  async toggleCollectedTrip (context, id) {
+    try {
+      await axios.patch(`/trips/${id}/collect`)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

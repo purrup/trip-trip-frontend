@@ -10,7 +10,7 @@ export default {
     const { data } = await axios.get(`/sites/${siteId}`)
     return mergeSite(data)
   },
-  toggleCollectedSites (placeId) {
+  toggleCollectedSite (placeId) {
     return axios.patch(`/sites/${placeId}/collect`)
   },
   async getSitesByCountryAndCities (city) {

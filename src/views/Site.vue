@@ -3,8 +3,7 @@
     div(class="image-container")
       div(
         v-for="image in site.photos.slice(0, 5)"
-        :style="{ 'background-image': `url(${image})` }"
-      )
+        :style="{ 'background-image': `url(${image})` }")
     div(class="main")
       div(class="content")
         site-info(:site="site")
@@ -74,10 +73,8 @@ export default {
 
 <style lang="scss" scoped>
 #site-root {
-  max-width: 964px;
   margin: 0 auto;
-  width: 100%;
-  margin-top: 70px;
+  max-width: 964px;
   .image-container {
     display: grid;
     grid-template-columns: repeat(4, 240px);

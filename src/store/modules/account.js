@@ -1,13 +1,15 @@
 import axios from '../../utils/axios'
 import siteApis from '@/utils/apis/site'
+import trip from '@/store/modules/trip.js'
 
 const state = {
   isLogin: localStorage.getItem('isLogin') || false,
   expiration: new Date(localStorage.getItem('expiration')) || false,
   /** ***********/
-  id: 1,
+  _id: 1,
   username: 'MiaYang',
   introduction: "Hello I'm Mia",
+  avatar: '',
   ownedTrips: [], // [ObjectId]
   collectedTrips: [], // [ObjectId]
   collectedSites: [], // [ObjectId]
@@ -25,6 +27,9 @@ const getters = {
   },
   getCollectedSites (state) {
     return state.collectedSites
+  },
+  getCollectedTrips (state) {
+    return state.collectedTrips
   }
 }
 
@@ -44,11 +49,18 @@ const mutations = {
     localStorage.setItem('isLogin', false)
     alert('logout')
   },
-  TOGGLE_collectedSites (state, placeId) {
+  TOGGLE_collectedSite (state, placeId) {
     if (state.collectedSites.includes(placeId)) {
       state.collectedSites = state.collectedSites.filter(siteId => siteId !== placeId)
     } else {
       state.collectedSites.push(placeId)
+    }
+  },
+  TOGGLE_collectedTrip (state, tripId) {
+    if (state.collectedTrips.includes(tripId)) {
+      state.collectedTrips = state.collectedTrips.filter(id => id !== tripId)
+    } else {
+      state.collectedTrips.push(tripId)
     }
   }
 }
@@ -90,10 +102,18 @@ const actions = {
       console.log(error)
     }
   },
-  async toggleCollectedSites ({ commit }, placeId) {
+  async toggleCollectedSite ({ commit }, placeId) {
     try {
-      commit('TOGGLE_collectedSites', placeId)
-      await siteApis.toggleCollectedSites(placeId)
+      commit('TOGGLE_collectedSite', placeId)
+      await siteApis.toggleCollectedSite(placeId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async toggleCollectedTrip ({ commit }, tripId) {
+    try {
+      commit('TOGGLE_collectedTrip', tripId)
+      await trip.actions.toggleCollectedTrip(trip.state, tripId)
     } catch (error) {
       console.log(error)
     }

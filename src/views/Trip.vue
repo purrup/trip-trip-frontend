@@ -198,7 +198,6 @@ export default {
 #trip {
   grid-template-columns: 786px 20px 1fr;
   grid-template-areas: "main . map";
-  margin-top: 70px;
   main {
     grid-area: main;
     width: 100%;

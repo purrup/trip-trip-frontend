@@ -47,24 +47,26 @@ export default {
   },
   computed: {
     ...mapGetters('account', {
-      collectedSites: 'getCollectedSites'
+      collectedSites: 'getCollectedSites',
+      collectedTrips: 'getCollectedTrips'
     }),
     isFavorite () {
-      return this.collectedSites.includes(this.id)
+      return (this.type === 'site')
+        ? this.collectedSites.includes(this.id)
+        : this.collectedTrips.includes(this.id)
     },
     showWhichIcon () {
-      if (this.isFavorite) {
-        return !this.isOnHover
-      }
-      return this.isOnHover
+      return this.isFavorite
+        ? !this.isOnHover
+        : this.isOnHover
     }
   },
   methods: {
-    ...mapActions('account', ['toggleCollectedSites']),
+    ...mapActions('account', ['toggleCollectedSite', 'toggleCollectedTrip']),
     toggle (id) {
-      if (this.type === 'site') {
-        this.toggleCollectedSites(id)
-      }
+      (this.type === 'site')
+        ? this.toggleCollectedSite(id)
+        : this.toggleCollectedTrip(id)
       this.isFavorite ? this.counts += 1 : this.counts -= 1
     },
     changeRouter (id) {
