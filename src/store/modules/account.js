@@ -30,6 +30,9 @@ const getters = {
   },
   getCollectedTrips (state) {
     return state.collectedTrips
+  },
+  getUserId (state) {
+    return state._id
   }
 }
 
@@ -62,6 +65,9 @@ const mutations = {
     } else {
       state.collectedTrips.push(tripId)
     }
+  },
+  SET_avatar (state, avatar) {
+    state.avatar = avatar
   }
 }
 
@@ -99,6 +105,18 @@ const actions = {
       context.commit('SET_login')
     } catch (error) {
       context.commit('SET_logout')
+      console.log(error)
+    }
+  },
+  async editProfile ({ commit }, formData) {
+    try {
+      await axios('/users', {
+        method: 'patch',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 0,
+        data: formData
+      })
+    } catch (error) {
       console.log(error)
     }
   },

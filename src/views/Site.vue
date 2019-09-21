@@ -6,7 +6,7 @@
         :style="{ 'background-image': `url(${image})` }")
     div(class="main")
       div(class="content")
-        site-info(:site="site")
+        site-info(v-if="site._id !== undefined" :site="site")
         div(class="comment-container")
           div
             span {{site.reviews.length}} 則評論
@@ -50,7 +50,10 @@ export default {
   },
   data () {
     return {
-      site: {},
+      site: {
+        photos: [],
+        reviews: []
+      },
       trips: []
     }
   },

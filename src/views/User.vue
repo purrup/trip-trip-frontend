@@ -1,7 +1,11 @@
 <template lang="pug">
   div(id="user-root")
-    user-profile(:user="user")
-    div
+    user-profile(
+      :user="user"
+      :isMyself="checkMyself"
+      @changeAvatar="changeAvatar"
+      @onEditMode="isOnEditMode = true")
+    div(class="record-container")
       div(v-if="user.collectedSites.length !== 0")
         h5 {{user.username}}收藏的景點
         div
@@ -32,6 +36,30 @@
             :type="'tirp'")
         v-icon(@click="back('idx3')") arrow_back_ios
         v-icon(@click="forward('idx3', user.collectedTrips.length)") arrow_forward_ios
+    div(v-if="isOnEditMode" class="edit-container")
+      v-card(
+        min-width="400")
+        h4 編輯你的個人資料
+        v-form(
+          ref="form"
+          @submit.prevent="confirm"
+          v-model="valid"
+          lazy-validation)
+          v-text-field(
+            v-model="user.username"
+            :rules="usernameRules"
+            label="Name"
+            required
+            outlined)
+          v-textarea(
+            v-model="user.introduction"
+            :rules="introductionRules"
+            name="introduction"
+            label="Introduction"
+            outlined)
+          div(class="btn-group")
+            v-btn(type="submit" color="#009499" ) 確定
+            v-btn(@click="cancel" color="error") 取消
 </template>
 
 <script>
@@ -39,6 +67,7 @@ import UserProfile from '@/components/UserProfile.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import userApis from '@/utils/apis/user.js'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -56,15 +85,35 @@ export default {
         idx1: 0,
         idx2: 0,
         idx3: 0
-      }
+      },
+      isOnEditMode: false,
+      valid: true,
+      originUsername: '',
+      originIntroduction: '',
+      usernameRules: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+      ],
+      introductionRules: [
+        v => (v.length <= 100) || 'Name must be less than 100 characters'
+      ]
     }
   },
-  async mounted () {
+  async created () {
     const { data } = await userApis.getUserProfile(this.$route.params.id)
     this.user = data
   },
-
+  computed: {
+    ...mapState('account', {
+      account: state => state
+    }),
+    checkMyself () {
+      return this.account._id === this.user._id
+    }
+  },
   methods: {
+    ...mapMutations('account', ['SET_avatar']),
+    ...mapActions('account', ['editProfile']),
     equalOrLess2 (length) {
       return length >= 2 ? 2 : length
     },
@@ -77,6 +126,32 @@ export default {
       return (this.indexs[index] + 1) > (length - this.equalOrLess2(length))
         ? 0
         : this.indexs[index]++
+    },
+    changeAvatar (avatar) {
+      this.user.avatar = URL.createObjectURL(avatar)
+      this.SET_avatar(this.user.avatar)
+    },
+    confirm () {
+      if (this.$refs.form.validate()) {
+        const formData = new FormData()
+        formData.append('username', this.user.username)
+        formData.append('introduction', this.user.introduction)
+        this.editProfile(formData)
+        this.isOnEditMode = false
+      }
+    },
+    cancel () {
+      this.user.username = this.originUsername
+      this.user.introduction = this.originIntroduction
+      this.isOnEditMode = false
+    }
+  },
+  watch: {
+    isOnEditMode (newValue) {
+      if (newValue) {
+        this.originUsername = this.user.username
+        this.originIntroduction = this.user.introduction
+      }
     }
   }
 }
@@ -91,7 +166,7 @@ export default {
   .user-profile-root {
     grid-area: profile;
   }
-  > div:nth-child(2) {
+  .record-container {
     grid-area: items;
     > div {
       position: relative;
@@ -116,6 +191,33 @@ export default {
         }
         &:nth-child(4) {
           right: -38px;
+        }
+      }
+    }
+  }
+  .edit-container {
+    position: fixed;
+    z-index: 1000;
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    left: 0px;
+    background-color: rgba($color: #000000, $alpha: 0.7);
+    > div {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 30px;
+      > h4 {
+        margin-bottom: 20px;
+      }
+      .btn-group {
+        display: flex;
+        justify-content: flex-end;
+        button:nth-child(1) {
+          margin-right: 10px;
+          color: white;
         }
       }
     }

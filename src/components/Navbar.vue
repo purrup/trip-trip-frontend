@@ -54,7 +54,7 @@
           outlined
         ) 登入
         v-avatar(v-else)
-          router-link(tag="img" :to="`/users/${account._id}`" src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John")
+          router-link(tag="img" :to="`/users/${account._id}`" :src="account.avatar" alt="John")
 </template>
 
 <script>

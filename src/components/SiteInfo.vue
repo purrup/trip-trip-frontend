@@ -61,10 +61,6 @@ export default {
       this.infos = [...this.infos, ...this.moreInfos]
     }
     this.infos.forEach((info, index) => {
-      if (info.type === 'opening_hours') {
-        info.content = this.site.opening_hours
-        return
-      }
       info.content = this.site[info.type]
     })
   }
