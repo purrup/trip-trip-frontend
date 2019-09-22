@@ -47,15 +47,16 @@
                 //- 顯示日期
                 span.text-center(style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ changeDateType }}  ({{ weekdays }})
             .schedule-list
-              v-sheet.d-flex.justify-space-around.align-center.mb-3(
+              v-sheet.schedule-card.align-center.mb-3(
                 v-for="(schedule, i) in schedules[this.dates.indexOf(this.currentDisplay)]"
                 :key="i"
                 width=370
                 height=47
                 color="white"
                 elevation="2"
+                @click="getSite(schedule.id)"
               )
-                .time {{ `${ new Date(schedule.startTime).getHours() + ':' + new Date(schedule.startTime).getMinutes() + ' ~ ' + new Date(schedule.endTime).getHours() + ':' + new Date(schedule.endTime).getMinutes()}` }}
+                .time {{ `${ new Date(schedule.startTime).getHours() + ':' + (new Date(schedule.startTime).getMinutes() === 0 ? '00' : new Date(schedule.startTime).getMinutes()) + ' ~ ' + new Date(schedule.endTime).getHours() + ':' + (new Date(schedule.endTime).getMinutes() === 0 ? '00' : new Date(schedule.endTime).getMinutes()) }` }}
                 .activity {{ schedule.name }}
                 .cost {{ '$' + schedule.cost }}
               .note.mt-4
@@ -68,30 +69,43 @@
                   .col-auto
                     span(style=" width: 100%; ") 備註：
                     p {{ note }}
-          v-sheet.site.d-flex.justify-start.align-center(
-            width=250
-            height=47
-            color="grey lighten-2"
-            elevation="2"
-          )
-            span.text-center(style=" width: 100%; cursor: default; ") 景點資訊
+          .site
+            .title.mb-2
+              v-sheet.d-flex.justify-start.align-center(
+                width=250
+                height=47
+                color="grey lighten-2"
+                elevation="2"
+              )
+                span.text-center(style=" width: 100%; cursor: default; ") 景點資訊
+            .little-card
+              little-card(
+                v-if="currentSiteCard"
+                :item="currentSiteCard"
+                :type="'site'")
+              p(v-else-if="currentSiteCard.length === 0") none
     #map
 </template>
 
 <script>
 import Overview from '@/components/Overview.vue'
+import LittleCard from '@/components/LittleCard.vue'
+import siteApis from '@/utils/apis/site'
+// import userApis from '@/utils/apis/user.js'
 import { mapState } from 'vuex'
 
 /* eslint-disable */
 export default {
   name: 'trip',
   components: {
-    Overview
+    Overview,
+    LittleCard
   },
   data () {
     return {
       dates: [],
       currentDisplay: null,
+      currentSiteCard:[],
       schedules:[],
       map: null,
       marker: null
@@ -111,8 +125,9 @@ export default {
     this.trip.contents.forEach(item => {
       this.schedules.push(item.activities)
     });
+    // console.log(this.currentSiteCard)
     // console.log('schedules:', this.schedules)
-    // console.log('dates:', this.dates)
+    // console.log('dates:', typeof this.dates[0].getMinutes())
   },
   mounted () {
     this.initMap()
@@ -120,6 +135,9 @@ export default {
   computed: {
     ...mapState('trip', {
       trip: state => state.trip
+    }),
+    ...mapState('account', {
+      account: state => state
     }),
     changeDateType() {
       return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.getMonth() + 1 + '/' + this.currentDisplay.getDate()
@@ -189,6 +207,13 @@ export default {
     },
     control () {
       console.log('control')
+    },
+    async getSite (siteId) {
+      try {
+        this.currentSiteCard = await siteApis.getSite(siteId)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
@@ -228,6 +253,20 @@ export default {
           grid-area: schedule-list;
           grid-auto-rows: 50px;
           grid-row-gap: 14px;
+          .schedule-card {
+            display: grid;
+            grid-template-columns: 8px 105px 4px auto 60px 8px;
+            grid-template-areas: ". time . activity cost .";
+            .time {
+              grid-area: time;
+            }
+            .activity {
+              grid-area: activity;
+            }
+            .cost {
+              grid-area: cost;              
+            }
+          }
         }
       }
       .site {

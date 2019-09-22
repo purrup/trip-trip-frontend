@@ -33,13 +33,13 @@ export default {
     }
   },
   created () {
+    if (this.images.length === 0) {
+      this.images.push(require('@/assets/image/5.jpg'))
+    }
     if (this.type === 'site') {
       this.images = this.item.photos
     } else {
       this.images = this.item.images
-    }
-    if (this.images.length === 0) {
-      this.images.push(require('@/assets/image/5.jpg'))
     }
   }
 }

@@ -34,11 +34,12 @@ export default {
     }
   },
   created () {
+    // console.log(this.item)
     this.name = this.item.name
     this.rating = this.item.rating
     this.collectingCounts = this.item.collectingCounts
     if (this.type === 'site') {
-      this.ratingCounts = this.item.reviews.length
+      this.ratingCounts = this.item.reviews.length ? this.item.reviews.length : 0
       this.id = this.item.placeId
     } else {
       this.ratingCounts = this.item.ratingCounts
