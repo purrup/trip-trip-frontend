@@ -12,6 +12,7 @@
       @mouseout="isOnHover = false"
       @click="toggle(id)"
     ) {{ showWhichIcon ? "favorite" : "favorite_border" }}
+    slot(name="cancel")
 </template>
 
 <script>

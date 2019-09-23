@@ -36,34 +36,22 @@
             v-icon save
             v-icon edit
           div
-            div(v-for="(activities, index) in storageTrip.activities" class="day-activities")
-              div
-                v-icon today
-                span Day {{index + 1}}
-                v-spacer
-                v-icon arrow_drop_down
-              draggable(
-                tag="div"
-                class="dragAreas"
-                group="sites"
-                :list="activities")
-                div(v-for="(site, index) in activities"
-                  :key="site.name + index"
-                  class="storage-site")
-                  v-icon drag_handle
-                  span {{ site.name }}
-                  v-spacer
-                  v-icon(@click="activities.splice(index, 1)") close
+            daily-activity(
+              v-for="(day, index) in storageTrip.content"
+              :key="`daily-activity-${index + 1}`"
+              :activities="day.activities"
+              :day="index + 1")
             v-btn(
               outlined
               color="secondary"
-              @click="storageTrip.activities.push([])")
+              @click="storageTrip.content.push({ activities: [], note: ''})")
               v-icon add
 </template>
 
 <script>
 import SiteCard from '@/components/SiteCard.vue'
 import draggable from 'vuedraggable'
+import DailyActivity from '@/components/DailyActivity.vue'
 
 import siteApis from '@/utils/apis/site.js'
 
@@ -71,7 +59,8 @@ import siteApis from '@/utils/apis/site.js'
 export default {
   components: {
     SiteCard,
-    draggable
+    draggable,
+    DailyActivity
   },
   data () {
     return {
@@ -81,7 +70,12 @@ export default {
       isOnDraggable: false,
       storageTrip: {
         name: 'XXX的快樂之旅',
-        activities: [[]]
+        content: [
+          {
+            activities: [],
+            note: ''
+          }
+        ]
       },
       map: null,
       marker: null,
@@ -122,6 +116,7 @@ export default {
     showSiteOnMap (pos) {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
+      this.map.setZoom(13)
     },
     start (e) {
       console.log('start', e)
@@ -151,8 +146,9 @@ export default {
     }
   },
   watch: {
-    '$route' (to, from) {
-      this.search()
+    async '$route' (to, from) {
+      await this.search()
+      this.showSiteOnMap(this.sites[0].geometry)
     }
   }
 }
@@ -228,45 +224,10 @@ export default {
         display: grid;
         width: 100%;
         justify-items: center;
-        > .day-activities {
-          width: 100%;
-          margin-bottom: 10px;
-          > div:nth-child(1) {
-            display: flex;
-            align-items: center;
-            background-color: lightgray;
-            height: 30px;
-            padding: 0 10px;
-            i:nth-child(1) {
-              padding-right: 10px;
-            }
-            i:last-child {
-              padding-left: 10px;
-            }
-          }
-          > .dragAreas {
-            width: 100%;
-            .storage-site {
-              display: flex;
-              padding: 0 10px;
-              i:nth-child(1) {
-                padding-right: 10px;
-              }
-              i:last-child {
-                padding-left: 10px;
-              }
-            }
-            > .site-card-root {
-              width: 241px !important;
-              .site-info-wrapper {
-                display: none !important;
-              }
-            }
-          }
-        }
         > button {
           width: 90%;
           border-style: dashed;
+          margin-top: 10px;
         }
       }
     }

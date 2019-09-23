@@ -1,0 +1,109 @@
+<template lang="pug">
+  div(class="daily-activity-root")
+    div(@click="isExpand = !isExpand")
+      span Day {{day}}
+      v-spacer
+      v-icon {{isExpand ? 'arrow_drop_down' : 'arrow_drop_up' }}
+    draggable(
+      tag="div"
+      class="dragAreas"
+      group="sites"
+      :list="activities"
+      @add="add")
+      template(v-if="isExpand")
+        rating-favorite(
+           v-for="(site, index) in activities"
+          :key="site.name + index"
+          :item="site"
+          :type="'site'"
+          class="storage-site")
+          div(slot="cancel" class="cancel-wrap")
+            v-icon(@click="activities.splice(index, 1)") close
+        //- div(v-for="(site, index) in activities"
+        //-   :key="site.name + index"
+        //-   class="storage-site")
+        //-   span {{ site.name }}
+        //-   v-spacer
+          v-icon(@click="activities.splice(index, 1)") close
+</template>
+
+<script>
+import draggable from 'vuedraggable'
+import RatingFavorite from '@/components/RatingFavorite.vue'
+
+export default {
+  components: {
+    draggable,
+    RatingFavorite
+  },
+  props: {
+    activities: Array,
+    day: Number
+  },
+  data () {
+    return {
+      isExpand: false
+    }
+  },
+  methods: {
+    add (e) { // Element is dropped into the list "from another" list
+      this.isExpand = true
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.daily-activity-root {
+  width: 100%;
+  > div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid black;
+    i:last-child {
+      font-size: 30px;
+    }
+    &:hover {
+      background-color: darkgrey;
+    }
+  }
+  > .dragAreas {
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+    .storage-site {
+      display: flex;
+      margin: 5px;
+      border: 1px solid black;
+      border-radius: 4px;
+      padding: 3px 35px;
+      cursor: grab;
+      &::v-deep .favorite-icon {
+        right: 8px;
+        top: 12px;
+      }
+    }
+    .cancel-wrap {
+      width: 32px;
+      height: 50px;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      background-color: burlywood;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &::v-deep .site-card-root {
+      width: 241px !important;
+      .site-info-wrapper {
+        display: none !important;
+      }
+    }
+  }
+}
+</style>
