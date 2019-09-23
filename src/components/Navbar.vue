@@ -26,12 +26,13 @@
           solo
         )
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}`"
+          v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId !== account._id"
           text
           elevation=2
+          @click="fork()"
         ) 複製行程
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
+          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit') && trip.userId === account._id"
           text
           elevation=2
         ) 編輯模式
@@ -59,7 +60,7 @@
 
 <script>
 import SearchBar from '@/components/SearchBar.vue'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'navbar',
@@ -71,12 +72,24 @@ export default {
       publish: false
     }
   },
+  beforeMount () {
+    console.log('accountId:', this.accountId)
+  },
   computed: {
     ...mapState('account', {
       account: state => state
     }),
+    ...mapState('trip', {
+      trip: state => state.trip
+    }),
     privacySetting () {
       return this.publish ? '公開此行程' : '不公開此行程'
+    }
+  },
+  methods: {
+    ...mapActions('trip', ['forkTrip']),
+    fork () {
+      this.forkTrip(this.trip._id)
     }
   }
 }

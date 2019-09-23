@@ -45,7 +45,7 @@
       br
       br
       .timeline
-        timeline
+        timeline(:sites="trip.sites")
 </template>
 
 <script>
@@ -64,13 +64,14 @@ export default {
   data () {
     return {
       rating: this.trip.rating,
-      images: [
-        'https://source.unsplash.com/random/686x360',
-        'https://source.unsplash.com/random/686x360',
-        'https://source.unsplash.com/random/686x360',
-        'https://source.unsplash.com/random/686x360',
-        'https://source.unsplash.com/random/686x360'
-      ]
+      images: []
+    }
+  },
+  beforeMount () {
+    if (!this.trip.images) {
+      this.images = this.trip.images
+    } else {
+      this.images.push('https://source.unsplash.com/random/686x360')
     }
   },
   computed: {

@@ -1,4 +1,5 @@
 import axios from '../../utils/axios'
+import router from '@/router.js'
 
 const state = {
   trips: [{
@@ -124,6 +125,14 @@ const actions = {
   async toggleCollectedTrip (context, id) {
     try {
       await axios.patch(`/trips/${id}/collect`)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async forkTrip (context, id) {
+    try {
+      const { data } = await axios.post(`/trips/${id}/fork`)
+      router.push(`/trips/${data._id}`)
     } catch (error) {
       console.log(error)
     }

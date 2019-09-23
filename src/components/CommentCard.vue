@@ -16,7 +16,13 @@
             size=50
             left
             )
-            img(:src="comment.userAvatar" alt="avatar")
+            img(
+              v-if="comment.userAvatar"
+              :src="comment.userAvatar"
+              alt="avatar")
+            v-icon(
+              v-else="!comment.userAvatar"
+              large) mdi-account-circle
         v-col.mr-12.mt-1(
           cols="8"
         )
