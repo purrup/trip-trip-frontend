@@ -101,15 +101,30 @@ const mutations = {
 }
 
 const actions = {
-  async getTrips (context) {
+  async getPopularTrips (context) {
     try {
-      const results = await axios('/trips/popular', {
+      const { data } = await axios('/trips/popular', {
         method: 'get'
       })
-
-      context.commit('SET_TRIPS', results.data)
+      return data
     } catch (error) {
       throw error
+    }
+  },
+  async getTripByCountryAndCities ({ commit }, city) {
+    try {
+      const { data } = await axios.get(`/trips/?country=台灣&cities[]=${city}`)
+      commit('SET_TRIPS', data)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async getTripsByKeyword ({ commit }, keyword) {
+    try {
+      const { data } = await axios.get(`/trips/search/?keyword=${keyword}`)
+      commit('SET_TRIPS', data)
+    } catch (error) {
+      console.log(error)
     }
   },
   async getTrip (context, id) {

@@ -6,14 +6,12 @@
     min-height="125"
     tile
     hover
-    :to="`/trips/${ trip._id }`"
-    )
+    :to="`/trips/${ trip._id }`")
     v-list-item.pl-0
       v-list-item-avatar.img.ml-2(
         tile
-        size="110"
-        )
-        v-img(src="https://source.unsplash.com/random/110x110")
+        size="110")
+        v-img(:src="trip.images.length !== 0 ? trip.images[0] : defautlImage")
       .content.my-auto
         .trip-name.headline.pt-2 {{ trip.name }}
         v-row.infomation
@@ -34,6 +32,11 @@ export default {
   name: 'TripCard',
   props: {
     trip: Object
+  },
+  data () {
+    return {
+      defautlImage: 'https://source.unsplash.com/random/110x110'
+    }
   },
   computed: {
     cities () {

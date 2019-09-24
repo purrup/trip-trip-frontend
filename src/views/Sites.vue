@@ -6,15 +6,12 @@
         tag="div"
         class="sites-wrapper"
         :group="{ name: 'sites', pull: 'clone', put: false }"
-        :list="sites"
-        @start="start"
-      )
+        :list="sites")
         site-card(
           v-for="site in sites"
           :key="`site-${site.name}`"
           :site="site"
-          @mouseover.native="showSiteOnMap(site.geometry)"
-        )
+          @mouseover.native="showSiteOnMap(site.geometry)")
     div(id="map")
     div(
       class="storage-zone"
@@ -117,9 +114,6 @@ export default {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
       this.map.setZoom(13)
-    },
-    start (e) {
-      console.log('start', e)
     },
     async search () {
       if (this.$route.query.hasOwnProperty('keyword')) {

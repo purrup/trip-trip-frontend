@@ -72,39 +72,39 @@ const mutations = {
 }
 
 const actions = {
-  async signup (context, params) {
+  async signup ({ commit }, params) {
     try {
       const { data } = await axios('/signup', {
         method: 'post',
         data: params
       })
-      context.commit('SET_user', data)
-      context.commit('SET_login')
+      commit('SET_user', data)
+      commit('SET_login')
     } catch (error) {
       console.log(error)
     }
   },
-  async signin (context, params) {
+  async signin ({ commit }, params) {
     try {
       const { data } = await axios('/signin', {
         method: 'post',
         data: params
       })
-      context.commit('SET_user', data)
-      context.commit('SET_login')
+      commit('SET_user', data)
+      commit('SET_login')
     } catch (error) {
       throw error
     }
   },
-  async getUser (context) {
+  async getUser ({ commit }) {
     try {
       const { data } = await axios('/users', {
         method: 'get'
       })
-      context.commit('SET_user', data)
-      context.commit('SET_login')
+      commit('SET_user', data)
+      commit('SET_login')
     } catch (error) {
-      context.commit('SET_logout')
+      commit('SET_logout')
       console.log(error)
     }
   },

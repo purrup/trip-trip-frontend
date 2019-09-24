@@ -2,16 +2,13 @@
   #trips-root.container
     main
       v-row#trips
-        v-col(
-          cols="auto"
-          )
-          template(v-for="(trip, index) in trips")
-            trip-card(
-              :trip="trip"
-              :key="index"
-              @mouseover.native="displayOverview(trip)"
-              @mouseout="mouseout"
-            )
+        v-col(cols="auto")
+          trip-card(
+            v-for="trip in trips"
+            :trip="trip"
+            :key="`trip-card-${trip._id}`"
+            @mouseover.native="displayOverview(trip)"
+            @mouseout.native="mouseout")
       v-row#overview
         v-col(cols="auto")
           overview(:trip="currentTrip")
@@ -35,7 +32,18 @@ export default {
       timer: null
     }
   },
-  beforeMount () {
+  async beforeRouteUpdate (to, from, next) {
+    if (to.query.hasOwnProperty('keyword')) {
+      const keyword = to.query.keyword
+      await this.$store.dispatch('trip/getTripsByKeyword', keyword)
+    } else {
+      const city = to.query['cities[]']
+      await this.$store.dispatch('trip/getTripByCountryAndCities', city)
+    }
+    this.currentTrip = this.trips[0]
+    next()
+  },
+  created () {
     // overview預設資料
     this.currentTrip = this.trips[0]
   },
@@ -47,13 +55,13 @@ export default {
   methods: {
     displayOverview (trip) {
       this.timeStamp = Date.now()
-      this.timer = setTimeout(this.toggle, 1000, trip)
+      this.timer = setInterval(this.toggle, 100, trip)
     },
     mouseout () {
-      clearTimeout(this.timer)
+      clearInterval(this.timer)
     },
     toggle (trip) {
-      if ((Date.now() - this.timeStamp) / 100 < 5) {
+      if ((Date.now() - this.timeStamp) / 100 < 3) {
         return
       }
       this.currentTrip = trip

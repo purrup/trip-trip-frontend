@@ -4,12 +4,12 @@
       height="144"
       hide-delimiter-background
       hide-delimiters
-    )
+      :next-icon="images.length !== 1 ? '$vuetify.icons.next' : false"
+      :prev-icon="images.length !== 1 ? '$vuetify.icons.prev' : false")
       v-carousel-item(
         v-for="image in images"
         :key="image"
-        :src="image"
-      )
+        :src="image")
     div(class="card-content")
       rating-favorite(
         :item="item"

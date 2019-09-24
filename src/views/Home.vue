@@ -6,14 +6,12 @@
       hide-delimiter-background
       hide-delimiters
       show-arrows-on-hover
-      :interval="8000"
-    )
+      :interval="8000")
       v-carousel-item(
         v-for="(slide, i) in slides"
         :key="slide"
         :src="slide"
-        height="100vh"
-      )
+        height="100vh")
     div(class="overlay")
       div
         h1 Trip Trip
@@ -32,10 +30,10 @@
         h3 Popular Trips
         div
           little-card(
-            v-for="site in popularSites"
-            :key="`little-card-${site.name}`"
-            :item="site"
-            :type="'site'")
+            v-for="trip in popularTrips"
+            :key="`little-card-${trip.name}`"
+            :item="trip"
+            :type="'trip'")
 </template>
 
 <script>
@@ -43,6 +41,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import siteApis from '@/utils/apis/site'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -64,8 +63,10 @@ export default {
   },
   async created () {
     await this.getPopularSites()
+    this.popularTrips = await this.getPopularTrips()
   },
   methods: {
+    ...mapActions('trip', ['getPopularTrips']),
     async getPopularSites () {
       try {
         this.popularSites = await siteApis.getPopularSites()

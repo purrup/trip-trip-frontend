@@ -3,7 +3,7 @@
     input(
       v-model="keyword"
       type="search"
-      placeholder="Search..."
+      placeholder="輸入城市/景點，來場旅行吧！"
       @focus="SET_isFocusOnSearchBar(true)",
       class="top-half-border-radius"
       :class="{'bottom-half-border-radius': !isFocusOnSearchBar}")
@@ -55,7 +55,7 @@ export default {
       ],
       regions: ['北部', '中部', '南部', '東部', '離島'],
       cities: {
-        '北部': ['基隆', '台北市', '新北市', '宜蘭', '桃園', '新竹', '苗栗'],
+        '北部': ['基隆', '台北', '新北', '宜蘭', '桃園', '新竹', '苗栗'],
         '中部': ['台中', '南投', '彰化', '雲林'],
         '南部': ['嘉義', '台南', '高雄', '屏東'],
         '東部': ['花蓮', '台東'],
@@ -82,6 +82,7 @@ export default {
       if ((Date.now() - this.timeStamp) / 100 < 3) {
         return
       }
+      console.log('toggle', region)
       this.selectedRegion = region
     },
     searchByCountryAndCities (city) {
@@ -89,7 +90,8 @@ export default {
       if (this.tab === 0) {
         this.$router.push(`/sites/?country=台灣&cities[]=${city}`)
       } else {
-        this.$router.push(`/trips/?country=台灣&cities[]=${city}`)
+        // this.$router.push(`/trips/?country=台灣&cities[]=${city}`)
+        this.$router.push({ path: '/trips', query: { country: '台灣', 'cities[]': city } })
       }
     },
     searchByKeyword (keyword) {
@@ -119,7 +121,7 @@ export default {
     font-size: 20px;
     border: 1px solid #efefef;
     &::placeholder {
-      color: #666666;
+      color: #66666679;
     }
   }
   > .search-icon {

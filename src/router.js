@@ -44,7 +44,13 @@ export default new Router({
       component: () => import('./views/Trips.vue'),
       async beforeEnter (to, from, next) {
         try {
-          await store.dispatch('trip/getTrips')
+          if (to.query.hasOwnProperty('keyword')) {
+            const keyword = to.query.keyword
+            await store.dispatch('trip/getTripsByKeyword', keyword)
+          } else {
+            const city = to.query['cities[]']
+            await store.dispatch('trip/getTripByCountryAndCities', city)
+          }
           next()
         } catch (error) {
           throw error
