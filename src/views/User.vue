@@ -37,8 +37,7 @@
         v-icon(@click="back('idx3')") arrow_back_ios
         v-icon(@click="forward('idx3', user.collectedTrips.length)") arrow_forward_ios
     div(v-if="isOnEditMode" class="edit-container")
-      v-card(
-        min-width="400")
+      v-card(min-width="400")
         h4 編輯你的個人資料
         v-form(
           ref="form"
@@ -63,11 +62,12 @@
 </template>
 
 <script>
-import UserProfile from '@/components/UserProfile.vue'
+import UserProfile from '@/components/user/UserProfile.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import userApis from '@/utils/apis/user.js'
 import { mapState, mapMutations, mapActions } from 'vuex'
+import { mergeSites } from '@/utils/apis/site.js'
 
 export default {
   components: {
@@ -101,6 +101,7 @@ export default {
   },
   async created () {
     const { data } = await userApis.getUserProfile(this.$route.params.id)
+    data.collectedSites = mergeSites(data.collectedSites)
     this.user = data
   },
   computed: {

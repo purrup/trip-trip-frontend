@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import SiteInfo from '@/components/SiteInfo.vue'
+import SiteInfo from '@/components/site/SiteInfo.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import siteApis from '@/utils/apis/site.js'

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import SiteInfo from '@/components/SiteInfo.vue'
+import SiteInfo from '@/components/site/SiteInfo.vue'
 
 export default {
   components: {

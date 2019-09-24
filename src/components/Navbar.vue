@@ -72,9 +72,6 @@ export default {
       publish: false
     }
   },
-  beforeMount () {
-    console.log('accountId:', this.accountId)
-  },
   computed: {
     ...mapState('account', {
       account: state => state

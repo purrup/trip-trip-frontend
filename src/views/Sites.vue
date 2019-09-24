@@ -46,9 +46,9 @@
 </template>
 
 <script>
-import SiteCard from '@/components/SiteCard.vue'
+import SiteCard from '@/components/site/SiteCard.vue'
 import draggable from 'vuedraggable'
-import DailyActivity from '@/components/DailyActivity.vue'
+import DailyActivity from '@/components/site/DailyActivity.vue'
 
 import siteApis from '@/utils/apis/site.js'
 

@@ -35,7 +35,6 @@ export default {
     }
   },
   created () {
-    // console.log(this.item)
     this.name = this.item.name
     this.rating = this.item.rating
     this.collectingCounts = this.item.collectingCounts

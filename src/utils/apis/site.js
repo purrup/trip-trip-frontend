@@ -22,8 +22,7 @@ export default {
     return mergeSites(data)
   }
 }
-
-function mergeSites (data) {
+const mergeSites = function (data) {
   const sites = data
   const placeData = place.data
   return sites.map(site => {
@@ -32,7 +31,7 @@ function mergeSites (data) {
   })
 }
 
-function mergeSite (data) {
+const mergeSite = function (data) {
   const { site, trips } = data
   const placeData = place.data
   const index = placeData.findIndex(place => site.placeId === place.placeId)
@@ -41,3 +40,5 @@ function mergeSite (data) {
     trips
   }
 }
+
+export { mergeSites, mergeSite }

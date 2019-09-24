@@ -82,7 +82,6 @@ export default {
       if ((Date.now() - this.timeStamp) / 100 < 3) {
         return
       }
-      console.log('toggle', region)
       this.selectedRegion = region
     },
     searchByCountryAndCities (city) {

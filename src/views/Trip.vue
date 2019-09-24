@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import Overview from '@/components/Overview.vue'
+import Overview from '@/components/trip/Overview.vue'
 import LittleCard from '@/components/LittleCard.vue'
 import siteApis from '@/utils/apis/site'
 // import userApis from '@/utils/apis/user.js'

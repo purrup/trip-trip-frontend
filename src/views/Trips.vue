@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import TripCard from '@/components/TripCard.vue'
-import Overview from '@/components/Overview.vue'
+import TripCard from '@/components/trip/TripCard.vue'
+import Overview from '@/components/trip/Overview.vue'
 import { mapState } from 'vuex'
 
 export default {

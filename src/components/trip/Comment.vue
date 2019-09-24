@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import CommentCard from '@/components/CommentCard.vue'
+import CommentCard from '@/components/trip/CommentCard.vue'
 
 export default {
   name: 'Comment',

@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import Comment from '@/components/Comment.vue'
-import Timeline from '@/components/Timeline.vue'
+import Comment from '@/components/trip/Comment.vue'
+import Timeline from '@/components/trip/Timeline.vue'
 
 export default {
   name: 'Overview',
