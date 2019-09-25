@@ -24,7 +24,7 @@
               outlined
               large
               min-width="380"
-              @click="facebook"
+              @click="facebookLogin"
             ) facebook
           v-divider.my-8.mx-auto
           v-form(
@@ -64,7 +64,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-
 export default {
   data () {
     return {
@@ -83,7 +82,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('account', ['signin', 'facebookLogin', 'googleLogin']),
+    ...mapActions('account', ['signin']),
     async submit () {
       try {
         if (this.$refs.form.validate()) {
@@ -91,7 +90,7 @@ export default {
             email: this.email,
             password: this.password
           })
-          this.$router.push('/')
+          this.$router.push(this.$route.query.redirect ? this.$route.query.redirect : '/')
         }
       } catch (error) {
         if (error.response.status === 401) {
@@ -101,8 +100,11 @@ export default {
         }
       }
     },
-    facebook () {
+    facebookLogin () {
       window.location = 'http://localhost:3000/facebook'
+    },
+    googleLogin () {
+      window.location = 'http://localhost:3000/google'
     }
   }
 }

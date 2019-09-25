@@ -4,7 +4,7 @@
     div
       v-icon(size="15" color="#FB9026") star
       span(:style="{ 'color': '#FB9026' }") {{rating}}
-      span(:style="{ 'color': '#999999' }") &nbsp ( {{ratingCounts}}則評論 | {{collectingCounts + counts}} 人將此收藏 )
+      span(:style="{ 'color': '#999999' }") &nbsp ( {{commentCounts}}則評論 | {{collectingCounts + counts}} 人將此收藏 )
     v-icon(
       class="favorite-icon"
       :style="{ 'color' : showWhichIcon ? 'red' : 'grey' }"
@@ -28,7 +28,7 @@ export default {
       isOnHover: false,
       name: '',
       rating: 0,
-      ratingCounts: 0,
+      commentCounts: 0,
       collectingCounts: 0,
       counts: 0,
       id: ''
@@ -39,10 +39,10 @@ export default {
     this.rating = this.item.rating
     this.collectingCounts = this.item.collectingCounts
     if (this.type === 'site') {
-      this.ratingCounts = this.item.reviews.length ? this.item.reviews.length : 0
+      this.commentCounts = this.item.reviews.length ? this.item.reviews.length : 0
       this.id = this.item.placeId
     } else {
-      this.ratingCounts = this.item.ratingCounts
+      this.commentCounts = this.item.comments.length
       this.id = this.item._id
     }
   },

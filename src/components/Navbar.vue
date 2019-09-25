@@ -49,8 +49,8 @@
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
-          v-if="!account.isLogin"
-          to="/signin"
+          v-if="!account.isLogin || account.isLogin === 'false'"
+          :to="{ path: '/signin', query: { redirect: $route.path} }"
           color="success"
           outlined
         ) 登入

@@ -9,18 +9,19 @@
             comment-card(:comment="comment")
         .comment-textarea
           v-textarea(
+            v-model="comment"
             outlined
             name="comment"
-            label="留言"
-          )
+            label="留言")
           v-row.d-flex.justify-end(style=" width: 100%;")
             v-btn(
               outlined
-            ) 送出
+              @click="checkAtLeastOneWord") 送出
 </template>
 
 <script>
 import CommentCard from '@/components/trip/CommentCard.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Comment',
@@ -29,6 +30,22 @@ export default {
   },
   props: {
     comments: Array
+  },
+  data () {
+    return {
+      comment: ''
+    }
+  },
+  methods: {
+    ...mapActions('trip', ['addComment']),
+    checkAtLeastOneWord () {
+      if (this.comment === '') {
+        console.log('comment', this.comment)
+        return
+      }
+      this.addComment(this.comment)
+        .then(() => { this.comment = '' })
+    }
   }
 }
 </script>

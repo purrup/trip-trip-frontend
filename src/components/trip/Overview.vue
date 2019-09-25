@@ -39,8 +39,7 @@
             color="yellow darken-3"
             half-increments
             hover
-            large
-            )
+            large)
       br
       br
       br

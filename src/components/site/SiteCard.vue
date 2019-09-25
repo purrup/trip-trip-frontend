@@ -1,19 +1,16 @@
 <template lang="pug">
   v-card(
     class="site-card-root"
-    hover
-    )
+    hover)
     div(class="carousel-wrapper")
       v-carousel(
         height="178"
         hide-delimiter-background
-        hide-delimiters
-      )
+        hide-delimiters)
         v-carousel-item(
           v-for="(image, i) in site.photos"
           :key="`image-${i}`"
-          :src="image"
-        )
+          :src="image")
     site-info(:site="site" class="site-info-wrapper")
 </template>
 

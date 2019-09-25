@@ -97,6 +97,16 @@ const mutations = {
   },
   SET_TRIP (state, data) {
     state.trip = data
+  },
+  ADD_comment (state, data) {
+    state.trip.comments.unshift(data)
+  },
+  REVISE_comment (state, { text, commentId }) {
+    const index = state.trip.comments.findIndex(comment => comment.id === commentId)
+    state.trip.comments[index].text = text
+  },
+  DELETE_comment (state, commentId) {
+    state.trip.comments = state.trip.comments.filter(comment => comment.id !== commentId)
   }
 }
 
@@ -151,6 +161,46 @@ const actions = {
     } catch (error) {
       console.log(error)
     }
+  },
+  async addComment ({ commit }, text) {
+    try {
+      const { data } = await axios(`/trips/${state.trip._id}/comment`, {
+        method: 'patch',
+        data: { text }
+      })
+      commit('ADD_comment', data)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async reviseComment ({ commit }, { text, commentId }) {
+    try {
+      const params = { text, commentId }
+      commit('REVISE_comment', params)
+      await axios(`/trips/${state.trip._id}/comment`, {
+        method: 'patch',
+        data: params
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async deleteComment ({ commit }, commentId) {
+    try {
+      commit('DELETE_comment', commentId)
+      await axios(`/trips/${state.trip._id}/comment`, {
+        method: 'patch',
+        data: { commentId }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async rateTrip ({ commit }, rating) {
+    await axios(`/trips/${state.trip._id}/rate`, {
+      method: 'patch',
+      data: { rating }
+    })
   }
 }
 

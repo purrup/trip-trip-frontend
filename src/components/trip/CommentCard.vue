@@ -5,17 +5,13 @@
       min-width="456"
       min-height="120"
       outlined
-      flat
-    )
+      flat)
       v-row.d-flex.flex-wrap.justify-md-space-between
-        v-col.mt-1(
-          cols="2"
-        )
+        v-col.mt-1(cols="2")
           v-avatar.mx-3(
             style=" border-radius: 50%; "
             size=50
-            left
-            )
+            left)
             img(
               v-if="comment.userAvatar"
               :src="comment.userAvatar"
@@ -23,22 +19,24 @@
             v-icon(
               v-else="!comment.userAvatar"
               large) mdi-account-circle
-        v-col.mr-12.mt-1(
-          cols="8"
-        )
+        v-col.mr-12.mt-1(cols="8")
           v-row
             .title.pr-5 {{ comment.userName }}
             span(style=" line-height: 33px; ") {{ comment.date }}
           v-row.mt-5
             p {{ comment.text }}
-
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'CommentCard',
   props: {
     comment: Object
+  },
+  methods: {
+    ...mapActions('trip', ['reviseComment', 'deleteComment'])
   }
 }
 </script>
