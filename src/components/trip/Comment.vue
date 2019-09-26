@@ -7,7 +7,7 @@
         .comments.mt-5
           template(v-for="(comment, index) in comments")
             comment-card(:comment="comment")
-        .comment-textarea
+        .comment-textarea(style="width: 450px;")
           v-textarea(
             v-model="comment"
             outlined
