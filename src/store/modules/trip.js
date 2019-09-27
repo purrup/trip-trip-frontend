@@ -196,11 +196,15 @@ const actions = {
       console.log(error)
     }
   },
-  async rateTrip ({ commit }, rating) {
-    await axios(`/trips/${state.trip._id}/rate`, {
-      method: 'patch',
-      data: { rating }
-    })
+  async rateTrip ({ commit }, { tripId, rating }) {
+    try {
+      await axios(`/trips/${tripId}/rate`, {
+        method: 'patch',
+        data: { rating }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

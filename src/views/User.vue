@@ -6,36 +6,36 @@
       @changeAvatar="changeAvatar"
       @onEditMode="isOnEditMode = true")
     div(class="record-container")
-      div(v-if="user.collectedSites.length !== 0")
+      div(v-if="user.collectingSites.length !== 0")
         h5 {{user.username}}收藏的景點
         div
           little-card(
-            v-for="site in user.collectedSites.slice(indexs.idx1, equalOrLess2(user.collectedSites.length) + indexs.idx1)"
+            v-for="site in user.collectingSites.slice(indexs.idx1, equalOrLess2(user.collectingSites.length) + indexs.idx1)"
             :key="`little-card-${site.name}`"
             :item="site"
             :type="'site'")
         v-icon(@click="back('idx1')") arrow_back_ios
-        v-icon(@click="forward('idx1', user.collectedSites.length)") arrow_forward_ios
-      div(v-if="user.ownedTrips.length !== 0")
+        v-icon(@click="forward('idx1', user.collectingSites.length)") arrow_forward_ios
+      div(v-if="user.owningTrips.length !== 0")
         h5 {{user.username}}建立的行程
         div
           ittle-card(
-            v-for="trip in user.ownedTrips"
+            v-for="trip in user.owningTrips"
             :key="`little-card-${trip.name}`"
             :item="trip"
             :type="'trip'")
         v-icon(@click="back('idx2')") arrow_back_ios
-        v-icon(@click="forward('idx2', user.ownedTrips.length)") arrow_forward_ios
-      div(v-if="user.collectedTrips.length !== 0")
+        v-icon(@click="forward('idx2', user.owningTrips.length)") arrow_forward_ios
+      div(v-if="user.collectingTrips.length !== 0")
         h5 {{user.username}}收藏的行程
         div
           little-card(
-            v-for="trip in user.collectedTrips.slice(indexs.idx3, equalOrLess2(user.collectedTrips.length) + indexs.idx3)"
+            v-for="trip in user.collectingTrips.slice(indexs.idx3, equalOrLess2(user.collectingTrips.length) + indexs.idx3)"
             :key="`little-card-${trip.name}`"
             :item="trip"
             :type="'tirp'")
         v-icon(@click="back('idx3')") arrow_back_ios
-        v-icon(@click="forward('idx3', user.collectedTrips.length)") arrow_forward_ios
+        v-icon(@click="forward('idx3', user.collectingTrips.length)") arrow_forward_ios
     div(v-if="isOnEditMode" class="edit-container")
       v-card(min-width="400")
         h4 編輯你的個人資料
@@ -66,7 +66,7 @@ import UserProfile from '@/components/user/UserProfile.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import userApis from '@/utils/apis/user.js'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { mergeSites } from '@/utils/apis/site.js'
 
 export default {
@@ -77,9 +77,9 @@ export default {
   data () {
     return {
       user: {
-        collectedTrips: [],
-        collectedSites: [],
-        ownedTrips: []
+        collectingTrips: [],
+        collectingSites: [],
+        owningTrips: []
       },
       indexs: {
         idx1: 0,
@@ -101,15 +101,15 @@ export default {
   },
   async created () {
     const { data } = await userApis.getUserProfile(this.$route.params.id)
-    data.collectedSites = mergeSites(data.collectedSites)
+    data.collectingSites = mergeSites(data.collectingSites)
     this.user = data
   },
   computed: {
-    ...mapState('account', {
-      account: state => state
+    ...mapGetters('account', {
+      accountId: 'getAccountId'
     }),
     checkMyself () {
-      return this.account._id === this.user._id
+      return this.user._id === this.accountId
     }
   },
   methods: {

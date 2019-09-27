@@ -7,7 +7,7 @@
       outlined
       flat)
       .d-flex.flex-row.align-center
-        .d-flex.flex-row.align-center.mt-2
+        .d-flex.flex-row.align-center
           v-avatar(size=60)
               img(
                 v-if="comment.userAvatar"
@@ -20,7 +20,7 @@
             .headline.pr-5 {{ comment.userName }}
             span.grey--text.caption {{ comment.date }}
         .reply
-          v-card-text.mx-4.mr-4(
+          v-card-text.mr-4(
             style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
             v-if="!commentEdit") {{ comment.text }}
           v-textarea.ml-5.mt-3(
@@ -49,38 +49,38 @@
               v-if="comment.userId === account._id && !commentEdit"
               @click="deleteComment(comment.id)"
             ) 刪除
-            v-btn(
-              v-if="comment.replies"
-              icon
-              @click="showReply = !showReply")
-              v-icon reply {{ showReply ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-    v-expand-transition
-      div.mt-3(v-show="showReply")
-        .reply.d-flex.flex-row.align-center.justify-end.mr-11
-          v-card(
-            v-for="(reply, i) in comment.replies"
-            :key="i"
-            width="350"
-            min-height="70"
-            outlined
-            flat)
-            .d-flex.flex-row.align-center
-              .d-flex.flex-row.align-center.mt-2
-                v-avatar(size=60)
-                    img(
-                      v-if="reply.userAvatar"
-                      :src="reply.userAvatar"
-                      alt="avatar")
-                    v-icon(
-                      v-else="!reply.userAvatar"
-                      large) mdi-account-circle
-                .userInfo
-                  .headline.pr-5 {{ reply.userName }}
-                  span.grey--text.caption {{ reply.date }}
-              .reply
-                v-card-text.mx-4(
-                  style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
-                  ) {{ reply.text }}
+            //- v-btn(
+            //-   v-if="comment.replies"
+            //-   icon
+            //-   @click="showReply = !showReply")
+            //-   v-icon reply {{ showReply ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+    //- v-expand-transition
+    //-   div.mt-3(v-show="showReply")
+    //-     .reply.d-flex.flex-row.align-center.justify-end.mr-11
+    //-       v-card(
+    //-         v-for="(reply, i) in comment.replies"
+    //-         :key="i"
+    //-         width="350"
+    //-         min-height="70"
+    //-         outlined
+    //-         flat)
+    //-         .d-flex.flex-row.align-center
+    //-           .d-flex.flex-row.align-center.mt-2
+    //-             v-avatar(size=60)
+    //-                 img(
+    //-                   v-if="reply.userAvatar"
+    //-                   :src="reply.userAvatar"
+    //-                   alt="avatar")
+    //-                 v-icon(
+    //-                   v-else="!reply.userAvatar"
+    //-                   large) mdi-account-circle
+    //-             .userInfo
+    //-               .headline.pr-5 {{ reply.userName }}
+    //-               span.grey--text.caption {{ reply.date }}
+    //-           .reply
+    //-             v-card-text(
+    //-               style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
+    //-               ) {{ reply.text }}
 </template>
 
 <script>

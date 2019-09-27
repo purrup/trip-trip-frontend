@@ -47,6 +47,7 @@ export default new Router({
             return { path: 'signin' }
           }
         }
+        store.commit('account/SET_login')
         return { path: '/' }
       }
     },

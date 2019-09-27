@@ -5,13 +5,11 @@
       height=360
       hide-delimiters
       hide-delimiter-background
-      interval=6000
-    )
+      interval=6000)
       v-carousel-item(
         v-for="(image, i) in images"
         :key="i"
-        :src="image"
-      )
+        :src="image")
     .journal.mx-auto.mt-5
       .display-2.text-center {{trip.name}}
       br
@@ -36,6 +34,7 @@
           v-col(cols="auto")
             v-rating(
             v-model="rating"
+            @click.native="rateTrip({tripId: trip._id, rating})"
             color="yellow darken-3"
             half-increments
             hover
@@ -50,6 +49,7 @@
 <script>
 import Comment from '@/components/trip/Comment.vue'
 import Timeline from '@/components/trip/Timeline.vue'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'Overview',
@@ -62,11 +62,12 @@ export default {
   },
   data () {
     return {
-      rating: this.trip.rating,
+      rating: '',
       images: []
     }
   },
-  beforeMount () {
+  created () {
+    this.rating = this.getTripRating(this.trip._id)
     if (!this.trip.images) {
       this.images = this.trip.images
     } else {
@@ -74,9 +75,16 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('account', {
+      getTripRating: 'getTripRating'
+    }),
     cities () {
       return this.trip.cities.join('、')
     }
+  },
+  methods: {
+    ...mapMutations('account', ['RATE_trip']),
+    ...mapActions('trip', ['rateTrip'])
   }
 }
 </script>

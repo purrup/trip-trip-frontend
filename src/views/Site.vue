@@ -25,8 +25,7 @@
                   half-increments
                   size="15px"
                   dense
-                  readonly
-                )
+                  readonly)
             div
               p {{comment.text}}
       div(v-if="trips.length !== 0" class="recommendation-lits")

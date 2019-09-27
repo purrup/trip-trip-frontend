@@ -127,9 +127,6 @@ export default {
     ...mapState('trip', {
       trip: state => state.trip
     }),
-    ...mapState('account', {
-      account: state => state
-    }),
     changeDateType() {
       return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.getMonth() + 1 + '/' + this.currentDisplay.getDate()
     },
