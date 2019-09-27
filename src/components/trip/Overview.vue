@@ -24,7 +24,7 @@
         p 尚未新增
       br
       .comments
-        comment.d-flex.flex-wrap.justify-start(:comments="trip.comments")
+        comment.d-flex.flex-wrap.justify-start(:comments="trip.comments" :tripId="trip._id")
       br
       .rating.d-flex.flex-column
         v-row.d-flex.flex-column.align-center

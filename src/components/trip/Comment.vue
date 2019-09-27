@@ -6,7 +6,10 @@
         br
         .comments.mt-5
           template(v-for="(comment, index) in comments")
-            comment-card(:comment="comment")
+            comment-card(
+              :comment="comment"
+              :tripId="tripId"
+              @confirmDelete="confirmDelete")
         .comment-textarea(style="width: 450px;")
           v-textarea(
             v-model="comment"
@@ -21,7 +24,7 @@
 
 <script>
 import CommentCard from '@/components/trip/CommentCard.vue'
-import { mapActions } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'Comment',
@@ -29,6 +32,7 @@ export default {
     CommentCard
   },
   props: {
+    tripId: String,
     comments: Array
   },
   data () {
@@ -37,14 +41,30 @@ export default {
     }
   },
   methods: {
-    ...mapActions('trip', ['addComment']),
+    ...mapMutations('trip', ['ADD_comment', 'DELETE_comment']),
+    ...mapActions('trip', ['addComment', 'deleteComment']),
     checkAtLeastOneWord () {
       if (this.comment === '') {
-        console.log('comment', this.comment)
         return
       }
-      this.addComment(this.comment)
+      this.addComment({ tripId: this.tripId, text: this.comment })
+        .then((data) => {
+          (this.$route.name === 'Trips')
+            ? this.comments.unshift(data)
+            : this.ADD_comment(data)
+        })
         .then(() => { this.comment = '' })
+    },
+    confirmDelete ({ tripId, commentId }) {
+      this.deleteComment({ tripId, commentId })
+        .then(() => {
+          if (this.$route.name === 'Trips') {
+            const index = this.comments.findIndex(comment => comment.id === commentId)
+            this.comments.splice(index, 1)
+          } else {
+            this.DELETE_comment(commentId)
+          }
+        })
     }
   }
 }

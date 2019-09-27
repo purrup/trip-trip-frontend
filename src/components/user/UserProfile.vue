@@ -26,7 +26,7 @@
         p 行程已被收藏{{10}}次
       div(v-if="isMyself")
         button(@click="$emit('onEditMode')") 編輯個人資料
-    span 加入時間: &nbsp 2019/09/20
+    span 加入時間: &nbsp {{new Date(user.createdAt).toDateString()}}
 </template>
 
 <script>
