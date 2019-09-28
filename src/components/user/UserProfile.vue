@@ -17,16 +17,16 @@
         p {{user.email}}
       div
         v-icon today
-        p 已建立{{user.ownedTrips.length}}個行程
+        p 已建立{{user.owningTrips.length}}個行程
       div
         v-icon(color="red") favorite
-        p 已收藏{{user.collectedTrips.length}}個行程
+        p 已收藏{{user.collectingTrips.length}}個行程
       div
         v-icon(color="#FB9026") emoji_events
         p 行程已被收藏{{10}}次
       div(v-if="isMyself")
         button(@click="$emit('onEditMode')") 編輯個人資料
-    span 加入時間: &nbsp 2019/09/20
+    span 加入時間: &nbsp {{new Date(user.createdAt).toDateString()}}
 </template>
 
 <script>

@@ -5,13 +5,11 @@
       height=360
       hide-delimiters
       hide-delimiter-background
-      interval=6000
-    )
+      interval=6000)
       v-carousel-item(
         v-for="(image, i) in images"
         :key="i"
-        :src="image"
-      )
+        :src="image")
     .journal.mx-auto.mt-5
       .display-2.text-center(v-if="!isOnEditMode") {{trip.name}}
       .display-2.text-center(v-else)
@@ -40,7 +38,7 @@
         p 尚未新增
       br
       .comments
-        comment.d-flex.flex-wrap.justify-start(:comments="trip.comments")
+        comment.d-flex.flex-wrap.justify-start(:comments="trip.comments" :tripId="trip._id")
       br
       .rating.d-flex.flex-column
         v-row.d-flex.flex-column.align-center
@@ -50,6 +48,7 @@
           v-col(cols="auto")
             v-rating(
             v-model="rating"
+            @click.native="rateTrip({tripId: trip._id, rating})"
             color="yellow darken-3"
             half-increments
             hover
@@ -65,7 +64,7 @@
 import Comment from '@/components/trip/Comment.vue'
 import Timeline from '@/components/trip/Timeline.vue'
 import userApis from '@/utils/apis/user.js'
-import { mapState } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'Overview',
@@ -79,28 +78,34 @@ export default {
   data () {
     return {
       user: {},
-      rating: this.trip.rating,
+      rating: '',
       images: []
     }
   },
-  beforeMount () {
+  async created () {
+    const { data } = await userApis.getUser(this.trip.userId)
+    this.user = data
+    this.rating = this.getTripRating(this.trip._id)
     if (!this.trip.images) {
       this.images = this.trip.images
     } else {
       this.images.push('https://source.unsplash.com/random/686x360')
     }
   },
-  async created () {
-    const { data } = await userApis.getUser(this.trip.userId)
-    this.user = data
-  },
   computed: {
     ...mapState('trip', {
       isOnEditMode: state => state.isOnEditMode
     }),
+    ...mapGetters('account', {
+      getTripRating: 'getTripRating'
+    }),
     cities () {
       return this.trip.cities.join('、')
     }
+  },
+  methods: {
+    ...mapMutations('account', ['RATE_trip']),
+    ...mapActions('trip', ['rateTrip'])
   }
 }
 </script>

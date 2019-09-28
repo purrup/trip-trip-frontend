@@ -7,7 +7,7 @@
       outlined
       flat)
       .d-flex.flex-row.align-center
-        .d-flex.flex-row.align-center.mt-2
+        .d-flex.flex-row.align-center
           v-avatar(size=60)
               img(
                 v-if="comment.userAvatar"
@@ -18,9 +18,9 @@
                 large) mdi-account-circle
           .userInfo
             .headline.pr-5 {{ comment.userName }}
-            span.grey--text.caption {{ comment.date }}
+            span.grey--text.caption {{ new Date(comment.date).toLocaleDateString()}}
         .reply
-          v-card-text.mx-4.mr-4(
+          v-card-text.mr-4(
             style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
             v-if="!commentEdit") {{ comment.text }}
           v-textarea.ml-5.mt-3(
@@ -42,54 +42,55 @@
             v-btn(
               text
               v-else-if="comment.userId === account._id && commentEdit"
-              @click="editCompleted(revisedComment, comment.id)"
+              @click="editCompleted(tripId, revisedComment, comment.id)"
             ) 編輯完成
             v-btn(
               text
               v-if="comment.userId === account._id && !commentEdit"
-              @click="deleteComment(comment.id)"
+              @click="$emit('confirmDelete', { tripId, commentId: comment.id })"
             ) 刪除
-            v-btn(
-              v-if="comment.replies"
-              icon
-              @click="showReply = !showReply")
-              v-icon reply {{ showReply ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-    v-expand-transition
-      div.mt-3(v-show="showReply")
-        .reply.d-flex.flex-row.align-center.justify-end.mr-11
-          v-card(
-            v-for="(reply, i) in comment.replies"
-            :key="i"
-            width="350"
-            min-height="70"
-            outlined
-            flat)
-            .d-flex.flex-row.align-center
-              .d-flex.flex-row.align-center.mt-2
-                v-avatar(size=60)
-                    img(
-                      v-if="reply.userAvatar"
-                      :src="reply.userAvatar"
-                      alt="avatar")
-                    v-icon(
-                      v-else="!reply.userAvatar"
-                      large) mdi-account-circle
-                .userInfo
-                  .headline.pr-5 {{ reply.userName }}
-                  span.grey--text.caption {{ reply.date }}
-              .reply
-                v-card-text.mx-4(
-                  style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
-                  ) {{ reply.text }}
+            //- v-btn(
+            //-   v-if="comment.replies"
+            //-   icon
+            //-   @click="showReply = !showReply")
+            //-   v-icon reply {{ showReply ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+    //- v-expand-transition
+    //-   div.mt-3(v-show="showReply")
+    //-     .reply.d-flex.flex-row.align-center.justify-end.mr-11
+    //-       v-card(
+    //-         v-for="(reply, i) in comment.replies"
+    //-         :key="i"
+    //-         width="350"
+    //-         min-height="70"
+    //-         outlined
+    //-         flat)
+    //-         .d-flex.flex-row.align-center
+    //-           .d-flex.flex-row.align-center.mt-2
+    //-             v-avatar(size=60)
+    //-                 img(
+    //-                   v-if="reply.userAvatar"
+    //-                   :src="reply.userAvatar"
+    //-                   alt="avatar")
+    //-                 v-icon(
+    //-                   v-else="!reply.userAvatar"
+    //-                   large) mdi-account-circle
+    //-             .userInfo
+    //-               .headline.pr-5 {{ reply.userName }}
+    //-               span.grey--text.caption {{ reply.date }}
+    //-           .reply
+    //-             v-card-text(
+    //-               style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
+    //-               ) {{ reply.text }}
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 // import userApis from '@/utils/apis/user.js'
 
 export default {
   name: 'CommentCard',
   props: {
+    tripId: String,
     comment: Object
   },
   data () {
@@ -100,18 +101,25 @@ export default {
     }
   },
   methods: {
-    ...mapActions('trip', ['reviseComment', 'deleteComment']),
-    editCompleted (text, commentId) {
+    ...mapMutations('trip', ['REVISE_comment']),
+    ...mapActions('trip', ['reviseComment']),
+    editCompleted (tripId, text, commentId) {
       if (text === '') {
         return
       }
-      this.commentEdit = !this.commentEdit
-      this.reviseComment({ text, commentId })
-        .then(() => { this.revisedComment = '' })
+      this.reviseComment({ tripId, text, commentId })
+        .then(() => {
+          if (this.$route.name === 'Trips') {
+            this.comment.text = text
+          } else {
+            this.REVISE_comment({ text, commentId })
+          }
+        })
+        .then(() => {
+          this.revisedComment = ''
+          this.commentEdit = !this.commentEdit
+        })
     }
-    // getUserAvatar (id) {
-    //   return userApis.getUser(id).avatar
-    // },
   },
   computed: {
     ...mapState('account', {

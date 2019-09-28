@@ -155,9 +155,6 @@ export default {
       trip: state => state.trip,
       isOnEditMode: state => state.isOnEditMode
     }),
-    ...mapState('account', {
-      account: state => state
-    }),
     changeDateType() {
       return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.getMonth() + 1 + '/' + this.currentDisplay.getDate()
     },

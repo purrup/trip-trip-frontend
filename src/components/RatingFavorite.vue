@@ -48,13 +48,13 @@ export default {
   },
   computed: {
     ...mapGetters('account', {
-      collectedSites: 'getCollectedSites',
-      collectedTrips: 'getCollectedTrips'
+      collectingSites: 'getCollectingSites',
+      collectingTrips: 'getCollectingTrips'
     }),
     isFavorite () {
       return (this.type === 'site')
-        ? this.collectedSites.includes(this.id)
-        : this.collectedTrips.includes(this.id)
+        ? this.collectingSites.includes(this.id)
+        : this.collectingTrips.includes(this.id)
     },
     showWhichIcon () {
       return this.isFavorite

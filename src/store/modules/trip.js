@@ -170,33 +170,30 @@ const actions = {
       console.log(error)
     }
   },
-  async addComment ({ commit }, text) {
+  async addComment ({ commit }, { tripId, text }) {
     try {
-      const { data } = await axios(`/trips/${state.trip._id}/comment`, {
+      const { data } = await axios(`/trips/${tripId}/comment`, {
         method: 'patch',
         data: { text }
       })
-      commit('ADD_comment', data)
+      return data
     } catch (error) {
       console.log(error)
     }
   },
-  async reviseComment ({ commit }, { text, commentId }) {
+  async reviseComment ({ commit }, { tripId, text, commentId }) {
     try {
-      const params = { text, commentId }
-      commit('REVISE_comment', params)
-      await axios(`/trips/${state.trip._id}/comment`, {
+      await axios(`/trips/${tripId}/comment`, {
         method: 'patch',
-        data: params
+        data: { text, commentId }
       })
     } catch (error) {
       console.log(error)
     }
   },
-  async deleteComment ({ commit }, commentId) {
+  async deleteComment ({ commit }, { tripId, commentId }) {
     try {
-      commit('DELETE_comment', commentId)
-      await axios(`/trips/${state.trip._id}/comment`, {
+      await axios(`/trips/${tripId}/comment`, {
         method: 'patch',
         data: { commentId }
       })
@@ -204,11 +201,15 @@ const actions = {
       console.log(error)
     }
   },
-  async rateTrip ({ commit }, rating) {
-    await axios(`/trips/${state.trip._id}/rate`, {
-      method: 'patch',
-      data: { rating }
-    })
+  async rateTrip ({ commit }, { tripId, rating }) {
+    try {
+      await axios(`/trips/${tripId}/rate`, {
+        method: 'patch',
+        data: { rating }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

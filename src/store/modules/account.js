@@ -10,10 +10,10 @@ const state = {
   username: 'MiaYang',
   introduction: "Hello I'm Mia",
   avatar: '',
-  ownedTrips: [], // [ObjectId]
-  collectedTrips: [], // [ObjectId]
-  collectedSites: [], // [ObjectId]
-  ratedTrips: [
+  owningTrips: [], // [ObjectId]
+  collectingTrips: [], // [ObjectId]
+  collectingSites: [], // [ObjectId]
+  ratingTrips: [
     {
       id: 1, // ObjectId
       rating: Number
@@ -25,14 +25,20 @@ const getters = {
   getIsLogin (state) {
     return state.isLogin
   },
-  getCollectedSites (state) {
-    return state.collectedSites
+  getCollectingSites (state) {
+    return state.collectingSites
   },
-  getCollectedTrips (state) {
-    return state.collectedTrips
+  getCollectingTrips (state) {
+    return state.collectingTrips
   },
-  getUserId (state) {
+  getAccountId (state) {
     return state._id
+  },
+  getTripRating (state) {
+    return function (tripId) {
+      const trip = state.ratingTrips.filter(trip => trip.id === tripId)[0]
+      return trip ? trip.userRating : 0
+    }
   }
 }
 
@@ -53,21 +59,24 @@ const mutations = {
     alert('logout')
   },
   TOGGLE_collectedSite (state, placeId) {
-    if (state.collectedSites.includes(placeId)) {
-      state.collectedSites = state.collectedSites.filter(siteId => siteId !== placeId)
+    if (state.collectingSites.includes(placeId)) {
+      state.collectingSites = state.collectingSites.filter(siteId => siteId !== placeId)
     } else {
-      state.collectedSites.push(placeId)
+      state.collectingSites.push(placeId)
     }
   },
   TOGGLE_collectedTrip (state, tripId) {
-    if (state.collectedTrips.includes(tripId)) {
-      state.collectedTrips = state.collectedTrips.filter(id => id !== tripId)
+    if (state.collectingTrips.includes(tripId)) {
+      state.collectingTrips = state.collectingTrips.filter(id => id !== tripId)
     } else {
-      state.collectedTrips.push(tripId)
+      state.collectingTrips.push(tripId)
     }
   },
   SET_avatar (state, avatar) {
     state.avatar = avatar
+  },
+  RATE_trip (state, params) {
+    state.ratingTrips.push(params)
   }
 }
 
