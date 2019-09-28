@@ -13,16 +13,30 @@
         :src="image"
       )
     .journal.mx-auto.mt-5
-      .display-2.text-center {{trip.name}}
+      .display-2.text-center(v-if="!isOnEditMode") {{trip.name}}
+      .display-2.text-center(v-else)
+        v-textarea(
+          auto-grow
+          rows=1
+          :value="trip.name"
+          label="行程名稱"
+        )
       br
       ul(style="list-style: none; padding: 0;")
-        li.mb-2 作者：Saitama
+        li.mb-2 作者：{{user.name}}
         li.mb-2 旅遊天數： {{ trip.days }}
         li.mb-2 城市： {{ cities }}
       br
       .article(v-if="trip.journal")
         p {{trip.journal}}
-      .article(v-else-if="!trip.journal")
+      .article(v-else-if="isOnEditMode")
+        v-textarea(
+          auto-grow
+          outlined
+          name="journal"
+          label="遊記"
+          :value="trip.journal")
+      .article(v-else-if="!trip.journal && !isOnEditMode")
         p 尚未新增
       br
       .comments
@@ -50,6 +64,8 @@
 <script>
 import Comment from '@/components/trip/Comment.vue'
 import Timeline from '@/components/trip/Timeline.vue'
+import userApis from '@/utils/apis/user.js'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Overview',
@@ -62,6 +78,7 @@ export default {
   },
   data () {
     return {
+      user: {},
       rating: this.trip.rating,
       images: []
     }
@@ -73,7 +90,14 @@ export default {
       this.images.push('https://source.unsplash.com/random/686x360')
     }
   },
+  async created () {
+    const { data } = await userApis.getUser(this.trip.userId)
+    this.user = data
+  },
   computed: {
+    ...mapState('trip', {
+      isOnEditMode: state => state.isOnEditMode
+    }),
     cities () {
       return this.trip.cities.join('、')
     }
@@ -92,6 +116,9 @@ export default {
 .journal {
   width: 590px;
   height: 100%;
+}
+.article {
+  height: auto;
 }
 .comments {
   width: 542px;

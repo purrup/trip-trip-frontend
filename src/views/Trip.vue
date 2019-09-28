@@ -1,25 +1,24 @@
 <template lang="pug">
   #trip
     main
+      //- 左側切換欄
       #toggle-bar
         v-list
           v-list-item-group(mandatory)
-            v-list-item(
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5);"
+            v-list-item.leftTogglebarBlock(
               @click="toggleContent('overview')")
               v-list-item-content
                 v-list-item-title.text-center(v-text="'概覽'")
-            v-list-item(
+            v-list-item.leftTogglebarBlock(
               v-for="(date, i) in dates"
               :key="i"
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5); "
               @click="toggleContent(date)")
               v-list-item-content
-                v-list-item-title.text-center(v-text="`${ date.getMonth() + 1 + '/' + date.getDate() }`") // 顯示日期
-            v-list-item(
-              v-if="$route.path.includes('edit')"
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5);"
-              @click="addNewDate()") // 編輯模式中新增旅遊日期
+                v-list-item-title.text-center(v-text=" trip.startDate ? `${ date.getMonth() + 1 + '/' + date.getDate() }` : ' ' ") // 顯示日期
+            //- 編輯模式中新增旅遊日期
+            v-list-item.leftTogglebarBlock(
+              v-if="isOnEditMode"
+              @click="addNewDate()")
               v-list-item-content
                 v-list-item-title.text-center(v-text="'+'")
       #content
@@ -36,10 +35,35 @@
                 color="grey lighten-2"
                 elevation="2")
                 v-icon(
-                  @click="control"
+                  v-if="isOnEditMode && !showeditDailySchedulePanel"
+                  @click="showeditDailySchedulePanel = !showeditDailySchedulePanel"
                   style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
                 //- 顯示日期
-                span.text-center(style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ changeDateType }}  ({{ weekdays }})
+                span.text-center(
+                  v-if="!showeditDailySchedulePanel"
+                  style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ changeDateType }}  ({{ weekdays }})
+                .dailySchedulePanel.d-flex.justify-start.align-center(
+                  v-if="showeditDailySchedulePanel"
+                  style="line-height: 47px;")
+                  .back.ml-3
+                    v-icon(
+                      large
+                      @click="showeditDailySchedulePanel = !showeditDailySchedulePanel") keyboard_arrow_left
+                  //- 選擇旅遊日期
+                  .leftTogglebarBlock.ml-5(
+                    v-if="isOnEditMode"
+                    @click.stop="showCalendar = !showCalendar")
+                    v-icon.mx-auto mdi-calendar
+                    v-dialog(
+                      width=300
+                      v-model="showCalendar"
+                      )
+                      v-date-picker(
+                        v-model="firstDatePicker"
+                        show-current
+                        @change="showCalendar = !showCalendar")
+                  .delete.ml-7
+                    v-icon mdi-trash-can-outline
             .schedule-list
               v-sheet.schedule-card.align-center.mb-3(
                 v-for="(schedule, i) in schedules[this.dates.indexOf(this.currentDisplay)]"
@@ -99,7 +123,10 @@ export default {
       currentSiteCard:[],
       schedules:[],
       map: null,
-      marker: null
+      marker: null,
+      showCalendar: false,
+      showeditDailySchedulePanel: false,
+      firstDatePicker: null
     }
   },
   beforeMount () {
@@ -125,7 +152,8 @@ export default {
   },
   computed: {
     ...mapState('trip', {
-      trip: state => state.trip
+      trip: state => state.trip,
+      isOnEditMode: state => state.isOnEditMode
     }),
     ...mapState('account', {
       account: state => state
@@ -225,6 +253,9 @@ export default {
       grid-area: toggle-bar;
       width: 83px;
       justify-self: center;
+      .leftTogglebarBlock {
+        border: 0.5px solid rgba(102, 102, 102, 0.5);
+      }
     }
     #content {
       grid-area: content;

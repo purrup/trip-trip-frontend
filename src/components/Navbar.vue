@@ -16,7 +16,7 @@
           solo
         )
         v-select(
-          v-if="$route.name === 'Trips' || $route.name === 'Sites' "
+          v-else-if="$route.name === 'Trips' || $route.name === 'Sites' "
           height="30px"
           class="custom-select-style"
           :style="{ 'width': '100px'} "
@@ -32,20 +32,28 @@
           @click="fork()"
         ) 複製行程
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit') && trip.userId === account._id"
+          v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId === account._id"
+          @click="toggleEditMode"
           text
           elevation=2
         ) 編輯模式
-        v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
-          text
-          elevation=2
-        ) 日期
-        v-switch.ml-8.mt-7(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
-          v-model="publish"
-          inset
-          :label="`${privacySetting}`")
+        .edit-buttons.d-flex.flex-nowrap.align-center(
+          v-if="isOnEditMode"
+        )
+          v-btn.ml-8(
+            text
+            elevation=2
+            @click="toggleEditMode"
+          ) 編輯完成
+          v-switch.ml-10.mt-7(
+            v-model="publish"
+            inset
+            :label="`${privacySetting}`")
+          v-btn.ml-6(
+            text
+            icon
+          )
+            v-icon mdi-trash-can-outline
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
@@ -54,13 +62,55 @@
           color="success"
           outlined
         ) 登入
-        v-avatar(v-else)
-          router-link(tag="img" :to="`/users/${account._id}`" :src="account.avatar" alt="John")
+        v-avatar.avatar(
+          v-else-if="account.isLogin && account.avatar")
+          img(
+            :src="account.avatar"
+            alt="account.name"
+          )
+        v-avatar.avatar(
+          v-else-if="account.isLogin && !account.avatar"
+          color="grey lighten-3")
+          v-btn(
+            icon
+            @click="showDropDownMenu = !showDropDownMenu"
+          ) {{account.name}}
+            v-sheet.dropDownMenu(
+              v-show="showDropDownMenu"
+              height=auto
+              width=auto
+              color="grey lighten-3")
+              v-list
+                v-list-item(
+                  tag="a"
+                  :to="{ path: `/users/${account._id}` }"
+                )
+                  v-list-item-icon(style="margin-right: 10px;")
+                    v-icon(v-text="'mdi-account-circle'")
+                  v-list-item-content
+                    v-list-item-title(v-text="'個人檔案'")
+                v-list-item(
+                  v-if="account.isAdmin"
+                  tag="a"
+                  :to="{ path: `/admin` }"
+                )
+                  v-list-item-icon(style="margin-right: 10px;")
+                    v-icon(v-text="'mdi-settings'")
+                  v-list-item-content
+                    v-list-item-title(v-text="'後台管理'")
+                v-list-item(
+                  tag="a"
+                  :to="{ path: `/logout` }"
+                )
+                  v-list-item-icon(style="margin-right: 10px;")
+                    v-icon(v-text="'mdi-logout'")
+                  v-list-item-content
+                    v-list-item-title(v-text="'登出'")
 </template>
 
 <script>
 import SearchBar from '@/components/SearchBar.vue'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'navbar',
@@ -69,7 +119,8 @@ export default {
   },
   data () {
     return {
-      publish: false
+      publish: false,
+      showDropDownMenu: false
     }
   },
   computed: {
@@ -77,7 +128,8 @@ export default {
       account: state => state
     }),
     ...mapState('trip', {
-      trip: state => state.trip
+      trip: state => state.trip,
+      isOnEditMode: state => state.isOnEditMode
     }),
     privacySetting () {
       return this.publish ? '公開此行程' : '不公開此行程'
@@ -85,8 +137,12 @@ export default {
   },
   methods: {
     ...mapActions('trip', ['forkTrip']),
+    ...mapMutations('trip', ['TOGGLEEDITMODE']),
     fork () {
       this.forkTrip(this.trip._id)
+    },
+    toggleEditMode () {
+      this.TOGGLEEDITMODE()
     }
   }
 }
@@ -114,5 +170,17 @@ export default {
   top: 14px;
   margin-left: 26px !important;
   flex-grow: 0 !important;
+}
+
+.avatar {
+  cursor: pointer;
+}
+
+.dropDownMenu {
+  position: fixed;
+  top: 73px;
+  right: 15px;
+  z-index: 99;
+  border-radius: 5px;
 }
 </style>
