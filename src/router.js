@@ -102,6 +102,19 @@ export default new Router({
       name: 'User',
       meta: { showNavbar: true },
       component: () => import('./views/User.vue')
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      meta: { showNavbar: false },
+      component: () => import('./views/Admin.vue'),
+      async beforeEnter (to, from, next) {
+        await store.dispatch('account/getUser')
+        if (store.getters['account/getIsAdmin']) {
+          return next()
+        }
+        next({ path: from.path })
+      }
     }
   ]
 })

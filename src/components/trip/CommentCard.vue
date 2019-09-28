@@ -1,38 +1,37 @@
 <template lang="pug">
   .comment-card-root.mb-5
-    v-card(
+    v-card.d-flex.flex-row.align-center(
       width="450"
       min-width="250"
       min-height="70"
       outlined
       flat)
       .d-flex.flex-row.align-center
-        .d-flex.flex-row.align-center
-          v-avatar(size=60)
-              img(
-                v-if="comment.userAvatar"
-                :src="comment.userAvatar"
-                alt="avatar")
-              v-icon(
-                v-else="!comment.userAvatar"
-                large) mdi-account-circle
-          .userInfo
-            .headline.pr-5 {{ comment.userName }}
-            span.grey--text.caption {{ new Date(comment.date).toLocaleDateString()}}
-        .reply
-          v-card-text.mr-4(
-            style="color: rgba(0, 0, 0, 0.85); font-size: medium; "
-            v-if="!commentEdit") {{ comment.text }}
-          v-textarea.ml-5.mt-3(
-            style="width: 150px;"
-            v-else-if="commentEdit"
-            v-model="revisedComment"
-            auto-grow
-            autofocus
-            row-height=12
-            label="編輯留言"
-            rows=1)
-        .card-actions.d-flex.flex-row.align-center.justify-end
+        v-avatar.mx-2(size=60)
+            img(
+              v-if="comment.userAvatar"
+              :src="comment.userAvatar"
+              alt="avatar")
+            v-icon(
+              v-else="!comment.userAvatar"
+              large) mdi-account-circle
+        .userInfo
+          h4 {{ comment.username }}
+          span.grey--text.caption {{ new Date(comment.date).toLocaleDateString()}}
+      .reply
+        span.pl-3(
+          v-if="!commentEdit"
+          style="color: rgba(0, 0, 0, 0.85); font-size: medium; ") {{ comment.text }}
+        v-textarea.ml-5.mt-3(
+          style="width: 150px;"
+          v-else-if="commentEdit"
+          v-model="revisedComment"
+          auto-grow
+          autofocus
+          row-height=12
+          label="編輯留言"
+          rows=1)
+      .card-actions.d-flex.flex-row.align-center.justify-end
           v-card-actions
             v-btn(
               text
@@ -133,7 +132,8 @@ export default {
 .comment-card-root > div {
   border-radius: 7px;
   .userInfo {
-    min-width: 110px;
+    max-width: 100px;
+    white-space: nowrap;
   }
   .reply {
     width: 450px;

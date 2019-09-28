@@ -54,8 +54,12 @@
           color="success"
           outlined
         ) 登入
-        v-avatar(v-else)
-          router-link(tag="img" :to="`/users/${account._id}`" :src="account.avatar" alt="John")
+        v-avatar(v-else :style="{ position: 'relative' }" @click="isExpand = !isExpand")
+          img(:src="account.avatar" :alt="account.username")
+          div(v-if="isExpand" class="dropdown-list-container")
+            router-link(tag="div" :to="`/users/${account._id}`") 個人資料
+            router-link(v-if="account.isAdmin" tag="div" to="/admin") 後台
+            div(@click="logout") 登出
 </template>
 
 <script>
@@ -69,7 +73,8 @@ export default {
   },
   data () {
     return {
-      publish: false
+      publish: false,
+      isExpand: false
     }
   },
   computed: {
@@ -84,6 +89,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('account', ['logout']),
     ...mapActions('trip', ['forkTrip']),
     fork () {
       this.forkTrip(this.trip._id)
@@ -106,6 +112,21 @@ export default {
     z-index: 100;
     box-shadow: none;
     border-bottom: 1px solid rgba(102, 102, 102, 0.2);
+    .dropdown-list-container {
+      cursor: pointer;
+      position: absolute;
+      width: 120px;
+      background-color: white;
+      top: 59px;
+      right: -16px;
+      > div {
+        height: 36px;
+        border-bottom: 1px solid lightgray;
+        display: flex;
+        align-items: center;
+        padding-left: 13px;
+      }
+    }
   }
 }
 

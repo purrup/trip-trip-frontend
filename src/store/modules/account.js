@@ -7,6 +7,7 @@ const state = {
   expiration: new Date(localStorage.getItem('expiration')) || false,
   /** ***********/
   _id: 1,
+  isAdmin: false,
   username: 'MiaYang',
   introduction: "Hello I'm Mia",
   avatar: '',
@@ -39,6 +40,9 @@ const getters = {
       const trip = state.ratingTrips.filter(trip => trip.id === tripId)[0]
       return trip ? trip.userRating : 0
     }
+  },
+  getIsAdmin (state) {
+    return state.isAdmin
   }
 }
 
@@ -104,6 +108,12 @@ const actions = {
     } catch (error) {
       throw error
     }
+  },
+  async logout ({ commit }) {
+    await axios('/logout', {
+      method: 'post'
+    })
+    commit('SET_logout')
   },
   async getUser ({ commit }) {
     try {
