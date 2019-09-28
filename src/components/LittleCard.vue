@@ -38,9 +38,9 @@ export default {
     } else {
       this.images = this.item.images
     }
-    if (this.images.length === 0) {
-      this.images.push(require('@/assets/image/5.jpg'))
-    }
+    // if (!this.item.images) {
+    //   this.images.push(require('@/assets/image/5.jpg'))
+    // }
   }
 }
 </script>

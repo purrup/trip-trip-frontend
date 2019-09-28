@@ -45,6 +45,11 @@
             elevation=2
             @click="toggleEditMode"
           ) 編輯完成
+          v-btn.ml-8(
+            text
+            elevation=2
+          ) 上傳照片
+            v-icon.ml-2(left) mdi-cloud-upload-outline
           v-switch.ml-10.mt-7(
             v-model="publish"
             inset

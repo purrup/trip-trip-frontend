@@ -78,7 +78,7 @@ export default {
   data () {
     return {
       user: {},
-      rating: '',
+      rating: 0,
       images: []
     }
   },
