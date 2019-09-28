@@ -16,7 +16,7 @@
           solo
         )
         v-select(
-          v-if="$route.name === 'Trips' || $route.name === 'Sites' "
+          v-else-if="$route.name === 'Trips' || $route.name === 'Sites' "
           height="30px"
           class="custom-select-style"
           :style="{ 'width': '100px'} "
@@ -32,20 +32,33 @@
           @click="fork()"
         ) 複製行程
         v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit') && trip.userId === account._id"
+          v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId === account._id"
+          @click="toggleEditMode"
           text
           elevation=2
         ) 編輯模式
-        v-btn.ml-8(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
-          text
-          elevation=2
-        ) 日期
-        v-switch.ml-8.mt-7(
-          v-if="$route.path ===`/trips/${$route.params.id}` && $route.path.includes('edit')"
-          v-model="publish"
-          inset
-          :label="`${privacySetting}`")
+        .edit-buttons.d-flex.flex-nowrap.align-center(
+          v-if="isOnEditMode"
+        )
+          v-btn.ml-8(
+            text
+            elevation=2
+            @click="toggleEditMode"
+          ) 編輯完成
+          v-btn.ml-8(
+            text
+            elevation=2
+          ) 上傳照片
+            v-icon.ml-2(left) mdi-cloud-upload-outline
+          v-switch.ml-10.mt-7(
+            v-model="publish"
+            inset
+            :label="`${privacySetting}`")
+          v-btn.ml-6(
+            text
+            icon
+          )
+            v-icon mdi-trash-can-outline
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(
@@ -57,14 +70,20 @@
         v-avatar(v-else :style="{ position: 'relative' }" @click="isExpand = !isExpand")
           img(:src="account.avatar" :alt="account.username")
           div(v-if="isExpand" class="dropdown-list-container")
-            router-link(tag="div" :to="`/users/${account._id}`") 個人資料
-            router-link(v-if="account.isAdmin" tag="div" to="/admin") 後台
-            div(@click="logout") 登出
+            router-link(tag="div" :to="`/users/${account._id}`")
+              v-icon mdi-account-circle
+              span 個人資料
+            router-link(v-if="account.isAdmin" tag="div" to="/admin")
+              v-icon mdi-settings
+              span 後台
+            div(@click="logout")
+              v-icon mdi-logout
+              span 登出
 </template>
 
 <script>
 import SearchBar from '@/components/SearchBar.vue'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'navbar',
@@ -82,7 +101,8 @@ export default {
       account: state => state
     }),
     ...mapState('trip', {
-      trip: state => state.trip
+      trip: state => state.trip,
+      isOnEditMode: state => state.isOnEditMode
     }),
     privacySetting () {
       return this.publish ? '公開此行程' : '不公開此行程'
@@ -91,8 +111,12 @@ export default {
   methods: {
     ...mapActions('account', ['logout']),
     ...mapActions('trip', ['forkTrip']),
+    ...mapMutations('trip', ['TOGGLEEDITMODE']),
     fork () {
       this.forkTrip(this.trip._id)
+    },
+    toggleEditMode () {
+      this.TOGGLEEDITMODE()
     }
   }
 }
@@ -124,7 +148,10 @@ export default {
         border-bottom: 1px solid lightgray;
         display: flex;
         align-items: center;
-        padding-left: 13px;
+        padding-left: 10px;
+        > i {
+          padding-right: 6px;
+        }
       }
     }
   }
@@ -135,5 +162,17 @@ export default {
   top: 14px;
   margin-left: 26px !important;
   flex-grow: 0 !important;
+}
+
+.avatar {
+  cursor: pointer;
+}
+
+.dropDownMenu {
+  position: fixed;
+  top: 73px;
+  right: 15px;
+  z-index: 99;
+  border-radius: 5px;
 }
 </style>

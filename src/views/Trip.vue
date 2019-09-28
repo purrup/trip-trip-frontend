@@ -1,25 +1,24 @@
 <template lang="pug">
   #trip
     main
+      //- 左側切換欄
       #toggle-bar
         v-list
           v-list-item-group(mandatory)
-            v-list-item(
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5);"
+            v-list-item.leftTogglebarBlock(
               @click="toggleContent('overview')")
               v-list-item-content
                 v-list-item-title.text-center(v-text="'概覽'")
-            v-list-item(
+            v-list-item.leftTogglebarBlock(
               v-for="(date, i) in dates"
               :key="i"
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5); "
               @click="toggleContent(date)")
               v-list-item-content
-                v-list-item-title.text-center(v-text="`${ date.getMonth() + 1 + '/' + date.getDate() }`") // 顯示日期
-            v-list-item(
-              v-if="$route.path.includes('edit')"
-              style=" border: 0.5px solid rgba(102, 102, 102, 0.5);"
-              @click="addNewDate()") // 編輯模式中新增旅遊日期
+                v-list-item-title.text-center(v-text=" i+1 ") // 左側togglebar顯示第i+1天
+            //- 編輯模式中新增旅遊日期
+            v-list-item.leftTogglebarBlock(
+              v-if="isOnEditMode"
+              @click="addNewDate()")
               v-list-item-content
                 v-list-item-title.text-center(v-text="'+'")
       #content
@@ -36,10 +35,41 @@
                 color="grey lighten-2"
                 elevation="2")
                 v-icon(
-                  @click="control"
+                  v-if="isOnEditMode && !showeditDailySchedulePanel"
+                  @click="showeditDailySchedulePanel = !showeditDailySchedulePanel"
                   style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
                 //- 顯示日期
-                span.text-center(style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ changeDateType }}  ({{ weekdays }})
+                span.text-center(
+                  v-if="!showeditDailySchedulePanel || !isOnEditMode"
+                  style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ displayDate }}
+                .dailySchedulePanel.d-flex.justify-start.align-center(
+                  v-if="showeditDailySchedulePanel && isOnEditMode")
+                  .backButton.ml-3
+                    v-icon(
+                      large
+                      @click="showeditDailySchedulePanel = !showeditDailySchedulePanel") keyboard_arrow_left
+                  //- 選擇旅遊日期
+                  .calendarButton.ml-5(
+                    v-if="isOnEditMode"
+                    )
+                    v-btn(
+                      text
+                      icon
+                      @click.stop="showCalendar = true"
+                    )
+                      v-icon mdi-calendar
+                    v-dialog(
+                      width=300
+                      v-model="showCalendar"
+                      )
+                      v-date-picker(
+                        v-model="firstDatePicker"
+                        show-current
+                        )
+                  .noteButton.ml-7
+                    v-icon mdi-note-outline
+                  .deleteButton.ml-7
+                    v-icon mdi-trash-can-outline
             .schedule-list
               v-sheet.schedule-card.align-center.mb-3(
                 v-for="(schedule, i) in schedules[this.dates.indexOf(this.currentDisplay)]"
@@ -49,6 +79,10 @@
                 color="white"
                 elevation="2"
                 @click="getSite(schedule.id)")
+                v-icon.dots-vertical(
+                  v-if="isOnEditMode && !showEditActivityPanel"
+                  @click="showEditActivityPanel = !showEditActivityPanel"
+                  style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
                 .time {{ `${ new Date(schedule.startTime).getHours() + ':' + (new Date(schedule.startTime).getMinutes() === 0 ? '00' : new Date(schedule.startTime).getMinutes()) + ' ~ ' + new Date(schedule.endTime).getHours() + ':' + (new Date(schedule.endTime).getMinutes() === 0 ? '00' : new Date(schedule.endTime).getMinutes()) }` }}
                 .activity {{ schedule.name }}
                 .cost {{ '$' + schedule.cost }}
@@ -68,13 +102,11 @@
                 height=47
                 color="grey lighten-2"
                 elevation="2")
-                span.text-center(style=" width: 100%; cursor: default; ") 景點資訊
-            .little-card
+                span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
+            .little-card(v-if="currentSiteCard")
               little-card(
-                v-if="currentSiteCard"
                 :item="currentSiteCard"
                 :type="'site'")
-              p(v-else-if="currentSiteCard.length === 0") none
     #map
 </template>
 
@@ -84,6 +116,7 @@ import LittleCard from '@/components/LittleCard.vue'
 import siteApis from '@/utils/apis/site'
 // import userApis from '@/utils/apis/user.js'
 import { mapState } from 'vuex'
+import moment from 'moment'
 
 /* eslint-disable */
 export default {
@@ -96,10 +129,14 @@ export default {
     return {
       dates: [],
       currentDisplay: null,
-      currentSiteCard:[],
+      currentSiteCard:{},
       schedules:[],
       map: null,
-      marker: null
+      marker: null,
+      showCalendar: false,
+      showeditDailySchedulePanel: false,
+      showEditActivityPanel: false,
+      firstDatePicker: null
     }
   },
   beforeMount () {
@@ -116,6 +153,7 @@ export default {
     this.trip.contents.forEach(item => {
       this.schedules.push(item.activities)
     });
+    // console.log(moment(this.trip.startDate).format('MM-DD-YYYY'))
     // console.log(this.currentSiteCard)
     // console.log('schedules:', this.schedules)
     // console.log('dates:', typeof this.dates[0].getMinutes())
@@ -125,36 +163,14 @@ export default {
   },
   computed: {
     ...mapState('trip', {
-      trip: state => state.trip
+      trip: state => state.trip,
+      isOnEditMode: state => state.isOnEditMode
     }),
-    changeDateType() {
-      return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.getMonth() + 1 + '/' + this.currentDisplay.getDate()
-    },
-    weekdays() {
-      if(this.currentDisplay !== 'overview') {
-        switch(this.currentDisplay.getDay()) {
-          case 0:
-            return '日';
-            break;
-          case 1:
-            return '一';
-            break;
-          case 2:
-            return '二';
-            break;
-          case 3:
-            return '三';
-            break;
-          case 4:
-            return '四';
-            break;
-          case 5:
-            return '五';
-            break;
-          case 6:
-            return '六';
-            break;
-        }
+    displayDate() {
+      if (!this.trip.startDate) {
+        return '尚未選擇旅遊日期'
+      } else {
+        return this.currentDisplay === 'overview' ? 'overview' : moment(this.currentDisplay).format('YYYY-MM-DD, dddd')
       }
     },
     note() {
@@ -193,9 +209,6 @@ export default {
       nextDate.setDate(nextDate.getDate() + 1)
       this.dates.push(nextDate)
     },
-    control () {
-      console.log('control')
-    },
     async getSite (siteId) {
       try {
         this.currentSiteCard = await siteApis.getSite(siteId)
@@ -222,6 +235,9 @@ export default {
       grid-area: toggle-bar;
       width: 83px;
       justify-self: center;
+      .leftTogglebarBlock {
+        border: 0.5px solid rgba(102, 102, 102, 0.5);
+      }
     }
     #content {
       grid-area: content;
@@ -236,6 +252,11 @@ export default {
         grid-template-areas: "date . schedule-list";
         .date {
           grid-area: date;
+          .dailySchedulePanel {
+            * {
+              cursor: pointer;
+            }
+          }
         }
         .schedule-list {
           grid-area: schedule-list;
@@ -243,8 +264,11 @@ export default {
           grid-row-gap: 14px;
           .schedule-card {
             display: grid;
-            grid-template-columns: 8px 105px 4px auto 60px 8px;
-            grid-template-areas: ". time . activity cost .";
+            grid-template-columns: 30px 105px 4px auto 60px 8px;
+            grid-template-areas: "dot time . activity cost .";
+            .dots-vertical {
+              grid-area: dot;
+            }
             .time {
               grid-area: time;
             }

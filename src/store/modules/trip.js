@@ -86,10 +86,15 @@ const state = {
     ]
   }],
   trip: {
-  }
+  },
+  isOnEditMode: false
 }
 
-const getters = {}
+const getters = {
+  getIsOnEditMode (state) {
+    return state.isOnEditMode
+  }
+}
 
 const mutations = {
   SET_TRIPS (state, data) {
@@ -107,6 +112,9 @@ const mutations = {
   },
   DELETE_comment (state, commentId) {
     state.trip.comments = state.trip.comments.filter(comment => comment.id !== commentId)
+  },
+  TOGGLEEDITMODE (state) {
+    state.isOnEditMode = !state.isOnEditMode
   }
 }
 
