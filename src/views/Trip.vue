@@ -78,6 +78,7 @@
                     v-btn(
                       text
                       icon
+                      @click="deleteDate"
                     )
                       v-icon mdi-trash-can-outline
             .schedule-list
@@ -237,17 +238,12 @@ export default {
     // content預設資料
     this.currentDisplay = 'overview'
     // // 計算全部旅行日期
-    if(this.trip.startDate) {
-      const firstDate = new Date(this.trip.startDate)
-      for (let i = 0; i < this.trip.days; i++) {
-        let newDate = new Date(firstDate)
-        newDate.setDate(newDate.getDate() + i)
-        this.dates.push(newDate)
-      }
-    } else {
-      for (let i = 0; i < this.trip.days; i++) {
-        this.dates.push(i)
-      }
+    const startDate = this.trip.startDate ? this.trip.startDate : Date.now()
+    const firstDate = new Date(startDate)
+    for (let i = 0; i < this.trip.days; i++) {
+      let newDate = new Date(firstDate)
+      newDate.setDate(newDate.getDate() + i)
+      this.dates.push(newDate)
     }
     // 取得所有行程表內容
     this.trip.contents.forEach(item => {
@@ -264,7 +260,7 @@ export default {
     }),
     displayDate() {
       if (!this.trip.startDate) {
-        return '尚未選擇旅遊日期'
+        return this.dates[this.dates.indexOf(this.currentDisplay)].toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', {weekday: 'short'})
       } else {
         return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', {weekday: 'short'})
       }
@@ -300,15 +296,17 @@ export default {
     },
     addNewDate () {
     // 新增旅遊日期
-      if(this.trip.startDate) {
-        let lastDate = this.dates[this.dates.length - 1]
-        let nextDate = new Date(lastDate)
-        nextDate.setDate(nextDate.getDate() + 1)
-        this.dates.push(nextDate)
-      } else {
-        this.dates.push(this.dates.length)
-        this.schedules.push([this.newActivity])
+      let lastDate = this.dates[this.dates.length - 1]
+      let nextDate = new Date(lastDate)
+      nextDate.setDate(nextDate.getDate() + 1)
+      this.dates.push(nextDate)
+      if(!this.trip.startDate) {
+        this.schedules.push([])
       }
+    },
+    deleteDate () {
+      this.dates.splice(this.dates.indexOf(this.currentDisplay), 1)
+      this.schedules.splice(this.dates.indexOf(this.currentDisplay), 1)
     },
     addNewActivity () {
       let currentDateContent = this.schedules[this.dates.indexOf(this.currentDisplay)]
