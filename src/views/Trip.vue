@@ -20,7 +20,8 @@
               v-if="isOnEditMode"
               @click="addNewDate()")
               v-list-item-content
-                v-list-item-title.text-center(v-text="'+'")
+                v-list-item-title.text-center
+                  v-icon mdi-plus
       #content
         overview(
           v-if="currentDisplay === 'overview'"
@@ -40,7 +41,7 @@
                   style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
                 //- 顯示日期
                 span.text-center(
-                  v-if="!showeditDailySchedulePanel || !isOnEditMode"
+                  v-if="!showeditDailySchedulePanel"
                   style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ displayDate }}
                 .dailySchedulePanel.d-flex.justify-start.align-center(
                   v-if="showeditDailySchedulePanel && isOnEditMode")
@@ -48,10 +49,16 @@
                     v-icon(
                       large
                       @click="showeditDailySchedulePanel = !showeditDailySchedulePanel") keyboard_arrow_left
-                  //- 選擇旅遊日期
-                  .calendarButton.ml-5(
-                    v-if="isOnEditMode"
+                  //- 新增activity
+                  .addActivityButton.ml-5
+                    v-btn(
+                      text
+                      icon
+                      @click="addNewActivity"
                     )
+                      v-icon mdi-plus
+                  //- 選擇旅遊日期
+                  .calendarButton.ml-5
                     v-btn(
                       text
                       icon
@@ -65,29 +72,103 @@
                       v-date-picker(
                         v-model="firstDatePicker"
                         show-current
+                        @change="showCalendar = false"
                         )
-                  .noteButton.ml-7
-                    v-icon mdi-note-outline
                   .deleteButton.ml-7
-                    v-icon mdi-trash-can-outline
+                    v-btn(
+                      text
+                      icon
+                    )
+                      v-icon mdi-trash-can-outline
             .schedule-list
-              v-sheet.schedule-card.align-center.mb-3(
+              v-sheet.mb-3(
                 v-for="(schedule, i) in schedules[this.dates.indexOf(this.currentDisplay)]"
                 :key="i"
                 width=370
                 height=47
                 color="white"
                 elevation="2"
-                @click="getSite(schedule.id)")
-                v-icon.dots-vertical(
-                  v-if="isOnEditMode && !showEditActivityPanel"
-                  @click="showEditActivityPanel = !showEditActivityPanel"
-                  style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
-                .time {{ `${ new Date(schedule.startTime).getHours() + ':' + (new Date(schedule.startTime).getMinutes() === 0 ? '00' : new Date(schedule.startTime).getMinutes()) + ' ~ ' + new Date(schedule.endTime).getHours() + ':' + (new Date(schedule.endTime).getMinutes() === 0 ? '00' : new Date(schedule.endTime).getMinutes()) }` }}
-                .activity {{ schedule.name }}
-                .cost {{ '$' + schedule.cost }}
+                @click="schedule.id ? getSite(schedule.id) : false")
+                .schedule-card(v-if="!showEditActivityPanel")
+                  //- 切換每日行程內容的編輯模式
+                  v-icon.dots-vertical(
+                    v-if="isOnEditMode && !showEditActivityPanel"
+                    @click="showEditActivityPanel = true"
+                    style=" width: 40px; padding: 10px 0px;") mdi-dots-vertical
+                  //- 行程時間
+                  .time(v-if="!showEditActivityPanel") {{ `${ new Date(schedule.startTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) + ' ~ ' + new Date(schedule.endTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'})}`}}
+                  //- 行程內容
+                  .activity(v-if="!showEditActivityPanel") {{ schedule.name }}
+                  //- 花費
+                  .cost(v-if="!showEditActivityPanel") {{ '$' + schedule.cost }}
+                .schedule-card-edit(v-else-if="showEditActivityPanel")
+                  v-icon.back(
+                    v-if="showEditActivityPanel"
+                    @click="showEditActivityPanel = false"
+                    large) keyboard_arrow_left
+                  .time
+                    v-btn(
+                      icon
+                      @click="showTimePicker =true"
+                    )
+                      v-icon mdi-clock-outline
+                    v-dialog(
+                      v-model="showTimePicker"
+                      width=600
+                      height=500
+                      persistent
+                    )
+                      v-card
+                        //- v-card-title
+                        .container.pt-10.mb-6
+                          .timePickersGroup.d-flex.flex-row.flex-nowrap.justify-center.align-center
+                            span.mx-5 開始時間
+                            input(
+                              style="padding: 10px;"
+                              type="time"
+                              name="start-time"
+                              label="開始時間"
+                              :value="`${ new Date(schedule.startTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) }`"
+                            )
+                            .px-5
+                            span.mx-5 結束時間
+                            input(
+                              style="padding: 10px;"
+                              type="time"
+                              name="end-time"
+                              label="結束時間"
+                              :value="`${ new Date(schedule.endTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) }`"
+                            )
+                        v-card-actions
+                          .flex-grow-1
+                          .btnGroup.mb-3
+                            v-btn(
+                              color="info"
+                              ) 確定
+                            v-btn.mx-5(
+                              color="error"
+                              @click="showTimePicker = false") 取消
+                  .cost.d-flex.flex-nowrap.flex-row
+                    p.mr-1 $
+                    input(
+                      style="width: 50px;"
+                      :value="`${schedule.cost}`"
+                    )
+                  .activity
+                    input(
+                      style="width: 169px;"
+                      :value="schedule.name")
+                  .delete-activity
+                    v-btn(
+                      text
+                      icon
+                      @click="deleteActivity(schedule)"
+                    )
+                      v-icon mdi-trash-can-outline
+              //- 備註
               .note.mt-4
                 v-sheet.d-flex.flex-wrap.align-start(
+                  v-if="!showeditDailySchedulePanel"
                   width=370
                   height=268
                   color="grey lighten-4"
@@ -95,6 +176,13 @@
                   .col-auto
                     span(style=" width: 100%; ") 備註：
                     p {{ note }}
+                v-textarea(
+                  v-else-if="showeditDailySchedulePanel"
+                  auto-grow
+                  rows=1
+                  :value="note"
+                  label="備註:"
+                )
           .site
             .title.mb-2
               v-sheet.d-flex.justify-start.align-center(
@@ -116,7 +204,6 @@ import LittleCard from '@/components/LittleCard.vue'
 import siteApis from '@/utils/apis/site'
 // import userApis from '@/utils/apis/user.js'
 import { mapState } from 'vuex'
-import moment from 'moment'
 
 /* eslint-disable */
 export default {
@@ -136,27 +223,36 @@ export default {
       showCalendar: false,
       showeditDailySchedulePanel: false,
       showEditActivityPanel: false,
-      firstDatePicker: null
+      showTimePicker: false,
+      firstDatePicker: null,
+      newActivity: {
+        name: '',
+        cost: 0,
+        startTime: Date.now(),
+        endTime: Date.now()
+      }
     }
   },
   beforeMount () {
     // content預設資料
     this.currentDisplay = 'overview'
     // // 計算全部旅行日期
-    const firstDate = new Date(this.trip.startDate)
-    for (let i = 0; i < this.trip.days; i++) {
-      let newDate = new Date(firstDate)
-      newDate.setDate(newDate.getDate() + i)
-      this.dates.push(newDate)
+    if(this.trip.startDate) {
+      const firstDate = new Date(this.trip.startDate)
+      for (let i = 0; i < this.trip.days; i++) {
+        let newDate = new Date(firstDate)
+        newDate.setDate(newDate.getDate() + i)
+        this.dates.push(newDate)
+      }
+    } else {
+      for (let i = 0; i < this.trip.days; i++) {
+        this.dates.push(i)
+      }
     }
     // 取得所有行程表內容
     this.trip.contents.forEach(item => {
       this.schedules.push(item.activities)
     });
-    // console.log(moment(this.trip.startDate).format('MM-DD-YYYY'))
-    // console.log(this.currentSiteCard)
-    // console.log('schedules:', this.schedules)
-    // console.log('dates:', typeof this.dates[0].getMinutes())
   },
   mounted () {
     this.initMap()
@@ -170,11 +266,11 @@ export default {
       if (!this.trip.startDate) {
         return '尚未選擇旅遊日期'
       } else {
-        return this.currentDisplay === 'overview' ? 'overview' : moment(this.currentDisplay).format('YYYY-MM-DD, dddd')
+        return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', {weekday: 'short'})
       }
     },
     note() {
-      return this.trip.contents[this.dates.indexOf(this.currentDisplay)].note
+      return this.trip.contents[this.dates.indexOf(this.currentDisplay)] ? this.trip.contents[this.dates.indexOf(this.currentDisplay)].note : ''
     }
   },
   methods: {
@@ -204,16 +300,42 @@ export default {
     },
     addNewDate () {
     // 新增旅遊日期
-      let lastDate = this.dates[this.dates.length - 1]
-      let nextDate = new Date(lastDate)
-      nextDate.setDate(nextDate.getDate() + 1)
-      this.dates.push(nextDate)
+      if(this.trip.startDate) {
+        let lastDate = this.dates[this.dates.length - 1]
+        let nextDate = new Date(lastDate)
+        nextDate.setDate(nextDate.getDate() + 1)
+        this.dates.push(nextDate)
+      } else {
+        this.dates.push(this.dates.length)
+        this.schedules.push([this.newActivity])
+      }
+    },
+    addNewActivity () {
+      let currentDateContent = this.schedules[this.dates.indexOf(this.currentDisplay)]
+      let now = new Date(Date.now())
+      currentDateContent.push(this.newActivity)
+    },
+    deleteActivity (schedule) {
+      let currentDateContent = this.schedules[this.dates.indexOf(this.currentDisplay)]
+      let scheduleIndex = currentDateContent.indexOf(schedule)
+      // 刪除activity
+      currentDateContent.splice(scheduleIndex, 1)
     },
     async getSite (siteId) {
       try {
         this.currentSiteCard = await siteApis.getSite(siteId)
       } catch (error) {
         console.log(error)
+      }
+    }
+  },
+  watch: {
+    isOnEditMode (newValue) {
+      if(newValue === false) {
+        this.showCalendar = false
+        this.showeditDailySchedulePanel = false
+        this.showEditActivityPanel = false
+        this.showTimePicker = false
       }
     }
   }
@@ -263,7 +385,9 @@ export default {
           grid-auto-rows: 50px;
           grid-row-gap: 14px;
           .schedule-card {
+            height: 100%;
             display: grid;
+            align-items: center;
             grid-template-columns: 30px 105px 4px auto 60px 8px;
             grid-template-areas: "dot time . activity cost .";
             .dots-vertical {
@@ -277,6 +401,29 @@ export default {
             }
             .cost {
               grid-area: cost;              
+            }
+          }
+          .schedule-card-edit {
+            height: 100%;
+            display: grid;
+            align-items: center;
+            grid-template-columns: 30px 30px 60px auto 30px 10px;
+            grid-template-areas: "back time cost name delete .";
+            column-gap: 10px;
+            .back {
+              grid-area: back;
+            }
+            .time {
+              grid-area: time;
+            }
+            .cost {
+              grid-area: cost;
+            }
+            .delete-activity {
+              grid-area: delete;
+            }
+            .activity {
+              grid-area: name;
             }
           }
         }

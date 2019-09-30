@@ -28,12 +28,11 @@
       .article(v-if="trip.journal")
         p {{trip.journal}}
       .article(v-else-if="isOnEditMode")
-        v-textarea(
-          auto-grow
-          outlined
+        v-text-field(
           name="journal"
           label="遊記"
-          :value="trip.journal")
+          :value="trip.journal"
+          :rules="rules.tripName")
       .article(v-else-if="!trip.journal && !isOnEditMode")
         p 尚未新增
       br
@@ -79,7 +78,10 @@ export default {
     return {
       user: {},
       rating: 0,
-      images: []
+      images: [],
+      rules: {
+        tripName: [v => (v.length <= 15) || '名稱請勿超過15個字']
+      }
     }
   },
   async created () {
