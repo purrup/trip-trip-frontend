@@ -40,7 +40,6 @@ export default new Router({
     {
       path: '/redirect',
       redirect: (to) => {
-        console.log(to)
         if (to.query.hasOwnProperty('status')) {
           if (to.query.status === '409') {
             alert('此信箱已用其他方式註冊過')

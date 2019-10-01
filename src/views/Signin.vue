@@ -78,7 +78,10 @@ export default {
         v => !!v || 'Password is required',
         v => (v && v.length >= 4) || 'Password must be more than 6 characters'
       ],
-      showPassword: false
+      showPassword: false,
+      baseURL: process.env.NODE_ENV === 'production'
+        ? 'https://triptrip-backend.herokuapp.com'
+        : 'http://localhost:3000'
     }
   },
   methods: {
@@ -101,10 +104,10 @@ export default {
       }
     },
     facebookLogin () {
-      window.location = 'http://localhost:3000/facebook'
+      window.location = this.baseURL + '/facebook'
     },
     googleLogin () {
-      window.location = 'http://localhost:3000/google'
+      window.location = this.baseURL + '/google'
     }
   }
 }

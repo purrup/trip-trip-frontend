@@ -2,7 +2,7 @@ import Axios from 'axios'
 
 const options = {
   baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://triptrip-backend.herokuapp.com:3000'
+    ? 'https://triptrip-backend.herokuapp.com'
     : 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json'
