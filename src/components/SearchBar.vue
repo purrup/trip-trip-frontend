@@ -1,5 +1,5 @@
 <template lang="pug">
-  form(@submit="searchByKeyword(keyword)" class="search-bar-root" :style="{ 'width': width, 'height' : height }")
+  form(@submit.prevent="searchByKeyword(keyword)" class="search-bar-root" :style="{ 'width': width, 'height' : height }")
     input(
       v-model="keyword"
       type="search"
@@ -98,7 +98,7 @@ export default {
       if (this.tab === 0) {
         this.$router.push(`/sites/?keyword=${keyword}`)
       } else {
-        this.$router.push(`/trips/?keyword=${keyword}`)
+        this.$router.push({ path: '/trips', query: { keyword } })
       }
     }
   }
