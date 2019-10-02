@@ -42,7 +42,6 @@ export default {
       // Manually change avatar first, since the response have to wait for a long time
       const avatar = e.target.files[0]
       this.$emit('changeAvatar', avatar)
-
       const formData = new FormData()
       formData.append('image', avatar)
       this.editProfile(formData)

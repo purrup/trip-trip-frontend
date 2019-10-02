@@ -88,7 +88,7 @@ export default {
     const { data } = await userApis.getUser(this.trip.userId)
     this.user = data
     this.rating = this.getTripRating(this.trip._id)
-    if (!this.trip.images) {
+    if (this.trip.images) {
       this.images = this.trip.images
     } else {
       this.images.push('https://source.unsplash.com/random/686x360')

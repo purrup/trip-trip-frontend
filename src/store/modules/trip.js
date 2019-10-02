@@ -210,6 +210,17 @@ const actions = {
     } catch (error) {
       console.log(error)
     }
+  },
+  async updateTrip ({ commit }, { tripId, formData }) {
+    try {
+      await axios(`/trips/${tripId}`, {
+        method: 'patch',
+        timeout: 0,
+        data: formData
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

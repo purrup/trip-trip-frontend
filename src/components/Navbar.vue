@@ -48,8 +48,44 @@
           v-btn.ml-8(
             text
             elevation=2
+            @click="editImage"
           ) 上傳照片
             v-icon.ml-2(left) mdi-cloud-upload-outline
+          v-dialog(
+            v-model="showEditImage"
+            width=600
+            height=500
+            persistent
+          )
+            v-card
+              v-card-title.justify-center 上傳照片至概覽
+              div(class="container")
+                //- input(
+                //-   type="file"
+                //-   @change="uploadTripImages"
+                //- )
+                v-file-input(
+                  type="file"
+                  chips
+                  multiple
+                  label="上傳一個/多個檔案"
+                  @change="uploadTripImages"
+                )
+                v-data-table(
+                  :headers="headers"
+                  :items="items"
+                  hide-default-footer
+                )
+              v-card-actions
+                .flex-grow-1
+                .btnGroup.mb-3
+                  v-btn(
+                    color="info"
+                    @click="showEditImage = false"
+                    ) 確定
+                  v-btn.mx-5(
+                    color="error"
+                    @click="showEditImage = false") 取消
           v-switch.ml-10.mt-7(
             v-model="publish"
             inset
@@ -93,7 +129,17 @@ export default {
   data () {
     return {
       publish: false,
-      isExpand: false
+      isExpand: false,
+      showEditImage: false,
+      headers: [
+        {
+          text: '檔案名',
+          align: 'start',
+          sortable: false,
+          value: 'images'
+        }
+      ],
+      items: [this.trip]
     }
   },
   computed: {
@@ -110,13 +156,25 @@ export default {
   },
   methods: {
     ...mapActions('account', ['logout']),
-    ...mapActions('trip', ['forkTrip']),
+    ...mapActions('trip', ['forkTrip', 'updateTrip']),
     ...mapMutations('trip', ['TOGGLEEDITMODE']),
     fork () {
       this.forkTrip(this.trip._id)
     },
     toggleEditMode () {
       this.TOGGLEEDITMODE()
+    },
+    editImage () {
+      this.showEditImage = true
+    },
+    uploadTripImages (e) {
+      console.log(e)
+      const images = e
+      const formData = new FormData()
+      formData.append('images', images)
+      formData.append('data', JSON.stringify(this.trip))
+      const tripId = this.trip._id
+      this.updateTrip({ tripId, formData })
     }
   }
 }
