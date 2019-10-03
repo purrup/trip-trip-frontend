@@ -15,7 +15,8 @@
           v-if="!showeditDailySchedulePanel"
           style=" width: calc(100% - 40px); cursor: default; margin-right: 40px;") {{ displayDate }}
         .dailySchedulePanel.d-flex.justify-start.align-center(
-          v-if="showeditDailySchedulePanel && isOnEditMode")
+          v-if="showeditDailySchedulePanel && isOnEditMode"
+          style="width: 100%;")
           .backButton.ml-3
             v-icon(
               large
@@ -28,24 +29,8 @@
               @click="addNewActivity"
             )
               v-icon mdi-plus
-          //- 選擇旅遊日期
-          .calendarButton.ml-5
-            v-btn(
-              text
-              icon
-              @click.stop="showCalendar = true"
-            )
-              v-icon mdi-calendar
-            v-dialog(
-              width=300
-              v-model="showCalendar"
-              )
-              v-date-picker(
-                v-model="firstDatePicker"
-                show-current
-                @change="showCalendar = false"
-                )
-          .deleteButton.ml-7
+          v-spacer
+          .deleteButton.mr-2
             v-btn(
               text
               icon
@@ -158,8 +143,7 @@
 </template>
 
 <script>
-import siteApis from '@/utils/apis/site'
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'TripSchedule',
@@ -170,7 +154,6 @@ export default {
   },
   data () {
     return {
-      showCalendar: false,
       showeditDailySchedulePanel: false,
       showEditActivityPanel: false,
       showTimePicker: false,
@@ -218,18 +201,13 @@ export default {
       // 刪除activity
       currentDateContent.splice(scheduleIndex, 1)
     },
-    async getSite (siteId) {
-      try {
-        this.currentSiteCard = await siteApis.getSite(siteId)
-      } catch (error) {
-        console.log(error)
-      }
+    getSite (siteId) {
+      this.$emit('getSite', siteId)
     }
   },
   watch: {
     isOnEditMode (newValue) {
       if (newValue === false) {
-        this.showCalendar = false
         this.showeditDailySchedulePanel = false
         this.showEditActivityPanel = false
         this.showTimePicker = false

@@ -123,6 +123,19 @@ const mutations = {
   },
   UPDATE_TRIP_NAME (state, data) {
     state.trip.name = data
+  },
+  UPDATE_TRIP_startDate (state, data) {
+    if (!state.trip.startDate) {
+      state.trip['startDate'] = data
+    } else {
+      state.trip.startDate = data
+    }
+  },
+  UPDATE_TRIP_privacy (state, data) {
+    state.trip.isPrivate = data
+  },
+  UPDATE_TRIP_journal (state, data) {
+    state.trip.journal = data
   }
 }
 

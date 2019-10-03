@@ -26,6 +26,23 @@
             elevation=2
             @click="editComplete"
           ) 編輯完成
+          //- 選擇旅遊日期
+          .calendarButton.ml-8
+            v-btn(
+              text
+              elevation=2
+              @click.stop="showCalendar = true"
+            ) 行程起始日期
+              v-icon.ml-2(left) mdi-calendar
+            v-dialog(
+              width=300
+              v-model="showCalendar"
+              )
+              v-date-picker(
+                v-model="firstDatePicker"
+                show-current
+                @change="updateStartDate"
+                )
           v-btn.ml-8(
             text
             elevation=2
@@ -62,7 +79,8 @@
           v-switch.ml-10.mt-7(
             v-model="publish"
             inset
-            :label="`${privacySetting}`")
+            :label="`${privacySetting}`"
+            @change="updatePrivacy")
           v-btn.ml-6(
             text
             icon
@@ -101,6 +119,7 @@
             :currentDate="`${currentDate}`"
             :dates="dates"
             :currentDisplay="currentDisplay"
+            @getSite="getSite"
           )
           .site
             .title.mb-2
@@ -121,7 +140,7 @@
 import Overview from '@/components/trip/Overview.vue'
 import TripSchedule from '@/components/trip/TripSchedule.vue'
 import LittleCard from '@/components/LittleCard.vue'
-// import siteApis from '@/utils/apis/site'
+import siteApis from '@/utils/apis/site'
 // import userApis from '@/utils/apis/user.js'
 import { mapState, mapActions, mapMutations } from 'vuex'
 
@@ -141,6 +160,7 @@ export default {
       map: null,
       marker: null,
       showCalendar: false,
+      firstDatePicker: null,
       publish: false,
       showEditImage: false,
     }
@@ -157,13 +177,18 @@ export default {
       this.dates.push(newDate)
     }
   },
+  beforeUpdate () {
+  },
+  updated () {
+  },
   mounted () {
     this.initMap()
   },
   computed: {
     ...mapState('trip', {
       trip: state => state.trip,
-      isOnEditMode: state => state.isOnEditMode
+      isOnEditMode: state => state.isOnEditMode,
+      startDate: state => state.startDate ? state.startDate : Date.now()
     }),
     ...mapState('account', {
       account: state => state
@@ -172,12 +197,12 @@ export default {
       return this.dates.indexOf(this.currentDisplay)
     },
     privacySetting () {
-      return this.publish ? '公開此行程' : '不公開此行程'
+      return this.trip.isPrivate ? '公開此行程' : '不公開此行程'
     }
   },
   methods: {
     ...mapActions('trip', ['forkTrip', 'updateTrip']),
-    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW']),
+    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 23.039808, lng: 120.211868 },
@@ -208,18 +233,23 @@ export default {
     toggleContent (content) {
       this.currentDisplay = content
     },
+    updateStartDate () {
+      this.showCalendar = false
+      this.UPDATE_TRIP_startDate(this.firstDatePicker)
+    },
     addNewDate () {
     // 新增旅遊日期及單日的行程規劃
       let lastDate = this.dates[this.dates.length - 1]
       let nextDate = new Date(lastDate)
       nextDate.setDate(nextDate.getDate() + 1)
       this.dates.push(nextDate)
-      if(!this.trip.startDate) {
-        this.trip.contents.push({
-          activities: [],
-          note: ''
-        })
-      }
+      this.trip.contents.push({
+        activities: [],
+        note: ''
+      })
+    },
+    updatePrivacy (value) {
+      this.UPDATE_TRIP_privacy(value)
     },
     editComplete () {
       const formData = new FormData()
@@ -241,12 +271,29 @@ export default {
       // 即時預覽上傳圖片
       // 放在updateTrip之後以免傳blob出去
       this.CHANGE_IMAGES_OF_OVERVIEW(previewImages)
+    },
+    async getSite (siteId) {
+      try {
+        this.currentSiteCard = await siteApis.getSite(siteId)
+      } catch (error) {
+        console.log(error)
+      }
     }
   },
   watch: {
     isOnEditMode (newValue) {
       if(newValue === false) {
         this.showCalendar = false
+      }
+    },
+    firstDatePicker (newValue) {
+      // 選取日期後立即更新頁面日期
+      const firstDate = new Date(newValue)
+      this.dates = []
+      for (let i = 0; i < this.trip.days; i++) {
+        let newDate = new Date(firstDate)
+        newDate.setDate(newDate.getDate() + i)
+        this.dates.push(newDate)
       }
     }
   }

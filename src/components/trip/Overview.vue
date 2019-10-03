@@ -13,13 +13,10 @@
     .journal.mx-auto.mt-5
       .display-2.text-center(v-if="!isOnEditMode") {{trip.name}}
       .display-2.text-center(v-else)
-        v-textarea(
+        v-text-field(
           :value="trip.name"
-          v-model="tripName"
-          auto-grow
-          rows=1
           label="行程名稱"
-          @change="changeTripName"
+          @change="updateTripName"
           :rules="tripNameRules"
         )
       br
@@ -28,16 +25,20 @@
         li.mb-2 旅遊天數： {{ trip.days }}
         li.mb-2 城市： {{ cities }}
       br
-      .article(v-if="trip.journal")
-        p {{trip.journal}}
+      .article.d-flex.flex-wrap(
+        v-if="!isOnEditMode"
+        style="word-wrap: break-word;"
+        ) {{trip.journal}}
       .article(v-else-if="isOnEditMode")
-        v-text-field(
+        v-textarea(
+          auto-grow
+          rows=1
           name="journal"
-          v-model="journal"
           label="遊記"
-          :value="trip.journal")
+          :value="trip.journal"
+          @change="updateJournal")
       .article(v-else-if="!trip.journal && !isOnEditMode")
-        p 尚未新增
+        p 尚未新增遊記
       br
       .comments
         comment.d-flex.flex-wrap.justify-start(:comments="trip.comments" :tripId="trip._id")
@@ -82,8 +83,6 @@ export default {
       user: {},
       rating: 0,
       images: [],
-      tripName: '',
-      journal: '',
       tripNameRules: [
         v => v.length <= 15 || v.length !== 0 || '名稱請勿超過15個字'
       ]
@@ -112,34 +111,39 @@ export default {
   },
   methods: {
     ...mapMutations('account', ['RATE_trip']),
-    ...mapMutations('trip', ['UPDATE_TRIP_NAME']),
+    ...mapMutations('trip', ['UPDATE_TRIP_NAME', 'UPDATE_TRIP_journal']),
     ...mapActions('trip', ['rateTrip']),
-    changeTripName () {
-      console.log(this.tripName)
-      this.UPDATE_TRIP_NAME(this.tripName)
+    updateTripName (value) {
+      this.UPDATE_TRIP_NAME(value)
+    },
+    updateJournal (value) {
+      this.UPDATE_TRIP_journal(value)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-.pictures {
-  max-width: 686px;
-  > :nth-child(1) {
-    height: 100%;
+.overview-root {
+  height: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 360px auto;
+  grid-template-areas: "pictures journal";
+  .pictures {
+    grid-area: pictures;
+    max-width: 686px;
+    > :nth-child(1) {
+      height: 100%;
+    }
+  }
+  .journal {
+    grid-area: journal;
+    width: 590px;
+    .comments {
+      width: 542px;
+      height : auto;
+    }
   }
 }
-.journal {
-  width: 590px;
-  height: 100%;
-}
-.article {
-  height: auto;
-}
-.comments {
-  width: 542px;
-  height : auto;
-}
-
 </style>
