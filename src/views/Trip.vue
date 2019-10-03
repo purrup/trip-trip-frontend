@@ -1,6 +1,73 @@
 <template lang="pug">
   #trip
     main
+      transition(name="fade" mode="out-in")
+        .edit-buttons.d-flex.flex-nowrap.align-center(
+          v-if="!isOnEditMode"
+        )
+          v-btn(
+            v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId !== account._id"
+            text
+            elevation=2
+            @click="fork"
+          ) 複製行程
+          v-btn(
+            v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId === account._id"
+            @click="toggleEditMode"
+            text
+            elevation=2
+          ) 編輯模式
+      transition(name="fade" mode="out-in")
+        .edit-buttons.d-flex.flex-nowrap.align-center(
+          v-if="isOnEditMode"
+        )
+          v-btn(
+            text
+            elevation=2
+            @click="editComplete"
+          ) 編輯完成
+          v-btn.ml-8(
+            text
+            elevation=2
+            @click="showEditImage = true"
+          ) 上傳照片
+            v-icon.ml-2(left) mdi-cloud-upload-outline
+          v-dialog(
+            v-model="showEditImage"
+            width=600
+            height=500
+            persistent
+          )
+            v-card
+              v-card-title.justify-center 上傳照片至概覽
+              div(class="container")
+                v-file-input(
+                  type="file"
+                  ref="file"
+                  chips
+                  multiple
+                  label="上傳一個/多個檔案"
+                  @change="uploadTripImages"
+                )
+              v-card-actions
+                .flex-grow-1
+                .btnGroup.mb-3
+                  v-btn(
+                    color="info"
+                    @click="showEditImage = false"
+                    ) 確定
+                  v-btn.mx-5(
+                    color="error"
+                    @click="showEditImage = false") 取消
+          v-switch.ml-10.mt-7(
+            v-model="publish"
+            inset
+            :label="`${privacySetting}`")
+          v-btn.ml-6(
+            text
+            icon
+          )
+            v-icon mdi-trash-can-outline
       //- 左側切換欄
       #toggle-bar
         v-list
@@ -131,7 +198,7 @@
                               label="開始時間"
                               :value="`${ new Date(schedule.startTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) }`"
                             )
-                            .px-5
+                            .px-5g887
                             span.mx-5 結束時間
                             input(
                               style="padding: 10px;"
@@ -167,16 +234,16 @@
                     )
                       v-icon mdi-trash-can-outline
               //- 備註
-              .note.mt-4
+              .note.mt-8
                 v-sheet.d-flex.flex-wrap.align-start(
                   v-if="!showeditDailySchedulePanel"
                   width=370
-                  height=268
+                  height=auto
                   color="grey lighten-4"
                   elevation="2")
                   .col-auto
                     span(style=" width: 100%; ") 備註：
-                    p {{ note }}
+                    p.my-4 {{ note }}
                 v-textarea(
                   v-else-if="showeditDailySchedulePanel"
                   auto-grow
@@ -204,7 +271,7 @@ import Overview from '@/components/trip/Overview.vue'
 import LittleCard from '@/components/LittleCard.vue'
 import siteApis from '@/utils/apis/site'
 // import userApis from '@/utils/apis/user.js'
-import { mapState } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 /* eslint-disable */
 export default {
@@ -231,7 +298,9 @@ export default {
         cost: 0,
         startTime: Date.now(),
         endTime: Date.now()
-      }
+      },
+      publish: false,
+      showEditImage: false,
     }
   },
   beforeMount () {
@@ -245,10 +314,6 @@ export default {
       newDate.setDate(newDate.getDate() + i)
       this.dates.push(newDate)
     }
-    // // 取得所有行程表內容
-    // this.trip.contents.forEach(item => {
-    //   this.schedules.push(item.activities)
-    // });
   },
   mounted () {
     this.initMap()
@@ -257,6 +322,9 @@ export default {
     ...mapState('trip', {
       trip: state => state.trip,
       isOnEditMode: state => state.isOnEditMode
+    }),
+    ...mapState('account', {
+      account: state => state
     }),
     displayDate() {
       if (!this.trip.startDate) {
@@ -270,9 +338,14 @@ export default {
     },
     currentDate () {
       return this.dates.indexOf(this.currentDisplay)
+    },
+    privacySetting () {
+      return this.publish ? '公開此行程' : '不公開此行程'
     }
   },
   methods: {
+    ...mapActions('trip', ['forkTrip', 'updateTrip']),
+    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 23.039808, lng: 120.211868 },
@@ -293,6 +366,12 @@ export default {
     showSiteOnMap (pos) {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
+    },
+    fork () {
+      this.forkTrip(this.trip._id)
+    },
+    toggleEditMode () {
+      this.TOGGLE_isOnEditMode()
     },
     toggleContent (content) {
       this.currentDisplay = content
@@ -329,6 +408,27 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    editComplete () {
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.trip))
+      const tripId = this.trip._id
+      this.updateTrip({ tripId, formData })
+      this.TOGGLE_isOnEditMode()
+    },
+    uploadTripImages (files) {
+      const formData = new FormData()
+      let previewImages = []
+      files.forEach(image => {
+        formData.append('images', image)
+        previewImages.push(URL.createObjectURL(image))
+      })
+      formData.append('data', JSON.stringify(this.trip))
+      const tripId = this.trip._id
+      this.updateTrip({ tripId, formData })
+      // 即時預覽上傳圖片
+      // 放在updateTrip之後以免傳blob出去
+      this.CHANGE_IMAGES_OF_OVERVIEW(previewImages)
     }
   },
   watch: {
@@ -354,7 +454,21 @@ export default {
     height: 100vh;
     display: grid;
     grid-template-columns: 48px 83px 15px 640px;
-    grid-template-areas: ". toggle-bar . content";
+    grid-template-rows: 70px auto;
+    grid-template-areas: 
+    ". edit-buttons edit-buttons edit-buttons"
+    ". toggle-bar . content";
+    .edit-buttons {
+      grid-area: edit-buttons;
+      height: 70px;
+    }
+    //edit-buttons transition
+    .fade-enter-active, .fade-enter-active {
+      transition: all 1.2s ease;
+    }
+    .fade-enter, .fade-leave-to {
+      opacity: 0;
+    }
     #toggle-bar {
       grid-area: toggle-bar;
       width: 83px;
