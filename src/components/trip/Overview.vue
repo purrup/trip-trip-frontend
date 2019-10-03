@@ -14,10 +14,13 @@
       .display-2.text-center(v-if="!isOnEditMode") {{trip.name}}
       .display-2.text-center(v-else)
         v-textarea(
+          :value="trip.name"
+          v-model="tripName"
           auto-grow
           rows=1
-          :value="trip.name"
           label="行程名稱"
+          @change="changeTripName"
+          :rules="tripNameRules"
         )
       br
       ul(style="list-style: none; padding: 0;")
@@ -30,9 +33,9 @@
       .article(v-else-if="isOnEditMode")
         v-text-field(
           name="journal"
+          v-model="journal"
           label="遊記"
-          :value="trip.journal"
-          :rules="rules.tripName")
+          :value="trip.journal")
       .article(v-else-if="!trip.journal && !isOnEditMode")
         p 尚未新增
       br
@@ -79,9 +82,11 @@ export default {
       user: {},
       rating: 0,
       images: [],
-      rules: {
-        tripName: [v => (v.length <= 15) || '名稱請勿超過15個字']
-      }
+      tripName: '',
+      journal: '',
+      tripNameRules: [
+        v => v.length <= 15 || v.length !== 0 || '名稱請勿超過15個字'
+      ]
     }
   },
   async created () {
@@ -107,7 +112,12 @@ export default {
   },
   methods: {
     ...mapMutations('account', ['RATE_trip']),
-    ...mapActions('trip', ['rateTrip'])
+    ...mapMutations('trip', ['UPDATE_TRIP_NAME']),
+    ...mapActions('trip', ['rateTrip']),
+    changeTripName () {
+      console.log(this.tripName)
+      this.UPDATE_TRIP_NAME(this.tripName)
+    }
   }
 }
 </script>

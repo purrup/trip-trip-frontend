@@ -83,7 +83,7 @@
                       v-icon mdi-trash-can-outline
             .schedule-list
               v-sheet.mb-3(
-                v-for="(schedule, i) in schedules[this.dates.indexOf(this.currentDisplay)]"
+                v-for="(schedule, i) in trip.contents[currentDate].activities"
                 :key="i"
                 width=370
                 height=47
@@ -217,8 +217,8 @@ export default {
     return {
       dates: [],
       currentDisplay: null,
-      currentSiteCard:{},
-      schedules:[],
+      currentSiteCard: {},
+      schedules: [],
       map: null,
       marker: null,
       showCalendar: false,
@@ -245,10 +245,10 @@ export default {
       newDate.setDate(newDate.getDate() + i)
       this.dates.push(newDate)
     }
-    // 取得所有行程表內容
-    this.trip.contents.forEach(item => {
-      this.schedules.push(item.activities)
-    });
+    // // 取得所有行程表內容
+    // this.trip.contents.forEach(item => {
+    //   this.schedules.push(item.activities)
+    // });
   },
   mounted () {
     this.initMap()
@@ -267,6 +267,9 @@ export default {
     },
     note() {
       return this.trip.contents[this.dates.indexOf(this.currentDisplay)] ? this.trip.contents[this.dates.indexOf(this.currentDisplay)].note : ''
+    },
+    currentDate () {
+      return this.dates.indexOf(this.currentDisplay)
     }
   },
   methods: {
@@ -295,26 +298,27 @@ export default {
       this.currentDisplay = content
     },
     addNewDate () {
-    // 新增旅遊日期
+    // 新增旅遊日期及單日的行程規劃
       let lastDate = this.dates[this.dates.length - 1]
       let nextDate = new Date(lastDate)
       nextDate.setDate(nextDate.getDate() + 1)
       this.dates.push(nextDate)
       if(!this.trip.startDate) {
-        this.schedules.push([])
+        this.trip.contents[this.currentDate].activities.push([])
       }
     },
     deleteDate () {
-      this.dates.splice(this.dates.indexOf(this.currentDisplay), 1)
-      this.schedules.splice(this.dates.indexOf(this.currentDisplay), 1)
+      // 刪除單一天的行程以及此行程內的活動
+      this.dates.splice(this.currentDate, 1)
+      this.contents[this.currentDate].activities.splice(this.currentDate, 1)
     },
     addNewActivity () {
-      let currentDateContent = this.schedules[this.dates.indexOf(this.currentDisplay)]
+      let currentDateContent = this.trip.contents[this.currentDate].activities
       let now = new Date(Date.now())
       currentDateContent.push(this.newActivity)
     },
     deleteActivity (schedule) {
-      let currentDateContent = this.schedules[this.dates.indexOf(this.currentDisplay)]
+      let currentDateContent = this.trip.contents[this.currentDate].activities
       let scheduleIndex = currentDateContent.indexOf(schedule)
       // 刪除activity
       currentDateContent.splice(scheduleIndex, 1)

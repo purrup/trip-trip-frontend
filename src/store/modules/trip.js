@@ -113,8 +113,16 @@ const mutations = {
   DELETE_comment (state, commentId) {
     state.trip.comments = state.trip.comments.filter(comment => comment.id !== commentId)
   },
-  TOGGLEEDITMODE (state) {
+  TOGGLE_isOnEditMode (state) {
     state.isOnEditMode = !state.isOnEditMode
+  },
+  CHANGE_IMAGES_OF_OVERVIEW (state, data) {
+    data.forEach(previewImage => {
+      state.trip.images.push(previewImage)
+    })
+  },
+  UPDATE_TRIP_NAME (state, data) {
+    state.trip.name = data
   }
 }
 
@@ -215,6 +223,7 @@ const actions = {
     try {
       await axios(`/trips/${tripId}`, {
         method: 'patch',
+        headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 0,
         data: formData
       })

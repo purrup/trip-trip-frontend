@@ -43,12 +43,12 @@
           v-btn.ml-8(
             text
             elevation=2
-            @click="toggleEditMode"
+            @click="editComplete"
           ) 編輯完成
           v-btn.ml-8(
             text
             elevation=2
-            @click="editImage"
+            @click="showEditImage = true"
           ) 上傳照片
             v-icon.ml-2(left) mdi-cloud-upload-outline
           v-dialog(
@@ -60,21 +60,13 @@
             v-card
               v-card-title.justify-center 上傳照片至概覽
               div(class="container")
-                //- input(
-                //-   type="file"
-                //-   @change="uploadTripImages"
-                //- )
                 v-file-input(
                   type="file"
+                  ref="file"
                   chips
                   multiple
                   label="上傳一個/多個檔案"
                   @change="uploadTripImages"
-                )
-                v-data-table(
-                  :headers="headers"
-                  :items="items"
-                  hide-default-footer
                 )
               v-card-actions
                 .flex-grow-1
@@ -131,15 +123,7 @@ export default {
       publish: false,
       isExpand: false,
       showEditImage: false,
-      headers: [
-        {
-          text: '檔案名',
-          align: 'start',
-          sortable: false,
-          value: 'images'
-        }
-      ],
-      items: [this.trip]
+      files: null
     }
   },
   computed: {
@@ -157,24 +141,33 @@ export default {
   methods: {
     ...mapActions('account', ['logout']),
     ...mapActions('trip', ['forkTrip', 'updateTrip']),
-    ...mapMutations('trip', ['TOGGLEEDITMODE']),
+    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW']),
     fork () {
       this.forkTrip(this.trip._id)
     },
     toggleEditMode () {
-      this.TOGGLEEDITMODE()
+      this.TOGGLE_isOnEditMode()
     },
-    editImage () {
-      this.showEditImage = true
-    },
-    uploadTripImages (e) {
-      console.log(e)
-      const images = e
+    uploadTripImages (files) {
       const formData = new FormData()
-      formData.append('images', images)
+      let previewImages = []
+      files.forEach(image => {
+        formData.append('images', image)
+        previewImages.push(URL.createObjectURL(image))
+      })
       formData.append('data', JSON.stringify(this.trip))
       const tripId = this.trip._id
       this.updateTrip({ tripId, formData })
+      // 即時預覽上傳圖片
+      // 放在updateTrip之後以免傳blob出去
+      this.CHANGE_IMAGES_OF_OVERVIEW(previewImages)
+    },
+    editComplete () {
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.trip))
+      const tripId = this.trip._id
+      this.updateTrip({ tripId, formData })
+      this.TOGGLE_isOnEditMode()
     }
   }
 }
