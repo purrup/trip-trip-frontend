@@ -40,12 +40,12 @@
     .schedule-list
       v-sheet.mb-3(
         v-for="(schedule, i) in trip.contents[currentDate].activities"
-        :key="i"
+        :key="`${schedule.startTime}-${i}`"
         width=370
         height=47
         color="white"
         elevation="2"
-        @click="schedule.id ? getSite(schedule.id) : false")
+        @click="schedule.id ? getSite(schedule.id) : false; toggleCurrentActivity(schedule)")
         .schedule-card(v-if="!showEditActivityPanel")
           //- 切換每日行程內容的編輯模式
           v-icon.dots-vertical(
@@ -66,55 +66,24 @@
           .time
             v-btn(
               icon
-              @click="showTimePicker =true"
+              @click="displayTimePicker(schedule)"
             )
               v-icon mdi-clock-outline
-            v-dialog(
-              v-model="showTimePicker"
-              width=600
-              height=500
-              persistent
-            )
-              v-card
-                //- v-card-title
-                .container.pt-10.mb-6
-                  .timePickersGroup.d-flex.flex-row.flex-nowrap.justify-center.align-center
-                    span.mx-5 開始時間
-                    input(
-                      style="padding: 10px;"
-                      type="time"
-                      name="start-time"
-                      label="開始時間"
-                      :value="`${ new Date(schedule.startTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) }`"
-                    )
-                    .px-5
-                    span.mx-5 結束時間
-                    input(
-                      style="padding: 10px;"
-                      type="time"
-                      name="end-time"
-                      label="結束時間"
-                      :value="`${ new Date(schedule.endTime).toLocaleTimeString('zh-TW', {hour12: false, hour: '2-digit', minute:'2-digit'}) }`"
-                    )
-                v-card-actions
-                  .flex-grow-1
-                  .btnGroup.mb-3
-                    v-btn(
-                      color="info"
-                      ) 確定
-                    v-btn.mx-5(
-                      color="error"
-                      @click="showTimePicker = false") 取消
           .cost.d-flex.flex-nowrap.flex-row
             p.mr-1 $
             input(
+              type="number"
               style="width: 50px;"
-              :value="`${schedule.cost}`"
+              :value="schedule.cost"
+              id="activityCost"
+              @change="updateAvtivity"
             )
           .activity
             input(
               style="width: 169px;"
-              :value="schedule.name")
+              :value="schedule.name"
+              id="avtivityName"
+              @change="updateAvtivity")
           .delete-activity
             v-btn(
               text
@@ -122,6 +91,41 @@
               @click="deleteActivity(schedule)"
             )
               v-icon mdi-trash-can-outline
+      v-dialog(
+        v-model="showTimePicker"
+        width=600
+        height=500
+      )
+        v-card
+          .container.pt-10.mb-6
+            .timePickersGroup.d-flex.flex-row.flex-nowrap.justify-center.align-center
+              span.mx-5 開始時間
+              input(
+                style="padding: 10px;"
+                type="time"
+                id="startTime"
+                v-model="startTime"
+                @change="updateAvtivity"
+              )
+              .px-5
+              span.mx-5 結束時間
+              input(
+                style="padding: 10px;"
+                type="time"
+                id="endTime"
+                v-model="endTime"
+                @change="updateAvtivity"
+              )
+          v-card-actions
+            .flex-grow-1
+            .btnGroup.mb-3
+              v-btn(
+                color="info"
+                @click="showTimePicker = false"
+                ) 確定
+              v-btn.mx-5(
+                color="error"
+                @click="showTimePicker = false") 取消
       //- 備註
       .note.mt-8
         v-sheet.d-flex.flex-wrap.align-start(
@@ -139,11 +143,12 @@
           rows=1
           :value="note"
           label="備註:"
+          @change="updateNote"
         )
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'TripSchedule',
@@ -163,7 +168,14 @@ export default {
         cost: 0,
         startTime: Date.now(),
         endTime: Date.now()
-      }
+      },
+      currentActivity: {
+        name: '',
+        cost: 0,
+        startTime: this.dates[this.currentDate],
+        endTime: this.dates[this.currentDate]
+      },
+      originCurrentActivity: {}
     }
   },
   computed: {
@@ -182,24 +194,75 @@ export default {
       }
     },
     note () {
-      return this.trip.contents[this.currentDate] ? this.trip.contents[this.currentDate].note : ''
+      return this.trip.contents[this.currentDate].note
+    },
+    startTime () {
+      if (!this.currentActivity) {
+        return false
+      } else {
+        return new Date(this.currentActivity.startTime).toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' })
+      }
+    },
+    endTime () {
+      if (!this.currentActivity) {
+        return false
+      } else {
+        return new Date(this.currentActivity.endTime).toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' })
+      }
     }
   },
   methods: {
-    addNewActivity () {
-      let currentDateContent = this.trip.contents[this.currentDate].activities
-      currentDateContent.push(this.newActivity)
+    ...mapMutations('trip', ['DELETE_TRIP_date', 'ADD_TRIP_activity', 'DELETE_TRIP_activity', 'UPDATE_TRIP_note', 'UPDATE_TRIP_activity', 'UPDATE_TRIP_activity_end_time']),
+    toggleCurrentActivity (currentActivity) {
+      this.currentActivity = currentActivity
     },
     deleteDate () {
       // 刪除單一天的行程以及此行程內的活動
       this.dates.splice(this.currentDate, 1)
-      this.contents[this.currentDate].activities.splice(this.currentDate, 1)
+      const newCurrentDate = this.currentDate - 1
+      this.$emit('toggleContent', this.dates[newCurrentDate])
+      this.DELETE_TRIP_date(this.currentDate)
     },
-    deleteActivity (schedule) {
-      let currentDateContent = this.trip.contents[this.currentDate].activities
-      let scheduleIndex = currentDateContent.indexOf(schedule)
-      // 刪除activity
-      currentDateContent.splice(scheduleIndex, 1)
+    addNewActivity () {
+      // 新增行程中的活動
+      const newActivity = this.newActivity
+      const currentDate = this.currentDate
+      this.ADD_TRIP_activity({ newActivity, currentDate })
+    },
+    deleteActivity (deletedActivity) {
+      const currentDate = this.currentDate
+      this.DELETE_TRIP_activity({ deletedActivity, currentDate })
+    },
+    displayTimePicker (activity) {
+      this.currentActivity = activity
+      this.originCurrentActivity = activity
+      this.showTimePicker = true
+    },
+    updateAvtivity (e) {
+      const currentDate = this.currentDate
+      // 設一個originCurrentActivity丟到mutations裡面去找activity? 因時間改動後currentActivity會變
+      const activity = this.currentActivity
+      // 拿到該日行程日期的string, e.g. '2019-10-10'
+      const currentDateString = this.dates[this.currentDate].toLocaleDateString()
+      let data = this.currentActivity
+      if (e.target.id === 'startTime') {
+        // 用e.target.value加入小時和分和秒數至年月日的string後方
+        const newTimeString = currentDateString + ' ' + e.target.value + ':' + '00'
+        // 轉換為date，存入state
+        data.startTime = new Date(newTimeString)
+      } else if (e.target.id === 'endTime') {
+        const newTimeString = currentDateString + ' ' + e.target.value + ':' + '00'
+        data.endTime = new Date(newTimeString)
+      } else if (e.target.id === 'avtivityName') {
+        data.name = e.target.value
+      } else if (e.target.id === 'activityCost') {
+        data.cost = e.target.value
+      }
+      this.UPDATE_TRIP_activity({ data, currentDate, activity })
+    },
+    updateNote (note) {
+      const currentDate = this.currentDate
+      this.UPDATE_TRIP_note({ note, currentDate })
     },
     getSite (siteId) {
       this.$emit('getSite', siteId)

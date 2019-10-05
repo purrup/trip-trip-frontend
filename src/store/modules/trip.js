@@ -136,6 +136,31 @@ const mutations = {
   },
   UPDATE_TRIP_journal (state, data) {
     state.trip.journal = data
+  },
+  ADD_TRIP_date (state) {
+    state.trip.days += 1
+    state.trip.contents.push({
+      activities: [],
+      note: ''
+    })
+  },
+  DELETE_TRIP_date (state, currentDate) {
+    state.trip.days -= 1
+    state.trip.contents.splice(currentDate, 1)
+  },
+  ADD_TRIP_activity (state, { newActivity, currentDate }) {
+    state.trip.contents[currentDate].activities.push(newActivity)
+  },
+  DELETE_TRIP_activity (state, { deletedActivity, currentDate }) {
+    const deletedIndex = state.trip.contents[currentDate].activities.indexOf(deletedActivity)
+    state.trip.contents[currentDate].activities.splice(deletedIndex, 1)
+  },
+  UPDATE_TRIP_note (state, { note, currentDate }) {
+    state.trip.contents[currentDate].note = note
+  },
+  UPDATE_TRIP_activity (state, { data, currentDate, activity }) {
+    const updatedIndex = state.trip.contents[currentDate].activities.indexOf(activity)
+    state.trip.contents[currentDate].activities[updatedIndex] = data
   }
 }
 

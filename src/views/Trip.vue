@@ -96,7 +96,7 @@
                 v-list-item-title.text-center(v-text="'概覽'")
             v-list-item.leftTogglebarBlock(
               v-for="(date, i) in dates"
-              :key="i"
+              :key="`toggle-bar-${date}`"
               @click="toggleContent(date)")
               v-list-item-content
                 v-list-item-title.text-center(v-text=" i+1 ") // 左側togglebar顯示第i+1天
@@ -120,6 +120,7 @@
             :dates="dates"
             :currentDisplay="currentDisplay"
             @getSite="getSite"
+            @toggleContent="toggleContent"
           )
           .site
             .title.mb-2
@@ -177,10 +178,6 @@ export default {
       this.dates.push(newDate)
     }
   },
-  beforeUpdate () {
-  },
-  updated () {
-  },
   mounted () {
     this.initMap()
   },
@@ -202,7 +199,7 @@ export default {
   },
   methods: {
     ...mapActions('trip', ['forkTrip', 'updateTrip']),
-    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy']),
+    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 23.039808, lng: 120.211868 },
@@ -230,8 +227,9 @@ export default {
     toggleEditMode () {
       this.TOGGLE_isOnEditMode()
     },
-    toggleContent (content) {
-      this.currentDisplay = content
+    toggleContent (date) {
+      // console.log('toggleContent', date)
+      this.currentDisplay = date
     },
     updateStartDate () {
       this.showCalendar = false
@@ -243,10 +241,7 @@ export default {
       let nextDate = new Date(lastDate)
       nextDate.setDate(nextDate.getDate() + 1)
       this.dates.push(nextDate)
-      this.trip.contents.push({
-        activities: [],
-        note: ''
-      })
+      this.ADD_TRIP_date()
     },
     updatePrivacy (value) {
       this.UPDATE_TRIP_privacy(value)
