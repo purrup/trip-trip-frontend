@@ -60,7 +60,6 @@ const mutations = {
   SET_logout (state) {
     state.isLogin = false
     localStorage.setItem('isLogin', false)
-    alert('logout')
   },
   TOGGLE_collectedSite (state, placeId) {
     if (state.collectingSites.includes(placeId)) {
@@ -94,7 +93,11 @@ const actions = {
       commit('SET_user', data)
       commit('SET_login')
     } catch (error) {
-      console.log(error)
+      if (error.response.status === 409) {
+        alert('此email已註冊過')
+      } else {
+        console.log(error)
+      }
     }
   },
   async signin ({ commit }, params) {

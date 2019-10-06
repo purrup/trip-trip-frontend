@@ -42,7 +42,8 @@ export default new Router({
       redirect: (to) => {
         if (to.query.hasOwnProperty('status')) {
           if (to.query.status === '409') {
-            alert('此信箱已用其他方式註冊過')
+            store.dispatch('notification/SET_ERROR_MSG', '此信箱已用其他方式註冊過')
+            // alert('此信箱已用其他方式註冊過')
             return { path: 'signin' }
           }
         }

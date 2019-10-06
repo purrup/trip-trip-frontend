@@ -200,6 +200,7 @@ export default {
   methods: {
     ...mapActions('trip', ['forkTrip', 'updateTrip']),
     ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 23.039808, lng: 120.211868 },
@@ -246,13 +247,6 @@ export default {
     updatePrivacy (value) {
       this.UPDATE_TRIP_privacy(value)
     },
-    editComplete () {
-      const formData = new FormData()
-      formData.append('data', JSON.stringify(this.trip))
-      const tripId = this.trip._id
-      this.updateTrip({ tripId, formData })
-      this.TOGGLE_isOnEditMode()
-    },
     uploadTripImages (files) {
       const formData = new FormData()
       let previewImages = []
@@ -266,6 +260,14 @@ export default {
       // 即時預覽上傳圖片
       // 放在updateTrip之後以免傳blob出去
       this.CHANGE_IMAGES_OF_OVERVIEW(previewImages)
+    },
+    editComplete () {
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.trip))
+      const tripId = this.trip._id
+      this.updateTrip({ tripId, formData })
+      this.TOGGLE_isOnEditMode()
+      this.SET_SUCCESS_MSG('修改完成')
     },
     async getSite (siteId) {
       try {
@@ -315,7 +317,7 @@ export default {
     }
     //edit-buttons transition
     .fade-enter-active, .fade-enter-active {
-      transition: all 1.2s ease;
+      transition: all 1s ease;
     }
     .fade-enter, .fade-leave-to {
       opacity: 0;

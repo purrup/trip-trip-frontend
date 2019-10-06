@@ -2,14 +2,27 @@
   v-app
     navbar(v-if="$route.meta.showNavbar")
     router-view
+    Notification(
+      :successMsg="successMsg"
+      :errorMsg="errorMsg"
+    )
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
+import Notification from '@/components/Notification.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
-    Navbar
+    Navbar,
+    Notification
+  },
+  computed: {
+    ...mapState('notification', {
+      successMsg: state => state.successMsg,
+      errorMsg: state => state.errorMsg
+    })
   }
 }
 </script>>

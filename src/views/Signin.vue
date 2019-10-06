@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -84,8 +84,14 @@ export default {
         : 'http://localhost:3000'
     }
   },
+  computed: {
+    ...mapState('account', {
+      username: state => state.username
+    })
+  },
   methods: {
     ...mapActions('account', ['signin']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     async submit () {
       try {
         if (this.$refs.form.validate()) {
@@ -93,12 +99,15 @@ export default {
             email: this.email,
             password: this.password
           })
+          this.SET_SUCCESS_MSG(`登入成功！ Hello ${this.username}`)
           this.$router.push(this.$route.query.redirect ? this.$route.query.redirect : '/')
         }
       } catch (error) {
-        if (error.response.status === 401) {
-          console.log('密碼錯')
+        if (error.response.status === 422) {
+          this.SET_ERROR_MSG('密碼有誤，請重新輸入')
         } else {
+          this.SET_ERROR_MSG('密碼有誤，請重新輸入')
+
           console.log(error.response)
         }
       }

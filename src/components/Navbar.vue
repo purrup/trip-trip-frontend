@@ -42,14 +42,14 @@
             router-link(v-if="account.isAdmin" tag="div" to="/admin")
               v-icon mdi-settings
               span 後台
-            div(@click="logout")
+            div(@click="Logout")
               v-icon mdi-logout
               span 登出
 </template>
 
 <script>
 import SearchBar from '@/components/SearchBar.vue'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'navbar',
@@ -67,7 +67,12 @@ export default {
     })
   },
   methods: {
-    ...mapActions('account', ['logout'])
+    ...mapActions('account', ['logout']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG']),
+    Logout () {
+      this.logout()
+      this.SET_SUCCESS_MSG('登出成功')
+    }
   }
 }
 </script>
