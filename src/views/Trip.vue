@@ -84,8 +84,28 @@
           v-btn.ml-6(
             text
             icon
+            @click="showDeleteConfirmation = true"
           )
             v-icon mdi-trash-can-outline
+      v-dialog(
+        v-model="showDeleteConfirmation"
+        width=550
+        height=300
+        )
+        v-card
+          .container.py-11
+            .timePickersGroup.d-flex.flex-row.flex-nowrap.justify-center.align-center
+              span(style="font-size: 1.4em; color: #616161;") 確定要刪除此行程：{{trip.name}} ？
+          v-card-actions
+            .flex-grow-1
+            .btnGroup.mb-3
+              v-btn(
+                color="info"
+                @click="deleteCurrentTrip(trip._id)"
+                ) 確定
+              v-btn.mx-5(
+                color="error"
+                @click="showDeleteConfirmation = false") 取消
       //- 左側切換欄
       #toggle-bar
         v-list
@@ -164,6 +184,7 @@ export default {
       firstDatePicker: null,
       publish: false,
       showEditImage: false,
+      showDeleteConfirmation: false
     }
   },
   beforeMount () {
@@ -198,7 +219,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('trip', ['forkTrip', 'updateTrip']),
+    ...mapActions('trip', ['forkTrip', 'updateTrip', 'deleteTrip']),
     ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     initMap () {
@@ -269,6 +290,11 @@ export default {
       this.TOGGLE_isOnEditMode()
       this.SET_SUCCESS_MSG('修改完成')
     },
+    deleteCurrentTrip (id) {
+      this.SET_SUCCESS_MSG(`已刪除您的行程 "${this.trip.name}"`)
+      this.deleteTrip(id)
+      this.$router.push('/')
+    }, 
     async getSite (siteId) {
       try {
         this.currentSiteCard = await siteApis.getSite(siteId)

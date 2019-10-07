@@ -211,7 +211,7 @@ const actions = {
   async forkTrip (context, id) {
     try {
       const { data } = await axios.post(`/trips/${id}/fork`)
-      router.push(`/trips/${data._id}`)
+      router.push({ path: `/trips/${data._id}` })
     } catch (error) {
       console.log(error)
     }
@@ -265,6 +265,14 @@ const actions = {
         timeout: 0,
         data: formData
       })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async deleteTrip  (context, id) {
+    try {
+      await axios.delete(`/trips/${id}`)
+      console.log('deleted')
     } catch (error) {
       console.log(error)
     }
