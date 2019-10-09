@@ -15,16 +15,6 @@
           label="天數"
           solo
         )
-        v-select(
-          v-else-if="$route.name === 'Trips' || $route.name === 'Sites' "
-          height="30px"
-          class="custom-select-style"
-          :style="{ 'width': '100px'} "
-          :items="['評分數', '評論數', '收藏數']"
-          :menu-props="{ top: false, offsetY: true }"
-          label="排序"
-          solo
-        )
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(

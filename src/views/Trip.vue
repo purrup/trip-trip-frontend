@@ -252,7 +252,6 @@ export default {
     },
     fork () {
       this.forkTrip(this.trip._id)
-
     },
     toggleEditMode () {
       this.TOGGLE_isOnEditMode()

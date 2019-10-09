@@ -1,7 +1,12 @@
 <template lang="pug">
   div(id="sites-root")
     div(class="sites-container")
-      div {{this.$route.query['cities[]']}}
+      search-result-bar(
+        :resultWord="resultWord"
+        :sitesAmounts="sites.length"
+        @sortByRating="sortByRating"
+        @sortByCollectingCounts="sortByCollectingCounts"
+        @sortByCommentAmounts="sortByCommentAmounts")
       draggable(
         tag="div"
         class="sites-wrapper"
@@ -46,6 +51,7 @@
 </template>
 
 <script>
+import SearchResultBar from '@/components/site/SearchResultBar.vue'
 import SiteCard from '@/components/site/SiteCard.vue'
 import draggable from 'vuedraggable'
 import DailyActivity from '@/components/site/DailyActivity.vue'
@@ -57,11 +63,13 @@ export default {
   components: {
     SiteCard,
     draggable,
-    DailyActivity
+    DailyActivity,
+    SearchResultBar
   },
   data () {
     return {
       isShowStorageZone: false,
+      resultWord: '',
       sites: [],
       trips: [],
       isOnDraggable: false,
@@ -82,9 +90,8 @@ export default {
   async mounted () {
     // the initialize function must be written at mounted hook
     await this.search()
-    this.initMap()
-    if (!this.site) {
-      console.log('no site')
+    if (this.sites.length !== 0) {
+      this.initMap()
     }
   },
   computed: {
@@ -129,6 +136,7 @@ export default {
       try {
         const city = this.$route.query['cities[]']
         this.sites = await siteApis.getSitesByCountryAndCities(city)
+        this.resultWord = city
       } catch (error) {
         console.log(error)
       }
@@ -137,9 +145,19 @@ export default {
       try {
         const keyword = this.$route.query.keyword
         this.sites = await siteApis.getSitesByKeyword(keyword)
+        this.resultWord = keyword
       } catch (error) {
         console.log(error)
       }
+    },
+    sortByRating () {
+      this.sites.sort((a, b) => b.rating - a.rating)
+    },
+    sortByCommentAmounts () {
+      this.sites.sort((a, b) => b.reviews.length - a.reviews.length)
+    },
+    sortByCollectingCounts () {
+      this.sites.sort((a, b) => b.collectingCounts - a.collectingCounts)
     }
   },
   watch: {
@@ -156,12 +174,6 @@ export default {
   .sites-container {
     margin-right: 720px;
     padding: 20px 36.5px;
-    > div:nth-child(1) {
-      font-size: 21px;
-      line-height: 21px;
-      text-align: left;
-      padding-bottom: 38px;
-    }
     > .sites-wrapper {
       display: grid;
       grid-template-columns: 1fr;
