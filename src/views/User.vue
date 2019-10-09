@@ -19,7 +19,7 @@
       div(v-if="user.owningTrips.length !== 0")
         h5 {{user.username}}建立的行程
         div
-          ittle-card(
+          little-card(
             v-for="trip in user.owningTrips"
             :key="`little-card-${trip.name}`"
             :item="trip"
