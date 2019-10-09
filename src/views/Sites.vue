@@ -83,6 +83,9 @@ export default {
     // the initialize function must be written at mounted hook
     await this.search()
     this.initMap()
+    if (!this.site) {
+      console.log('no site')
+    }
   },
   computed: {
     storageZoneHeight () {

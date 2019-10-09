@@ -89,7 +89,7 @@ export default {
     }
   },
   async created () {
-    const { data } = await userApis.getUser(this.trip.userId)
+    const { data } = await userApis.getUser(this.trip.userId._id)
     this.user = data
     this.rating = this.getTripRating(this.trip._id)
     if (this.trip.images) {

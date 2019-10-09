@@ -153,7 +153,7 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'TripSchedule',
   props: {
-    currentDate: String,
+    currentDate: Number,
     dates: Array,
     currentDisplay: Date
   },
@@ -187,11 +187,7 @@ export default {
       account: state => state
     }),
     displayDate () {
-      if (!this.trip.startDate) {
-        return this.dates[this.currentDate].toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', { weekday: 'short' })
-      } else {
-        return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', { weekday: 'short' })
-      }
+      return this.currentDisplay === 'overview' ? 'overview' : this.currentDisplay.toLocaleDateString() + ' ' + this.currentDisplay.toLocaleDateString('zh-TW', { weekday: 'short' })
     },
     note () {
       return this.trip.contents[this.currentDate].note

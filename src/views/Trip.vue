@@ -6,13 +6,13 @@
           v-if="!isOnEditMode"
         )
           v-btn(
-            v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId !== account._id"
+            v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId._id !== account._id"
             text
             elevation=2
             @click="fork"
           ) 複製行程
           v-btn(
-            v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId === account._id"
+            v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId._id === account._id"
             @click="toggleEditMode"
             text
             elevation=2
@@ -57,25 +57,29 @@
           )
             v-card
               v-card-title.justify-center 上傳照片至概覽
-              div(class="container")
-                v-file-input(
-                  type="file"
-                  ref="file"
-                  chips
-                  multiple
-                  label="上傳一個/多個檔案"
-                  @change="uploadTripImages"
-                )
-              v-card-actions
-                .flex-grow-1
-                .btnGroup.mb-3
-                  v-btn(
-                    color="info"
-                    @click="showEditImage = false"
-                    ) 確定
-                  v-btn.mx-5(
-                    color="error"
-                    @click="showEditImage = false") 取消
+              v-form(
+                ref="form"
+                @submit.prevent="previewImages"
+              )
+                div(class="container")
+                  v-file-input(
+                    type="file"
+                    ref="file"
+                    chips
+                    multiple
+                    v-model="imageFiles"
+                    label="上傳一個/多個檔案"
+                  )
+                v-card-actions
+                  .flex-grow-1
+                  .btnGroup.mb-3
+                    v-btn(
+                      color="info"
+                      type="submit"
+                      ) 確定
+                    v-btn.mx-5(
+                      color="error"
+                      @click="showEditImage = false") 取消
           v-switch.ml-10.mt-7(
             v-model="publish"
             inset
@@ -136,7 +140,7 @@
           )
           trip-schedule(
             class="trip-schedule"
-            :currentDate="`${currentDate}`"
+            :currentDate="currentDate"
             :dates="dates"
             :currentDisplay="currentDisplay"
             @getSite="getSite"
@@ -178,13 +182,16 @@ export default {
       dates: [],
       currentDisplay: null,
       currentSiteCard: {},
+      // currentDate: 0,
       map: null,
       marker: null,
       showCalendar: false,
       firstDatePicker: null,
       publish: false,
       showEditImage: false,
-      showDeleteConfirmation: false
+      showDeleteConfirmation: false,
+      // formData: new FormData(),
+      imageFiles: []
     }
   },
   beforeMount () {
@@ -250,12 +257,23 @@ export default {
       this.TOGGLE_isOnEditMode()
     },
     toggleContent (date) {
-      // console.log('toggleContent', date)
       this.currentDisplay = date
     },
     updateStartDate () {
+      const oldCurrentDate = this.currentDate
       this.showCalendar = false
       this.UPDATE_TRIP_startDate(this.firstDatePicker)
+      // 選取日期後立即更新頁面日期
+      const firstDate = new Date(this.firstDatePicker)
+      let newDatesArray = []
+      for (let i = 0; i < this.trip.days; i++) {
+        let newDate = new Date(firstDate)
+        newDate.setDate(newDate.getDate() + i)
+        newDatesArray.push(newDate)
+      }
+      this.dates = newDatesArray
+      // 更改日期後，仍可停留在原本的天數的activity
+      this.currentDisplay = this.dates[oldCurrentDate]
     },
     addNewDate () {
     // 新增旅遊日期及單日的行程規劃
@@ -268,22 +286,21 @@ export default {
     updatePrivacy (value) {
       this.UPDATE_TRIP_privacy(value)
     },
-    uploadTripImages (files) {
-      const formData = new FormData()
-      let previewImages = []
-      files.forEach(image => {
-        formData.append('images', image)
-        previewImages.push(URL.createObjectURL(image))
-      })
-      formData.append('data', JSON.stringify(this.trip))
-      const tripId = this.trip._id
-      this.updateTrip({ tripId, formData })
+    previewImages () {
       // 即時預覽上傳圖片
-      // 放在updateTrip之後以免傳blob出去
-      this.CHANGE_IMAGES_OF_OVERVIEW(previewImages)
+      let previewImagesArray = []
+      this.imageFiles.forEach(image => {
+        previewImagesArray.push(URL.createObjectURL(image))
+      })
+      this.CHANGE_IMAGES_OF_OVERVIEW(previewImagesArray)
+      this.showEditImage = false
     },
     editComplete () {
       const formData = new FormData()
+      //將暫存的images放入formData
+      this.imageFiles.forEach(image => {
+        formData.append('images', image)
+      })
       formData.append('data', JSON.stringify(this.trip))
       const tripId = this.trip._id
       this.updateTrip({ tripId, formData })
@@ -307,16 +324,6 @@ export default {
     isOnEditMode (newValue) {
       if(newValue === false) {
         this.showCalendar = false
-      }
-    },
-    firstDatePicker (newValue) {
-      // 選取日期後立即更新頁面日期
-      const firstDate = new Date(newValue)
-      this.dates = []
-      for (let i = 0; i < this.trip.days; i++) {
-        let newDate = new Date(firstDate)
-        newDate.setDate(newDate.getDate() + i)
-        this.dates.push(newDate)
       }
     }
   }
