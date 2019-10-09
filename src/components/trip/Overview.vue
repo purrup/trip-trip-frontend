@@ -21,7 +21,7 @@
         )
       br
       ul(style="list-style: none; padding: 0;")
-        li.mb-2 作者：{{user.name}}
+        li.mb-2 作者：{{trip.userId.username}}
         li.mb-2 旅遊天數： {{ trip.days }}
         li.mb-2 城市： {{ cities }}
       br
@@ -66,7 +66,6 @@
 <script>
 import Comment from '@/components/trip/Comment.vue'
 import Timeline from '@/components/trip/Timeline.vue'
-import userApis from '@/utils/apis/user.js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
@@ -80,7 +79,6 @@ export default {
   },
   data () {
     return {
-      user: {},
       rating: 0,
       images: [],
       tripNameRules: [
@@ -89,10 +87,8 @@ export default {
     }
   },
   async created () {
-    const { data } = await userApis.getUser(this.trip.userId._id)
-    this.user = data
     this.rating = this.getTripRating(this.trip._id)
-    if (this.trip.images) {
+    if (this.trip.images.length !== 0) {
       this.images = this.trip.images
     } else {
       this.images.push('https://source.unsplash.com/random/686x360')

@@ -21,7 +21,7 @@
           v-col.pt-1(cols="6")
             ul(style="list-style: none;")
               li 城市： {{ cities }}
-              li 預估花費： ${{ trip.cost}}
+              li 預估花費： ${{ estimatedCost }}
 </template>
 
 <script>
@@ -37,7 +37,8 @@ export default {
   },
   data () {
     return {
-      defautlImage: 'https://source.unsplash.com/random/110x110'
+      defautlImage: 'https://source.unsplash.com/random/110x110',
+      estimatedCost: this.trip.contents.map(content => content.activities.reduce((total, activity) => total + activity.cost, 0)).reduce((total, dailyCost) => total + dailyCost, 0)
     }
   },
   computed: {

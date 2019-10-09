@@ -37,7 +37,7 @@
             v-dialog(
               width=300
               v-model="showCalendar"
-              )
+            )
               v-date-picker(
                 v-model="firstDatePicker"
                 show-current
@@ -252,6 +252,7 @@ export default {
     },
     fork () {
       this.forkTrip(this.trip._id)
+
     },
     toggleEditMode () {
       this.TOGGLE_isOnEditMode()
@@ -276,7 +277,7 @@ export default {
       this.currentDisplay = this.dates[oldCurrentDate]
     },
     addNewDate () {
-    // 新增旅遊日期及單日的行程規劃
+      // 新增旅遊日期及單日的行程規劃
       let lastDate = this.dates[this.dates.length - 1]
       let nextDate = new Date(lastDate)
       nextDate.setDate(nextDate.getDate() + 1)
@@ -311,7 +312,7 @@ export default {
       this.SET_SUCCESS_MSG(`已刪除您的行程 "${this.trip.name}"`)
       this.deleteTrip(id)
       this.$router.push('/')
-    }, 
+    },
     async getSite (siteId) {
       try {
         this.currentSiteCard = await siteApis.getSite(siteId)
@@ -322,9 +323,12 @@ export default {
   },
   watch: {
     isOnEditMode (newValue) {
-      if(newValue === false) {
+      if (newValue === false) {
         this.showCalendar = false
       }
+    },
+    async '$route' (to, from) {
+      this.$router.go(0)
     }
   }
 }
@@ -341,18 +345,20 @@ export default {
     display: grid;
     grid-template-columns: 48px 83px 15px 640px;
     grid-template-rows: 70px auto;
-    grid-template-areas: 
-    ". edit-buttons edit-buttons edit-buttons"
-    ". toggle-bar . content";
+    grid-template-areas:
+      ". edit-buttons edit-buttons edit-buttons"
+      ". toggle-bar . content";
     .edit-buttons {
       grid-area: edit-buttons;
       height: 70px;
     }
     //edit-buttons transition
-    .fade-enter-active, .fade-enter-active {
+    .fade-enter-active,
+    .fade-enter-active {
       transition: all 1s ease;
     }
-    .fade-enter, .fade-leave-to {
+    .fade-enter,
+    .fade-leave-to {
       opacity: 0;
     }
     #toggle-bar {
@@ -367,16 +373,16 @@ export default {
       grid-area: content;
       margin-top: 10px;
       #trip-schedule {
-      display: grid;
-      grid-template-columns: 370px 20px auto;
-      grid-template-areas: "trip-schedule . site";
-      .trip-schedule {
-        grid-area: trip-schedule;
+        display: grid;
+        grid-template-columns: 370px 20px auto;
+        grid-template-areas: "trip-schedule . site";
+        .trip-schedule {
+          grid-area: trip-schedule;
+        }
+        .site {
+          grid-area: site;
+        }
       }
-      .site {
-        grid-area: site;
-      }
-    }
     }
   }
   #map {
