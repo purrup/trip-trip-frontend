@@ -120,8 +120,6 @@ import PicturesWall from '@/components/trip/PicturesWall.vue'
 export default {
   name: 'EditButtonsGroup',
   props: {
-    dates: Array,
-    currentDate: Number
   },
   components: {
     PicturesWall
@@ -164,7 +162,6 @@ export default {
     updateStartDate () {
       this.showCalendar = false
       this.UPDATE_TRIP_startDate(this.firstDatePicker)
-      this.$emit('updateStartDate', this.firstDatePicker)
     },
     updatePrivacy (value) {
       this.UPDATE_TRIP_privacy(value)

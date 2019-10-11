@@ -149,23 +149,23 @@ const mutations = {
       note: ''
     })
   },
-  DELETE_TRIP_date (state, currentDate) {
+  DELETE_TRIP_date (state, dayOfTrip) {
     state.trip.days -= 1
-    state.trip.contents.splice(currentDate, 1)
+    state.trip.contents.splice(dayOfTrip, 1)
   },
-  ADD_TRIP_activity (state, { newActivity, currentDate }) {
-    state.trip.contents[currentDate].activities.push(newActivity)
+  ADD_TRIP_activity (state, { newActivity, dayOfTrip }) {
+    state.trip.contents[dayOfTrip].activities.push(newActivity)
   },
-  DELETE_TRIP_activity (state, { deletedActivity, currentDate }) {
-    const deletedIndex = state.trip.contents[currentDate].activities.indexOf(deletedActivity)
-    state.trip.contents[currentDate].activities.splice(deletedIndex, 1)
+  DELETE_TRIP_activity (state, { deletedActivity, dayOfTrip }) {
+    const deletedIndex = state.trip.contents[dayOfTrip].activities.indexOf(deletedActivity)
+    state.trip.contents[dayOfTrip].activities.splice(deletedIndex, 1)
   },
-  UPDATE_TRIP_note (state, { note, currentDate }) {
-    state.trip.contents[currentDate].note = note
+  UPDATE_TRIP_note (state, { note, dayOfTrip }) {
+    state.trip.contents[dayOfTrip].note = note
   },
-  UPDATE_TRIP_activity (state, { data, currentDate, activity }) {
-    const updatedIndex = state.trip.contents[currentDate].activities.indexOf(activity)
-    state.trip.contents[currentDate].activities[updatedIndex] = data
+  UPDATE_TRIP_activity (state, { data, dayOfTrip, activity }) {
+    const updatedIndex = state.trip.contents[dayOfTrip].activities.indexOf(activity)
+    state.trip.contents[dayOfTrip].activities[updatedIndex] = data
   }
 }
 

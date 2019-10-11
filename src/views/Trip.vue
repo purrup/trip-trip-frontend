@@ -1,62 +1,44 @@
 <template lang="pug">
   #trip
     main
-      edit-buttons-group(
-        class="edit-buttons-group"
-        @updateStartDate="updateStartDate"
-        :dates="dates"
-        :currentDate="currentDate")
+      edit-buttons-group(class="edit-buttons-group")
       //- 左側切換欄
       #toggle-bar
         v-list
           v-list-item-group(mandatory)
             v-list-item.leftTogglebarBlock(
-              @click="toggleContent('overview')")
+              @click="isShowOverview = true")
               v-list-item-content
                 v-list-item-title.text-center(v-text="'概覽'")
             v-list-item.leftTogglebarBlock(
-              v-for="(date, i) in dates"
+              v-for="(date, day) in datesOfTrip"
               :key="`toggle-bar-${date}`"
-              @click="toggleContent(date)")
+              @click="toggleContent(day)")
               v-list-item-content
-                v-list-item-title.text-center(v-text=" i+1 ") // 左側togglebar顯示第i+1天
+                v-list-item-title.text-center(v-text=" day+1 ") // 左側togglebar顯示第i+1天
             //- 編輯模式中新增旅遊日期
             v-list-item.leftTogglebarBlock(
               v-if="isOnEditMode"
-              @click="addNewDate()")
+              @click="ADD_TRIP_date")
               v-list-item-content
                 v-list-item-title.text-center
                   v-icon mdi-plus
       #content
         overview(
-          v-if="currentDisplay === 'overview'"
+          v-if="isShowOverview"
           :trip="trip")
-        #trip-schedule(v-else)
-          trip-schedule(
-            class="trip-schedule"
-            :currentDate="currentDate"
-            :dates="dates"
-            :currentDisplay="currentDisplay"
-            @toggleCurrentActivity="toggleCurrentActivity"
-            @toggleContent="toggleContent")
-          .site
-            v-sheet.d-flex.justify-start.align-center.mb-2(
-              width=250
-              height=47
-              color="grey lighten-2"
-              elevation="2")
-              span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
-            little-card(
-              :key="currentActivity.placeId"
-              :item="currentActivity"
-              :type="'site'")
+        trip-schedule(
+          v-else
+          class="trip-schedule"
+          :dayOfTrip="dayOfTrip"
+          :datesOfTrip="datesOfTrip"
+          @toggleContent="toggleContent")
     #map
 </template>
 
 <script>
 import Overview from '@/components/trip/Overview.vue'
 import TripSchedule from '@/components/trip/TripSchedule.vue'
-import LittleCard from '@/components/LittleCard.vue'
 import EditButtonsGroup from '@/components/trip/EditButtonsGroup.vue'
 import { mapState, mapMutations } from 'vuex'
 
@@ -65,26 +47,15 @@ export default {
   name: 'trip',
   components: {
     Overview,
-    LittleCard,
     TripSchedule,
     EditButtonsGroup
   },
   data () {
     return {
-      dates: [],
-      currentDisplay: 'overview',
-      currentActivity: {},
+      isShowOverview: true,
+      dayOfTrip: 0,
       map: null,
       marker: null
-    }
-  },
-  created () {
-    // 計算全部旅行日期
-    const startDate = this.trip.startDate ? this.trip.startDate : new Date()
-    for (let i = 0; i < this.trip.days; i++) {
-      let newDate = new Date(startDate)
-      newDate.setDate(newDate.getDate() + i)
-      this.dates.push(newDate)
     }
   },
   mounted () {
@@ -98,8 +69,13 @@ export default {
     ...mapState('account', {
       account: state => state
     }),
-    currentDate () {
-      return this.dates.indexOf(this.currentDisplay)
+    datesOfTrip () {
+      const startDate = this.trip.startDate ? this.trip.startDate : new Date()
+      return this.trip.contents.map((_, index) => {
+        let newDate = new Date(startDate)
+        newDate.setDate(newDate.getDate() + index)
+        return newDate
+      })
     }
   },
   methods: {
@@ -126,34 +102,9 @@ export default {
       this.marker.setPosition(pos)
       this.map.setCenter(pos)
     },
-    toggleContent (date) {
-      this.currentDisplay = date
-    },
-    toggleCurrentActivity (currentActivity) {
-      this.currentActivity = currentActivity
-    },
-    addNewDate () {
-      // 新增旅遊日期及單日的行程規劃
-      let lastDate = this.dates[this.dates.length - 1]
-      let nextDate = new Date(lastDate)
-      nextDate.setDate(nextDate.getDate() + 1)
-      this.dates.push(nextDate)
-      this.ADD_TRIP_date()
-    },
-    updateStartDate (newFirstDate) {
-      // 選取日期後立即更新頁面日期
-      const oldCurrentDate = this.currentDate
-      console.log('firstDate', newFirstDate)
-      const firstDate = new Date(newFirstDate)
-      let newDatesArray = []
-      for (let i = 0; i < this.trip.days; i++) {
-        let newDate = new Date(firstDate)
-        newDate.setDate(newDate.getDate() + i)
-        newDatesArray.push(newDate)
-      }
-      this.dates = newDatesArray
-      // 更改日期後，仍可停留在原本的天數的activity
-      this.currentDisplay = this.dates[oldCurrentDate]
+    toggleContent (day) {
+      this.isShowOverview = false
+      this.dayOfTrip = day
     }
   },
   watch: {
@@ -193,17 +144,6 @@ export default {
     #content {
       grid-area: content;
       margin-top: 10px;
-      #trip-schedule {
-        display: grid;
-        grid-template-columns: 370px 20px auto;
-        grid-template-areas: "trip-schedule . site";
-        .trip-schedule {
-          grid-area: trip-schedule;
-        }
-        .site {
-          grid-area: site;
-        }
-      }
     }
   }
   #map {
