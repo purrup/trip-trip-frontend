@@ -58,35 +58,13 @@
           v-icon.ml-1(small) mdi-cloud-upload-outline
         v-dialog(
           v-model="showEditImage"
-          width=600
-          height=500
-          persistent
+          width=800
+          height=auto
         )
-          v-card
-            v-card-title.justify-center 上傳照片至概覽
-            v-form(
-              ref="form"
-              @submit.prevent="previewImages"
-            )
-              div(class="container")
-                v-file-input(
-                  type="file"
-                  ref="file"
-                  chips
-                  multiple
-                  v-model="imageFiles"
-                  label="上傳一個/多個檔案"
-                )
-              v-card-actions
-                .flex-grow-1
-                .btnGroup.mb-3
-                  v-btn(
-                    color="info"
-                    type="submit"
-                    ) 確定
-                  v-btn.mx-5(
-                    color="error"
-                    @click="showEditImage = false") 取消
+         pictures-wall(
+           @closeEditImage="closeEditImage"
+           @syncImageFiles="syncImageFiles"
+         )
         v-btn.ml-6(
           text
           elevation=2
@@ -102,7 +80,6 @@
           v-card
             .container.pt-8
               .d-flex.flex-row.flex-nowrap.justify-center.align-center
-                //- span(style="font-size: 1.4em; color: #616161;") 確定要刪除此行程：{{trip.name}} ？
                 span(style="font-size: 1.2em; color: #616161;") 讓其他人能夠瀏覽、參考您的行程
               v-switch.ml-10.mt-7(
                 v-model="publish"
@@ -138,12 +115,16 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
+import PicturesWall from '@/components/trip/PicturesWall.vue'
 
 export default {
   name: 'EditButtonsGroup',
   props: {
     dates: Array,
     currentDate: Number
+  },
+  components: {
+    PicturesWall
   },
   data () {
     return {
@@ -152,8 +133,9 @@ export default {
       publish: false,
       showEditImage: false,
       showDeleteConfirmation: false,
-      imageFiles: [],
-      showPrivacySetting: false
+      showPrivacySetting: false,
+      newImageFiles: [],
+      deletedImages: []
     }
   },
   computed: {
@@ -171,7 +153,7 @@ export default {
   },
   methods: {
     ...mapActions('trip', ['forkTrip', 'updateTrip', 'deleteTrip']),
-    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'CHANGE_IMAGES_OF_OVERVIEW', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
+    ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     fork () {
       this.forkTrip(this.trip._id)
@@ -187,26 +169,29 @@ export default {
     updatePrivacy (value) {
       this.UPDATE_TRIP_privacy(value)
     },
-    previewImages () {
-      // 即時預覽上傳圖片
-      let previewImagesArray = []
-      this.imageFiles.forEach(image => {
-        previewImagesArray.push(URL.createObjectURL(image))
-      })
-      this.CHANGE_IMAGES_OF_OVERVIEW(previewImagesArray)
-      this.showEditImage = false
+    closeEditImage (boolean) {
+      this.showEditImage = boolean
+    },
+    syncImageFiles (data) {
+      this.newImageFiles = data.newImageFiles
+      this.deletedImages = data.deletedImages
+      console.log(data.newImageFiles)
+      console.log(data.deletedImages)
     },
     deleteCurrentTrip (id) {
       this.SET_SUCCESS_MSG(`已刪除您的行程 "${this.trip.name}"`)
       this.deleteTrip(id)
+      this.TOGGLE_isOnEditMode()
       this.$router.push('/')
     },
     editComplete () {
       const formData = new FormData()
-      // 將暫存的images放入formData
-      this.imageFiles.forEach(image => {
+      // 將newimages和deletedImages放入formData
+      this.newImageFiles.forEach(image => {
         formData.append('images', image)
       })
+      formData.append('deletedImages', this.deletedImages)
+      console.log(formData.get('deletedImages'))
       formData.append('data', JSON.stringify(this.trip))
       const tripId = this.trip._id
       this.updateTrip({ tripId, formData })

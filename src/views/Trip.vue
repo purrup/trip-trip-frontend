@@ -82,13 +82,6 @@ export default {
       currentSiteCard: {},
       map: null,
       marker: null
-      // showCalendar: false,
-      // firstDatePicker: null,
-      // publish: false,
-      // showEditImage: false,
-      // showDeleteConfirmation: false,
-      // imageFiles: [],
-      // showPrivacySetting: false
     }
   },
   beforeMount () {
@@ -155,8 +148,6 @@ export default {
       this.ADD_TRIP_date()
     },
     updateStartDate (newFirstDate) {
-      // this.showCalendar = false
-      // this.UPDATE_TRIP_startDate(this.firstDatePicker)
       // 選取日期後立即更新頁面日期
       const oldCurrentDate = this.currentDate
       console.log('firstDate', newFirstDate)

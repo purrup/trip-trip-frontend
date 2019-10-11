@@ -7,7 +7,7 @@
       hide-delimiter-background
       interval=6000)
       v-carousel-item(
-        v-for="(image, i) in images"
+        v-for="(image, i) in trip.images"
         :key="i"
         :src="image")
     .journal.mx-auto.mt-5
@@ -88,11 +88,12 @@ export default {
   },
   async created () {
     this.rating = this.getTripRating(this.trip._id)
-    if (this.trip.images.length !== 0) {
-      this.images = this.trip.images
-    } else {
-      this.images.push('https://source.unsplash.com/random/686x360')
-    }
+    // if (this.trip.images.length !== 0) {
+    //   this.images = this.trip.images
+    // } else {
+    //   return
+    //   // this.images.push('https://source.unsplash.com/random/686x360')
+    // }
   },
   computed: {
     ...mapState('trip', {

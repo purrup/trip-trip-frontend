@@ -117,9 +117,10 @@ const mutations = {
     state.isOnEditMode = !state.isOnEditMode
   },
   CHANGE_IMAGES_OF_OVERVIEW (state, data) {
-    data.forEach(previewImage => {
-      state.trip.images.push(previewImage)
-    })
+    // data.forEach(previewImage => {
+    //   state.trip.images.push(previewImage)
+    // })
+    state.trip.images = data
   },
   UPDATE_TRIP_NAME (state, data) {
     state.trip.name = data
@@ -272,7 +273,6 @@ const actions = {
   async deleteTrip  (context, id) {
     try {
       await axios.delete(`/trips/${id}`)
-      console.log('deleted')
     } catch (error) {
       console.log(error)
     }

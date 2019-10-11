@@ -74,14 +74,21 @@ export default {
 #trips-root {
   main {
     width: 100%;
-    display: grid;
-    grid-template-columns: 0.77fr 50px 1.15fr;
-    grid-template-areas: "left . right";
+    // display: grid;
+    // grid-template-columns: 0.77fr 50px 1.15fr;
+    // grid-template-areas: "left . right";
     #trips {
-      grid-area: left;
+      // grid-area: left;
+      margin-right: 736px;
     }
     #overview {
-      grid-area: right;
+      // grid-area: right;
+      overflow-x: auto;
+      width: 686px;
+      height: 100%;
+      position: fixed !important;
+      top: 70px;
+      right: 0px;
       max-width: 686px;
     }
   }

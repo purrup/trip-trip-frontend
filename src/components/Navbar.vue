@@ -5,16 +5,21 @@
       v-layout(wrap align-center)
         router-link.ml-2(to="/" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
-        v-select(
-          v-if="$route.name === 'Trips'"
-          height="30px"
-          class="custom-select-style"
-          :style="{ 'width': '100px'} "
-          :items="['1天', '2天', '3天', '4天', '5天']"
-          :menu-props="{ top: false, offsetY: true }"
-          label="天數"
-          solo
-        )
+        //- v-select(
+        //-   v-if="$route.name === 'Trips'"
+        //-   height="30px"
+        //-   class="custom-select-style"
+        //-   :style="{ 'width': '100px'} "
+        //-   :items="['1天', '2天', '3天', '4天', '5天']"
+        //-   :menu-props="{ top: false, offsetY: true }"
+        //-   label="天數"
+        //-   solo
+        //- )
+        v-btn.ml-6(
+          text
+          height=70
+          to="/"
+        ) 建立行程
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
         v-btn(

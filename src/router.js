@@ -116,5 +116,9 @@ export default new Router({
         next({ path: from.path })
       }
     }
-  ]
+  ],
+  // 從置頂開始瀏覽
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })

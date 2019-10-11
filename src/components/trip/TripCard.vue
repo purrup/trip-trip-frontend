@@ -10,7 +10,7 @@
       v-list-item-avatar.img.ml-2(
         tile
         size="110")
-        v-img(:src="trip.images.length !== 0 ? trip.images[0] : defautlImage")
+        v-img(:src="trip.images.length !== 0 ? trip.images[0] : ''")
       .content.my-auto
         rating-favorite.mt-3(:item="trip" :type="'trip'")
         v-row.infomation
