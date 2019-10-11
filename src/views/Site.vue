@@ -28,10 +28,16 @@
                   readonly)
             div
               p {{comment.text}}
-      div(v-if="trips.length !== 0" class="recommendation-lits")
+      div(v-if="containingTrips" class="recommendation-lits")
         p 包含此景點的行程
-        little-card(v-for="trip in trips"
-          :key="`little-card-${trip.name}`"
+        little-card(v-for="(trip, index) in containingTrips"
+          :key="`little-card-${trip.name}-${index}`"
+          :item="trip"
+          :type="'trip'")
+      div(v-if="otherTrips" class="recommendation-lits")
+        p 同縣市的其他行程
+        little-card(v-for="(trip, index) in otherTrips"
+          :key="`little-card-${trip.name}-${index}`"
           :item="trip"
           :type="'trip'")
 </template>
@@ -53,7 +59,8 @@ export default {
         photos: [],
         reviews: []
       },
-      trips: []
+      containingTrips: [],
+      otherTrips: []
     }
   },
   async created () {
@@ -62,9 +69,10 @@ export default {
   methods: {
     async getSite () {
       try {
-        const { site, trips } = await siteApis.getSite(this.$route.params.id)
+        const { site, containingTrips, otherTrips } = await siteApis.getSite(this.$route.params.id)
         this.site = site
-        this.trips = trips
+        this.containingTrips = containingTrips
+        this.otherTrips = otherTrips
       } catch (error) {
         console.log(error)
       }
@@ -131,6 +139,9 @@ export default {
       }
     }
     .recommendation-lits {
+      p {
+        padding-bottom: 10px;
+      }
       .little-card-root {
         margin-bottom: 38px;
       }

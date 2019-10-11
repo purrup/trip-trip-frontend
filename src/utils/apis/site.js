@@ -32,12 +32,13 @@ const mergeSites = function (data) {
 }
 
 const mergeSite = function (data) {
-  const { site, trips } = data
+  const { site, containingTrips, otherTrips } = data
   const placeData = place.data
   const index = placeData.findIndex(place => site.placeId === place.placeId)
   return {
     site: Object.assign({}, site, placeData[index]),
-    trips
+    containingTrips,
+    otherTrips
   }
 }
 

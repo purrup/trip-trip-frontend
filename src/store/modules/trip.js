@@ -269,10 +269,23 @@ const actions = {
       console.log(error)
     }
   },
-  async deleteTrip  (context, id) {
+  async deleteTrip (context, id) {
     try {
       await axios.delete(`/trips/${id}`)
       console.log('deleted')
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async createTrip ({ commit }, formData) {
+    try {
+      const { data } = await axios(`/trips`, {
+        method: 'post',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 0,
+        data: formData
+      })
+      return data
     } catch (error) {
       console.log(error)
     }

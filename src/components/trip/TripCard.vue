@@ -16,7 +16,7 @@
         v-row.infomation
           v-col.pt-1(cols="6")
             ul(style="list-style: none;")
-              li 作者：Saitama
+              li 作者：{{ trip.username }}
               li 旅遊天數： {{ trip.days }}
           v-col.pt-1(cols="6")
             ul(style="list-style: none;")

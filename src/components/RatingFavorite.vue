@@ -6,12 +6,12 @@
       span(:style="{ 'color': '#FB9026' }") {{rating}}
       span(:style="{ 'color': '#999999' }") &nbsp ( {{commentCounts}}則評論 | {{collectingCounts + counts}} 人將此收藏 )
     v-icon(
+      v-if="item.userId !== accountId"
       class="favorite-icon"
       :style="{ 'color' : showWhichIcon ? 'red' : 'grey' }"
       @mouseover="isOnHover = true"
       @mouseout="isOnHover = false"
-      @click="toggle(id)"
-    ) {{ showWhichIcon ? "favorite" : "favorite_border" }}
+      @click="toggle(id)") {{ showWhichIcon ? "favorite" : "favorite_border" }}
     slot(name="cancel")
 </template>
 
@@ -48,6 +48,7 @@ export default {
   },
   computed: {
     ...mapGetters('account', {
+      accountId: 'getAccountId',
       collectingSites: 'getCollectingSites',
       collectingTrips: 'getCollectingTrips'
     }),

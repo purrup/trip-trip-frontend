@@ -6,13 +6,13 @@
           v-if="!isOnEditMode"
         )
           v-btn(
-            v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId._id !== account._id"
+            v-if="$route.path ===`/trips/${$route.params.id}` && trip.userId !== account._id"
             text
             elevation=2
             @click="fork"
           ) 複製行程
           v-btn(
-            v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId._id === account._id"
+            v-else-if="$route.path ===`/trips/${$route.params.id}` && !isOnEditMode && trip.userId === account._id"
             @click="toggleEditMode"
             text
             elevation=2
