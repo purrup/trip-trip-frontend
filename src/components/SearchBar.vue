@@ -19,11 +19,6 @@
         grow)
         v-tabs-slider(color="grey")
         v-tab(v-for="tab in tabLists" :key="tab") {{ tab }}
-      //- v-tabs-items(v-model="tab")
-      //-   v-tab-item(
-      //-     v-for="tab in tabLists"
-      //-     :key="tab"
-      //-   )
       div(class="search-panel")
         div(class="region-panel")
           div(v-for="region in regions"

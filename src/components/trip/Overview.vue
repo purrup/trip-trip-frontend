@@ -21,7 +21,7 @@
         )
       br
       ul(style="list-style: none; padding: 0;")
-        li.mb-2 作者：{{trip.userId.username}}
+        li.mb-2 作者：{{trip.username}}
         li.mb-2 旅遊天數： {{ trip.days }}
         li.mb-2 城市： {{ cities }}
       br

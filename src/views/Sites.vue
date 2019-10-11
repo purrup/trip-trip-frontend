@@ -2,6 +2,7 @@
   div(id="sites-root")
     div(class="sites-container")
       search-result-bar(
+        v-if="!loading"
         :resultWord="resultWord"
         :sitesAmounts="sites.length"
         @sortByRating="sortByRating"
@@ -11,77 +12,38 @@
         tag="div"
         class="sites-wrapper"
         :group="{ name: 'sites', pull: 'clone', put: false }"
-        :list="sites")
+        :list="sites"
+        :clone="clone")
         site-card(
           v-for="site in sites"
           :key="`site-${site.name}`"
           :site="site"
           @mouseover.native="showSiteOnMap(site.geometry)")
     div(id="map")
-    div(
-      class="storage-zone"
-      :class="{ 'fade-in': isShowStorageZone}")
-      button(@click="isShowStorageZone = !isShowStorageZone")
-        v-icon(:class="{ 'arrow-rotate': isShowStorageZone}") keyboard_arrow_left
-      div(:style="storageZoneHeight")
-        div(v-if="!isOnDraggable" class="no-draggable")
-          p(v-if="trips.length === 0") 你還沒有屬於自己的旅程，趕快新增吧！
-          v-btn(
-            outlined
-            color="secondary"
-            @click="isOnDraggable = true") Create
-        div(v-else class="on-draggable")
-          div
-            v-icon(@click="isOnDraggable = false") reply
-            span {{storageTrip.name}}
-            v-spacer
-            v-icon save
-            v-icon edit
-          div
-            daily-activity(
-              v-for="(day, index) in storageTrip.content"
-              :key="`daily-activity-${index + 1}`"
-              :activities="day.activities"
-              :day="index + 1")
-            v-btn(
-              outlined
-              color="secondary"
-              @click="storageTrip.content.push({ activities: [], note: ''})")
-              v-icon add
+    storage-zone
 </template>
 
 <script>
 import SearchResultBar from '@/components/site/SearchResultBar.vue'
 import SiteCard from '@/components/site/SiteCard.vue'
+import StorageZone from '@/components/site/StorageZone.vue'
 import draggable from 'vuedraggable'
-import DailyActivity from '@/components/site/DailyActivity.vue'
 
 import siteApis from '@/utils/apis/site.js'
 
 /* eslint-disable */
 export default {
   components: {
-    SiteCard,
     draggable,
-    DailyActivity,
+    SiteCard,
+    StorageZone,
     SearchResultBar
   },
   data () {
     return {
-      isShowStorageZone: false,
+      loading: true, // 確保搜尋完才出現
       resultWord: '',
       sites: [],
-      trips: [],
-      isOnDraggable: false,
-      storageTrip: {
-        name: 'XXX的快樂之旅',
-        content: [
-          {
-            activities: [],
-            note: ''
-          }
-        ]
-      },
       map: null,
       marker: null,
       myTainanHouse: { lat: 23.039808, lng: 120.211868 }
@@ -92,13 +54,6 @@ export default {
     await this.search()
     if (this.sites.length !== 0) {
       this.initMap()
-    }
-  },
-  computed: {
-    storageZoneHeight () {
-      return {
-        height: window.innerHeight - 70 + 'px'
-      }
     }
   },
   methods: {
@@ -125,12 +80,25 @@ export default {
       this.map.setCenter(pos)
       this.map.setZoom(13)
     },
+    clone (site) {
+      return {
+        placeId: site.placeId,
+        collectingCounts: site.collectingCounts,
+        reviews: site.reviews,
+        rating: site.rating,
+        name: site.name,
+        cost: 0,
+        startTime: Date.now(),
+        endTime: Date.now()
+      }
+    },
     async search () {
       if (this.$route.query.hasOwnProperty('keyword')) {
         await this.getSitesByKeyword()
       } else {
         await this.getSitesByCountryAndCities()
       }
+      this.loading = false
     },
     async getSitesByCountryAndCities () {
       try {
@@ -188,65 +156,5 @@ export default {
     top: 70px;
     right: 0px;
   }
-}
-.storage-zone {
-  width: 360px;
-  position: fixed;
-  top: 70px;
-  right: -330px;
-  opacity: 1;
-  transition: all 1s;
-  display: flex;
-  > button {
-    width: 30px;
-    height: 30px;
-    outline: none;
-    background-color: orange;
-  }
-  > div {
-    width: 330px;
-    background-color: white;
-    .no-draggable {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .on-draggable {
-      height: 100%;
-      > div:nth-child(1) {
-        display: flex;
-        align-items: center;
-        border: 1px solid black;
-        height: 40px;
-        padding: 0 10px;
-        span {
-          font-size: 24px;
-        }
-        i:nth-child(1) {
-          padding-right: 10px;
-        }
-        i:last-child {
-          padding-left: 10px;
-        }
-      }
-      > div:nth-child(2) {
-        display: grid;
-        width: 100%;
-        justify-items: center;
-        > button {
-          width: 90%;
-          border-style: dashed;
-          margin-top: 10px;
-        }
-      }
-    }
-  }
-}
-
-.fade-in {
-  transform: translateX(-330px);
-}
-.arrow-rotate {
-  transform: rotateZ(180deg);
 }
 </style>

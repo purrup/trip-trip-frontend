@@ -23,7 +23,7 @@
         p 已收藏{{user.collectingTrips.length}}個行程
       div
         v-icon(color="#FB9026") emoji_events
-        p 行程已被收藏{{10}}次
+        p 行程已被收藏{{haveBeenCollectingCounts}}次
       div(v-if="isMyself")
         button(@click="$emit('onEditMode')") 編輯個人資料
     span 加入時間: &nbsp {{new Date(user.createdAt).toDateString()}}
@@ -35,6 +35,11 @@ export default {
   props: {
     user: Object,
     isMyself: Boolean
+  },
+  computed: {
+    haveBeenCollectingCounts () {
+      return this.user.owningTrips.reduce((total, trip) => trip.collectingCounts + total, 0)
+    }
   },
   methods: {
     ...mapActions('account', ['editProfile']),

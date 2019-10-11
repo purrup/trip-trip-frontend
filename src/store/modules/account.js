@@ -80,6 +80,9 @@ const mutations = {
   },
   RATE_trip (state, params) {
     state.ratingTrips.push(params)
+  },
+  CREATE_trip (state, trip) {
+    state.owningTrips.push(trip)
   }
 }
 

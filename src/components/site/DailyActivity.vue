@@ -1,9 +1,10 @@
 <template lang="pug">
   div(class="daily-activity-root")
     div(@click="isExpand = !isExpand")
+      v-icon {{isExpand ? 'arrow_drop_down' : 'arrow_drop_up' }}
       span Day {{day}}
       v-spacer
-      v-icon {{isExpand ? 'arrow_drop_down' : 'arrow_drop_up' }}
+      v-icon(@click="$emit('deleteOneDay')") close
     draggable(
       tag="div"
       class="dragAreas"
@@ -19,12 +20,6 @@
           class="storage-site")
           div(slot="cancel" class="cancel-wrap")
             v-icon(@click="activities.splice(index, 1)") close
-        //- div(v-for="(site, index) in activities"
-        //-   :key="site.name + index"
-        //-   class="storage-site")
-        //-   span {{ site.name }}
-        //-   v-spacer
-          v-icon(@click="activities.splice(index, 1)") close
 </template>
 
 <script>
@@ -62,8 +57,11 @@ export default {
     height: 40px;
     padding: 0 10px;
     border: 1px solid black;
+    i:nth-child(1) {
+      padding-right: 6px;
+    }
     i:last-child {
-      font-size: 30px;
+      font-size: 20px;
     }
     &:hover {
       background-color: darkgrey;

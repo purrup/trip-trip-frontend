@@ -1,5 +1,6 @@
 import axios from '../../utils/axios'
 import router from '@/router.js'
+import { mergeSites } from '@/utils/apis/site.js'
 
 const state = {
   trips: [{
@@ -102,6 +103,9 @@ const mutations = {
   },
   SET_TRIP (state, data) {
     state.trip = data
+    state.trip.contents.forEach(content => {
+      content.activities = mergeSites(content.activities)
+    })
   },
   ADD_comment (state, data) {
     state.trip.comments.unshift(data)
@@ -270,9 +274,22 @@ const actions = {
       console.log(error)
     }
   },
-  async deleteTrip  (context, id) {
+  async deleteTrip (context, id) {
     try {
       await axios.delete(`/trips/${id}`)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async createTrip ({ commit }, formData) {
+    try {
+      const { data } = await axios(`/trips`, {
+        method: 'post',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 0,
+        data: formData
+      })
+      return data
     } catch (error) {
       console.log(error)
     }
