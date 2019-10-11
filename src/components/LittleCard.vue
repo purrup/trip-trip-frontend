@@ -24,7 +24,10 @@ export default {
     RatingFavorite
   },
   props: {
-    item: Object,
+    item: {
+      type: Object,
+      default: () => ({})
+    },
     type: String
   },
   data () {

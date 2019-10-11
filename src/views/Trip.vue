@@ -5,8 +5,7 @@
         class="edit-buttons-group"
         @updateStartDate="updateStartDate"
         :dates="dates"
-        :currentDate="currentDate"
-      )
+        :currentDate="currentDate")
       //- 左側切換欄
       #toggle-bar
         v-list
@@ -32,29 +31,25 @@
         overview(
           v-if="currentDisplay === 'overview'"
           :trip="trip")
-        #trip-schedule(
-          v-else-if="currentDisplay !== 'overview'"
-          )
+        #trip-schedule(v-else)
           trip-schedule(
             class="trip-schedule"
             :currentDate="currentDate"
             :dates="dates"
             :currentDisplay="currentDisplay"
-            @getSite="getSite"
-            @toggleContent="toggleContent"
-          )
+            @toggleCurrentActivity="toggleCurrentActivity"
+            @toggleContent="toggleContent")
           .site
-            .title.mb-2
-              v-sheet.d-flex.justify-start.align-center(
-                width=250
-                height=47
-                color="grey lighten-2"
-                elevation="2")
-                span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
-            .little-card(v-if="currentSiteCard")
-              little-card(
-                :item="currentSiteCard"
-                :type="'site'")
+            v-sheet.d-flex.justify-start.align-center.mb-2(
+              width=250
+              height=47
+              color="grey lighten-2"
+              elevation="2")
+              span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
+            little-card(
+              :key="currentActivity.placeId"
+              :item="currentActivity"
+              :type="'site'")
     #map
 </template>
 
@@ -63,7 +58,6 @@ import Overview from '@/components/trip/Overview.vue'
 import TripSchedule from '@/components/trip/TripSchedule.vue'
 import LittleCard from '@/components/LittleCard.vue'
 import EditButtonsGroup from '@/components/trip/EditButtonsGroup.vue'
-import siteApis from '@/utils/apis/site'
 import { mapState, mapMutations } from 'vuex'
 
 /* eslint-disable */
@@ -78,20 +72,17 @@ export default {
   data () {
     return {
       dates: [],
-      currentDisplay: null,
-      currentSiteCard: {},
+      currentDisplay: 'overview',
+      currentActivity: {},
       map: null,
       marker: null
     }
   },
-  beforeMount () {
-    // content預設資料
-    this.currentDisplay = 'overview'
-    // // 計算全部旅行日期
-    const startDate = this.trip.startDate ? this.trip.startDate : Date.now()
-    const firstDate = new Date(startDate)
+  created () {
+    // 計算全部旅行日期
+    const startDate = this.trip.startDate ? this.trip.startDate : new Date()
     for (let i = 0; i < this.trip.days; i++) {
-      let newDate = new Date(firstDate)
+      let newDate = new Date(startDate)
       newDate.setDate(newDate.getDate() + i)
       this.dates.push(newDate)
     }
@@ -102,8 +93,7 @@ export default {
   computed: {
     ...mapState('trip', {
       trip: state => state.trip,
-      isOnEditMode: state => state.isOnEditMode,
-      startDate: state => state.startDate ? state.startDate : Date.now()
+      isOnEditMode: state => state.isOnEditMode
     }),
     ...mapState('account', {
       account: state => state
@@ -139,6 +129,9 @@ export default {
     toggleContent (date) {
       this.currentDisplay = date
     },
+    toggleCurrentActivity (currentActivity) {
+      this.currentActivity = currentActivity
+    },
     addNewDate () {
       // 新增旅遊日期及單日的行程規劃
       let lastDate = this.dates[this.dates.length - 1]
@@ -161,13 +154,6 @@ export default {
       this.dates = newDatesArray
       // 更改日期後，仍可停留在原本的天數的activity
       this.currentDisplay = this.dates[oldCurrentDate]
-    },
-    async getSite (siteId) {
-      try {
-        this.currentSiteCard = await siteApis.getSite(siteId)
-      } catch (error) {
-        console.log(error)
-      }
     }
   },
   watch: {
