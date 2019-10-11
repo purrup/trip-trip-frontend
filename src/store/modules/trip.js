@@ -1,5 +1,6 @@
 import axios from '../../utils/axios'
 import router from '@/router.js'
+import { mergeSites } from '@/utils/apis/site.js'
 
 const state = {
   trips: [{
@@ -102,6 +103,9 @@ const mutations = {
   },
   SET_TRIP (state, data) {
     state.trip = data
+    state.trip.contents.forEach(content => {
+      content.activities = mergeSites(content.activities)
+    })
   },
   ADD_comment (state, data) {
     state.trip.comments.unshift(data)
