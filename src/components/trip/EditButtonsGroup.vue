@@ -172,8 +172,6 @@ export default {
     syncImageFiles (data) {
       this.newImageFiles = data.newImageFiles
       this.deletedImages = data.deletedImages
-      console.log(data.newImageFiles)
-      console.log(data.deletedImages)
     },
     deleteCurrentTrip (id) {
       this.SET_SUCCESS_MSG(`已刪除您的行程 "${this.trip.name}"`)
@@ -187,8 +185,7 @@ export default {
       this.newImageFiles.forEach(image => {
         formData.append('images', image)
       })
-      formData.append('deletedImages', this.deletedImages)
-      console.log(formData.get('deletedImages'))
+      this.trip['deletedImages'] = this.deletedImages
       formData.append('data', JSON.stringify(this.trip))
       const tripId = this.trip._id
       this.updateTrip({ tripId, formData })

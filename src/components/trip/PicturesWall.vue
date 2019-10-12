@@ -108,7 +108,7 @@ export default {
       // 刪除newImageFiles中的file
       // 如果deletedimage 不在originImages中，表示是新upload的image，刪除file檔
       if (this.originImages.includes(image) === false) {
-        // 刪除file檔
+        // 刪除file檔中對應的照片
         let deletedfileIndex = this.previewImagesList.length - 1 - this.previewImagesList.indexOf(image)
         this.newImageFiles.splice(deletedfileIndex, 1)
       }
@@ -117,13 +117,6 @@ export default {
       })
       this.previewImagesList = newPreviewImageList
     }
-    // 給後端：
-    // 刪除的image放進data的deletedImages
-    // 新增的image放進data的images中
-    // 前端：
-    // 取得現在的全部images => trip.images
-    // 列出previewImagesList中的image讓使用者read and delete
-    // 使用者上傳及刪除完後按下確認
   }
 }
 </script>
