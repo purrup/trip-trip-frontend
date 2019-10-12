@@ -12,11 +12,8 @@
           elevation=3
           hover
           v-for="(image, i) in previewImagesList"
-          :key="`image-card-${image}`"
-          @click="deleteImage(image)"
-        )
-          .overlay
-            v-icon(medium) mdi-close-circle
+          :key="`image-card-${image}`")
+          v-icon(medium @click="deleteImage(image)") mdi-close-circle
           v-img.image(
             height=140
             :src="`${image}`")
@@ -24,22 +21,19 @@
           width=160
           height=160
           elevation=3
-          hover
-        )
+          hover)
           v-btn(
             text
             height="100%"
             width="100%"
-            @click="$refs.file.click()"
-          )
+            @click="$refs.file.click()")
             input(
               style="display: none;"
               accept=".png,.jpg"
               type="file"
               ref="file"
               multiple
-              @change="editImages"
-            )
+              @change="editImages")
             p upload
             v-icon mdi-plus
       v-card-actions
@@ -47,8 +41,7 @@
         .btnGroup.mb-3
           v-btn(
             color="info"
-            type="submit"
-            ) 確定
+            type="submit") 確定
           v-btn.mx-5(
             color="error"
             @click="closeEditImage") 取消
@@ -127,33 +120,11 @@ export default {
     margin: 16px 0;
     .picture-card {
       margin: 10px 16px;
-      .overlay {
-        :first-child {
-          position: absolute;
-          top: 10px;
-          right: 5px;
-        }
+      i:first-child {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        &::before,
-        &::after {
-          content: '';
-          position: absolute;
-          top: 1.5rem;
-          right: 1.5rem;
-          bottom: 1.5rem;
-          left: 1.5rem;
-          transition: 0.5s;
-        }
-        &::before {
-          transform: scale(0,1);
-        }
-        &::after {
-          transform: scale(1,0);
-        }
+        top: 10px;
+        right: 5px;
+        z-index: 10
       }
       .image {
         margin-top: 10px;
@@ -161,17 +132,13 @@ export default {
         transition: 0.5s;
       }
       &:hover {
-        .overlay {
-          opacity: 1;
-          transform: translate3d(0,0,0);
-        }
         .image {
           opacity: 0.2;
         }
-        &::before,
-        &::after {
-          transform: scale(1);
-        }
+        // &::before,
+        // &::after {
+        //   transform: scale(1);
+        // }
       }
     }
   }
