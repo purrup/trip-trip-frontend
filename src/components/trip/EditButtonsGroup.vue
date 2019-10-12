@@ -54,7 +54,7 @@
           elevation=2
           @click="showEditImage = true"
           medium
-        ) 上傳照片
+        ) 編輯照片
           v-icon.ml-1(small) mdi-cloud-upload-outline
         v-dialog(
           v-model="showEditImage"
@@ -74,17 +74,17 @@
           v-icon.ml-1(small) mdi-security
         v-dialog(
           v-model="showPrivacySetting"
-          width=400
+          width=600
           height=auto
           )
           v-card
-            .container.pt-8
-              .d-flex.flex-row.flex-nowrap.justify-center.align-center
-                span(style="font-size: 1.2em; color: #616161;") 讓其他人能夠瀏覽、參考您的行程
-              v-switch.ml-10.mt-7(
-                v-model="publish"
-                :label="`${privacySetting}`"
-                @change="updatePrivacy")
+            .container
+              .d-flex.flex-row.flex-wrap.justify-center.align-center
+                span(style="font-size: 1.2em; color: #616161;") 是否讓其他人能夠瀏覽、參考您的行程
+                v-switch.ml-10.mt-5(
+                  v-model="trip.isPrivate"
+                  :label="`${privacySetting}`"
+                  @change="updatePrivacy")
         v-btn.ml-6(
           text
           elevation=2
@@ -128,7 +128,6 @@ export default {
     return {
       showCalendar: false,
       firstDatePicker: null,
-      publish: false,
       showEditImage: false,
       showDeleteConfirmation: false,
       showPrivacySetting: false,
@@ -146,7 +145,7 @@ export default {
       account: state => state
     }),
     privacySetting () {
-      return this.trip.isPrivate ? '公開此行程' : '不公開此行程'
+      return this.trip.isPrivate ? '否' : '是'
     }
   },
   methods: {
