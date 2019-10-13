@@ -18,7 +18,7 @@
         v-btn.ml-6(
           text
           height=70
-          to="/"
+          @click="createNewTrip"
         ) 建立行程
         v-spacer
         search-bar.mr-12(class="ml-8" :width="'480px'" :height="'40px'" :home="false")
@@ -62,11 +62,53 @@ export default {
     })
   },
   methods: {
+    ...mapMutations('account', ['CREATE_trip']),
     ...mapActions('account', ['logout']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG']),
+    ...mapActions('trip', ['createTrip']),
     Logout () {
       this.logout()
       this.SET_SUCCESS_MSG('登出成功')
+    },
+    async createNewTrip () {
+      const formData = new FormData()
+      const basicFormat = {
+        name: this.account.username + '的快樂之旅',
+        country: '臺灣',
+        contents: [
+          {
+            activities: [
+              {
+                startTime: Date.now(),
+                endTime: Date.now(),
+                placeId: 'ChIJraeA2rarQjQRPBBjyR3RxKw',
+                cost: 0
+              }
+            ],
+            note: ''
+          }
+        ],
+        sites: [
+          {
+            'city': '台北市',
+            'village': '信義區',
+            'collectingCounts': 0,
+            'collectingUsers': [],
+            '_id': '5d9b3835cc170726254c3a32',
+            'name': '台北101',
+            'placeId': 'ChIJraeA2rarQjQRPBBjyR3RxKw',
+            'address': '111台灣台北市信義區信義路五段7號',
+            '__v': 2
+          }
+        ]
+      }
+      formData.append('data', JSON.stringify(basicFormat))
+
+      const trip = await this.createTrip(formData)
+      this.CREATE_trip(trip)
+      console.log(trip)
+      this.$router.push(`/trips/${trip._id}`)
+      this.SET_SUCCESS_MSG(`可以開始編輯您的行程：${trip.name}`)
     }
   }
 }

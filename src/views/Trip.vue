@@ -32,7 +32,8 @@
           class="trip-schedule"
           :dayOfTrip="dayOfTrip"
           :datesOfTrip="datesOfTrip"
-          @toggleContent="toggleContent")
+          @toggleContent="toggleContent"
+          @showSiteOnMap="showSiteOnMap")
     #map
 </template>
 
@@ -40,6 +41,7 @@
 import Overview from '@/components/trip/Overview.vue'
 import TripSchedule from '@/components/trip/TripSchedule.vue'
 import EditButtonsGroup from '@/components/trip/EditButtonsGroup.vue'
+import siteApis from '@/utils/apis/site.js'
 import { mapState, mapMutations } from 'vuex'
 
 /* eslint-disable */
@@ -55,10 +57,12 @@ export default {
       isShowOverview: true,
       dayOfTrip: 0,
       map: null,
-      marker: null
+      marker: null,
+      currentSite: []
     }
   },
-  mounted () {
+  async mounted () {
+    await this.getSitesByKeyword(this.trip.sites[0].name)
     this.initMap()
   },
   computed: {
@@ -83,7 +87,7 @@ export default {
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 23.039808, lng: 120.211868 },
+        center: this.currentSite[0].geometry,
         zoom: 13,
         mapTypeControl: false,
         fullscreenControl: true,
@@ -91,7 +95,7 @@ export default {
           position: google.maps.ControlPosition.RIGHT_BOTTOM
         }
       })
-      this.marker = new google.maps.Marker({ map: this.map, position: { lat: 23.039808, lng: 120.211868 } })
+      this.marker = new google.maps.Marker({ map: this.map, position: this.currentSite[0].geometry })
 
       this.marker.addListener('click', (e) => {
         this.map.setZoom(8)
@@ -105,7 +109,11 @@ export default {
     toggleContent (day) {
       this.isShowOverview = false
       this.dayOfTrip = day
-    }
+    },
+    async getSitesByKeyword (keyword) {
+      const site = await siteApis.getSitesByKeyword(keyword)
+      this.currentSite = site
+    },
   },
   watch: {
     async '$route' (to, from) {

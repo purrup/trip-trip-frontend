@@ -1,9 +1,9 @@
 <template lang="pug">
   v-card(class="pictures-wall")
-    v-card-title.justify-center 上傳照片至概覽
+    v-card-title.justify-center 分享您這次旅程的照片
     v-form(
       ref="form"
-      @submit.prevent="previewImages"
+      @submit.prevent="confirmImages"
     )
       div(class="container d-flex flex-wrap justify-start align-content-space-around")
         v-card.picture-card(
@@ -11,7 +11,7 @@
           height=160
           elevation=3
           hover
-          v-for="(image, i) in previewImagesList"
+          v-for="(image, i) in uploadWallImages"
           :key="`image-card-${image}`")
           v-icon(medium @click="deleteImage(image)") mdi-close-circle
           v-img.image(
@@ -38,13 +38,13 @@
             v-icon mdi-plus
       v-card-actions
         .flex-grow-1
-        .btnGroup.mb-3
+        .btnGroup.mb-3.mr-3
           v-btn(
             color="info"
-            type="submit") 確定
-          v-btn.mx-5(
-            color="error"
-            @click="closeEditImage") 取消
+            type="submit") 完成
+          //- v-btn.mx-5(
+          //-   color="error"
+          //-   @click="cancelEditImage") 取消
 </template>
 
 <script>
@@ -56,15 +56,14 @@ export default {
     return {
       originImages: [],
       deletedImages: [],
-      previewImagesList: [],
-      newImageFiles: [],
-      showinput: false
+      uploadWallImages: [],
+      newImageFiles: []
     }
   },
   mounted () {
-    // fork 一份trip.images
+    // fork trip.images
     this.originImages = [...this.trip.images]
-    this.previewImagesList = this.trip.images
+    this.uploadWallImages = [...this.trip.images]
   },
   computed: {
     ...mapState('trip', {
@@ -79,36 +78,39 @@ export default {
         let image = e.target.files[i]
         // 要給後端的imageFile
         this.newImageFiles.push(image)
-        this.previewImagesList.push(URL.createObjectURL(image))
+        // 使用者上傳圖片後，將預覽圖片存在uploadWallImages，此時newImageFiles為空
+        this.uploadWallImages.push(URL.createObjectURL(image))
       }
+      e.target.value = ''
     },
-    previewImages () {
-      this.closeEditImage()
-      // deletedImages = 從originImages中找出不在previewImagesList的images
+    confirmImages () {
+      this.$emit('closeEditImage', false)
+      // deletedImages = 從originImages中找出不在trip.images的images
       this.deletedImages = this.originImages.filter(originImage => {
-        return !this.previewImagesList.includes(originImage)
+        return !this.uploadWallImages.includes(originImage)
       })
       // 把deletedImages, newImageFiles傳到editButtonsGroup
       this.$emit('syncImageFiles', { newImageFiles: this.newImageFiles, deletedImages: this.deletedImages })
       // 即時預覽上傳圖片
-      // 要放入編輯過的previewImagesList
-      this.CHANGE_IMAGES_OF_OVERVIEW(this.previewImagesList)
+      // 要放入編輯過的uploadWallImages
+      this.CHANGE_IMAGES_OF_OVERVIEW(this.uploadWallImages)
     },
-    closeEditImage () {
+    cancelEditImage () {
       this.$emit('closeEditImage', false)
+      // 取消的話，trip.images不變，uploadWallImages = orginImages
+      this.uploadWallImages = this.orginImages
     },
     deleteImage (image) {
       // 刪除newImageFiles中的file
       // 如果deletedimage 不在originImages中，表示是新upload的image，刪除file檔
       if (this.originImages.includes(image) === false) {
         // 刪除file檔中對應的照片
-        let deletedfileIndex = this.previewImagesList.length - 1 - this.previewImagesList.indexOf(image)
+        let deletedfileIndex = this.uploadWallImages.length - 1 - this.uploadWallImages.indexOf(image)
         this.newImageFiles.splice(deletedfileIndex, 1)
       }
-      let newPreviewImageList = this.previewImagesList.filter(item => {
+      this.uploadWallImages = this.uploadWallImages.filter(item => {
         return item !== image
       })
-      this.previewImagesList = newPreviewImageList
     }
   }
 }

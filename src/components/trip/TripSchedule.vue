@@ -16,7 +16,7 @@
         v-sheet.mb-3(width=370 height=47 color="white" elevation="2"
           v-for="(schedule, i) in trip.contents[dayOfTrip].activities"
           :key="`${schedule.startTime}-${i}`"
-          @click="toggleCurrentActivity(schedule)")
+          @mouseover.native="toggleCurrentActivity(schedule)")
           .schedule-card(v-if="!showEditActivityPanel")
             //- 切換每日行程內容的編輯模式
             v-icon.dots-vertical(
@@ -43,10 +43,12 @@
                 :value="schedule.cost"
                 @change="updateAvtivity")
             input.activity(
+              v-if="!currentActivity.placeId"
               id="avtivityName"
               style="width: 169px;"
               :value="schedule.name"
               @change="updateAvtivity")
+            .activity(v-else-if="currentActivity.placeId") {{schedule.name}}
             v-icon.delete-activity(@click="DELETE_TRIP_activity({ schedule, dayOfTrip })") mdi-trash-can-outline
         v-sheet.d-flex.justify-center(width=370 height=47 elevation="2"
           v-if="isOnEditMode"
@@ -111,6 +113,7 @@
         elevation="2")
         span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
       little-card(
+        v-if="currentActivity.placeId"
         :key="currentActivity.placeId"
         :item="currentActivity"
         :type="'site'")
@@ -118,6 +121,7 @@
 
 <script>
 import LittleCard from '@/components/LittleCard.vue'
+import siteApis from '@/utils/apis/site.js'
 import { mapState, mapMutations } from 'vuex'
 
 export default {
@@ -134,7 +138,8 @@ export default {
       showEditDailySchedulePanel: false,
       showEditActivityPanel: false,
       showTimePicker: false,
-      currentActivity: {}
+      currentActivity: {},
+      currentSite: []
     }
   },
   created () {
@@ -168,6 +173,15 @@ export default {
     ...mapMutations('trip', ['DELETE_TRIP_date', 'ADD_TRIP_activity', 'DELETE_TRIP_activity', 'UPDATE_TRIP_note', 'UPDATE_TRIP_activity']),
     toggleCurrentActivity (currentActivity) {
       this.currentActivity = currentActivity
+      if (currentActivity.placeId) {
+        this.getSitesByKeyword(currentActivity.name)
+        // console.log(this.currentSite[0].geometry)
+        let geometry = this.currentSite[0].geometry
+        this.$emit('showSiteOnMap', geometry)
+      }
+    },
+    async getSitesByKeyword (keyword) {
+      this.currentSite = await siteApis.getSitesByKeyword(keyword)
     },
     deleteDate () {
       // 刪除單一天的行程以及此行程內的活動
