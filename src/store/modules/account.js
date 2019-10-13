@@ -1,6 +1,7 @@
 import axios from '../../utils/axios'
 import siteApis from '@/utils/apis/site'
 import trip from '@/store/modules/trip.js'
+import notification from '@/store/modules/notification.js'
 
 const state = {
   isLogin: localStorage.getItem('isLogin') || false,
@@ -97,7 +98,7 @@ const actions = {
       commit('SET_login')
     } catch (error) {
       if (error.response.status === 409) {
-        alert('此email已註冊過')
+        notification.mutations.SET_ERROR_MSG(notification.state, error.response.data.message)
       } else {
         console.log(error)
       }
@@ -157,6 +158,18 @@ const actions = {
     try {
       commit('TOGGLE_collectedTrip', tripId)
       await trip.actions.toggleCollectedTrip(trip.state, tripId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async forgotPassword ({ commit }, email) {
+    try {
+      console.log(email)
+      await axios('/forgot_password', {
+        method: 'post',
+        data: email
+      })
+      notification.mutations.SET_SUCCESS_MSG(notification.state, '已寄送密碼確認信，請至此信箱收信')
     } catch (error) {
       console.log(error)
     }

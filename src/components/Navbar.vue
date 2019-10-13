@@ -58,7 +58,8 @@ export default {
   },
   computed: {
     ...mapState('account', {
-      account: state => state
+      account: state => state,
+      isLogin: state => state.isLogin
     })
   },
   methods: {
@@ -73,7 +74,7 @@ export default {
     async createNewTrip () {
       const formData = new FormData()
       const basicFormat = {
-        name: this.account.username + '的快樂之旅',
+        name: this.account.username ? this.account.username + '的快樂之旅' : '快樂之旅',
         country: '臺灣',
         contents: [
           {
@@ -103,12 +104,19 @@ export default {
         ]
       }
       formData.append('data', JSON.stringify(basicFormat))
-
+      // console.log(formData.get('data'))
       const trip = await this.createTrip(formData)
-      this.CREATE_trip(trip)
       console.log(trip)
+      this.CREATE_trip(trip)
       this.$router.push(`/trips/${trip._id}`)
       this.SET_SUCCESS_MSG(`可以開始編輯您的行程：${trip.name}`)
+    }
+  },
+  watch: {
+    isLogin (newValue) {
+      if (newValue === false) {
+        this.$router.go(0)
+      }
     }
   }
 }

@@ -153,7 +153,11 @@ export default {
     ...mapMutations('trip', ['TOGGLE_isOnEditMode', 'UPDATE_TRIP_startDate', 'UPDATE_TRIP_privacy', 'ADD_TRIP_date']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     fork () {
-      this.forkTrip(this.trip._id)
+      if (this.account.isLogin === 'false') {
+        this.SET_ERROR_MSG('請先登入或註冊帳號喔')
+      } else {
+        this.forkTrip(this.trip._id)
+      }
     },
     toggleEditMode () {
       this.TOGGLE_isOnEditMode()

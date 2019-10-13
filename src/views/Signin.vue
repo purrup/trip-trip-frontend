@@ -58,8 +58,38 @@
         ) 登入
         v-col.d-flex.justify-end.mt-12(cols="auto")
           router-link.body-2.mr-5(to="/signup") 註冊帳號
-          router-link.body-2(to="/signup'}") 忘記密碼？
-
+          //- p.body-2(
+          //-   style="color: #1976d2; cursor: pointer;"
+          //-   @click="showForgetPassword = true") 忘記密碼？
+        v-dialog(
+          v-model="showForgetPassword"
+          width=430
+          height=auto
+          )
+          v-card
+            .container.py-11
+              p.text-center 請輸入註冊時的email
+              v-text-field.my-3(
+                v-model="email"
+                :rules="emailRules"
+                label="E-mail"
+                prepend-icon="email"
+                required
+              )
+            v-card-actions
+              .flex-grow-1
+              .btnGroup.mb-3
+                v-btn(
+                  width=50
+                  height=40
+                  color="info"
+                  @click="issueForgotPassword(email)"
+                  ) 確定
+                v-btn.mx-5(
+                  width=50
+                  height=40
+                  color="error"
+                  @click="showForgetPassword = false") 取消
 </template>
 
 <script>
@@ -81,7 +111,8 @@ export default {
       showPassword: false,
       baseURL: process.env.NODE_ENV === 'production'
         ? 'https://triptrip-backend.herokuapp.com'
-        : 'http://localhost:3000'
+        : 'http://localhost:3000',
+      showForgetPassword: false
     }
   },
   computed: {
@@ -90,7 +121,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('account', ['signin']),
+    ...mapActions('account', ['signin', 'forgotPassword']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     async submit () {
       try {
@@ -107,7 +138,6 @@ export default {
           this.SET_ERROR_MSG('密碼有誤，請重新輸入')
         } else {
           this.SET_ERROR_MSG('密碼有誤，請重新輸入')
-
           console.log(error.response)
         }
       }
@@ -117,6 +147,9 @@ export default {
     },
     googleLogin () {
       window.location = this.baseURL + '/google'
+    },
+    issueForgotPassword (email) {
+      this.forgotPassword({ email: email })
     }
   }
 }

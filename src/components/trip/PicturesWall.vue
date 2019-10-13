@@ -54,7 +54,7 @@ export default {
   name: 'PicturesWall',
   data () {
     return {
-      originImages: [],
+      // originImages: [],
       deletedImages: [],
       uploadWallImages: [],
       newImageFiles: []
@@ -62,13 +62,16 @@ export default {
   },
   mounted () {
     // fork trip.images
-    this.originImages = [...this.trip.images]
+    // this.originImages = [...this.trip.images]
     this.uploadWallImages = [...this.trip.images]
   },
   computed: {
     ...mapState('trip', {
       trip: state => state.trip
-    })
+    }),
+    originImages () {
+      return this.trip.images
+    }
   },
   methods: {
     ...mapMutations('trip', ['CHANGE_IMAGES_OF_OVERVIEW']),
@@ -98,7 +101,7 @@ export default {
     cancelEditImage () {
       this.$emit('closeEditImage', false)
       // 取消的話，trip.images不變，uploadWallImages = orginImages
-      this.uploadWallImages = this.orginImages
+      this.uploadWallImages = this.trip.images
     },
     deleteImage (image) {
       // 刪除newImageFiles中的file

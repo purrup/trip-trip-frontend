@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 
 export default {
   data () {
@@ -90,6 +90,7 @@ export default {
   },
   methods: {
     ...mapActions('account', ['signup']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     async submit () {
       try {
         if (this.$refs.form.validate()) {
@@ -99,6 +100,7 @@ export default {
             password: this.password
           })
           this.$router.push('/')
+          this.SET_SUCCESS_MSG('註冊成功！開始規劃您的旅程吧！')
         }
       } catch (error) {
         console.log(error)
