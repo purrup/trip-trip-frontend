@@ -12,7 +12,7 @@
               style=" list-style: none; "
               v-for="(site, i) in sitesOfOneDay"
               :key="i")
-              li {{ site }}
+              li {{ site.name ? site.name : site }}
 </template>
 
 <script>

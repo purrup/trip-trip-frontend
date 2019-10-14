@@ -122,6 +122,7 @@ export default {
 
 <style lang="scss" scoped>
 .overview-root {
+  overflow-y: auto;
   height: auto;
   display: grid;
   grid-template-columns: 1fr;

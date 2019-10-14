@@ -65,51 +65,45 @@ export default {
   methods: {
     ...mapMutations('account', ['CREATE_trip']),
     ...mapActions('account', ['logout']),
-    ...mapMutations('notification', ['SET_SUCCESS_MSG']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     ...mapActions('trip', ['createTrip']),
     Logout () {
       this.logout()
       this.SET_SUCCESS_MSG('登出成功')
     },
     async createNewTrip () {
-      const formData = new FormData()
-      const basicFormat = {
-        name: this.account.username ? this.account.username + '的快樂之旅' : '快樂之旅',
-        country: '臺灣',
-        contents: [
-          {
-            activities: [
-              {
-                startTime: Date.now(),
-                endTime: Date.now(),
-                placeId: 'ChIJraeA2rarQjQRPBBjyR3RxKw',
-                cost: 0
-              }
-            ],
-            note: ''
-          }
-        ],
-        sites: [
-          {
-            'city': '台北市',
-            'village': '信義區',
-            'collectingCounts': 0,
-            'collectingUsers': [],
-            '_id': '5d9b3835cc170726254c3a32',
-            'name': '台北101',
-            'placeId': 'ChIJraeA2rarQjQRPBBjyR3RxKw',
-            'address': '111台灣台北市信義區信義路五段7號',
-            '__v': 2
-          }
-        ]
+      if (this.account.isLogin === true) {
+        const formData = new FormData()
+        const basicFormat = {
+          name: this.account.username + '的快樂之旅',
+          country: '臺灣',
+          cities: ['台北'],
+          contents: [
+            {
+              activities: [
+                {
+                  placeId: 'ChIJraeA2rarQjQRPBBjyR3RxKw',
+                  cost: 0,
+                  startTime: Date.now(),
+                  endTime: Date.now()
+                }
+              ],
+              note: ''
+            }
+          ],
+          sites: [
+            ['台北101']
+          ]
+        }
+        formData.append('data', JSON.stringify(basicFormat))
+        const trip = await this.createTrip(formData)
+        console.log(trip)
+        this.CREATE_trip(trip)
+        this.$router.push(`/trips/${trip._id}`)
+        this.SET_SUCCESS_MSG(`可以開始編輯您的行程：${trip.name}`)
+      } else {
+        this.SET_ERROR_MSG('請先登入或註冊帳號喔')
       }
-      formData.append('data', JSON.stringify(basicFormat))
-      // console.log(formData.get('data'))
-      const trip = await this.createTrip(formData)
-      console.log(trip)
-      this.CREATE_trip(trip)
-      this.$router.push(`/trips/${trip._id}`)
-      this.SET_SUCCESS_MSG(`可以開始編輯您的行程：${trip.name}`)
     }
   },
   watch: {

@@ -96,6 +96,7 @@ export default {
       this.isOnDraggable = true
     },
     async storeTrip () {
+      this.storageTrip.sites = this.storageTrip.contents.map(content => content.activities)
       this.storageTrip.contents.forEach(content => {
         content.activities = content.activities.map(site => ({
           placeId: site.placeId,
@@ -105,6 +106,12 @@ export default {
           startTime: site.startTime,
           endTime: site.endTime
         }))
+      })
+      const cityOfSite = this.$route.query['cities[]']
+      this.storageTrip.cities.forEach(city => {
+        if (city !== cityOfSite) {
+          this.storageTrip.cities.push(cityOfSite)
+        }
       })
       const formData = new FormData()
       formData.append('data', JSON.stringify(this.storageTrip))

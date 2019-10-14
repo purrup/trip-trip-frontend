@@ -57,8 +57,7 @@ export default {
       isShowOverview: true,
       dayOfTrip: 0,
       map: null,
-      marker: null,
-      currentSite: []
+      marker: null
     }
   },
   mounted () {
@@ -86,7 +85,7 @@ export default {
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     initMap () {
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.currentSite[0].geometry,
+        center: this.trip.contents[0].activities[0].geometry,
         zoom: 13,
         mapTypeControl: false,
         fullscreenControl: true,
@@ -94,7 +93,7 @@ export default {
           position: google.maps.ControlPosition.RIGHT_BOTTOM
         }
       })
-      this.marker = new google.maps.Marker({ map: this.map, position: this.currentSite[0].geometry })
+      this.marker = new google.maps.Marker({ map: this.map, position: this.trip.contents[0].activities[0].geometry })
 
       this.marker.addListener('click', (e) => {
         this.map.setZoom(8)

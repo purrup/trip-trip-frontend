@@ -1,5 +1,5 @@
 <template lang="pug">
-  #trips-root.container
+  #trips-root
     main
       v-row#trips
         v-col(cols="auto")
@@ -74,22 +74,26 @@ export default {
 #trips-root {
   main {
     width: 100%;
-    // display: grid;
-    // grid-template-columns: 0.77fr 50px 1.15fr;
-    // grid-template-areas: "left . right";
+    max-width: 1440px;
+    margin: 0 auto;
+    height: auto;
+    display: grid;
+    grid-template-columns: 40px 0.77fr 1fr 1.15fr;
+    grid-template-areas: ". left . right";
     #trips {
-      // grid-area: left;
-      margin-right: 736px;
+      grid-area: left;
+      height: 200vh;
+      // margin-right: 736px;
     }
     #overview {
-      // grid-area: right;
-      overflow-x: auto;
+      grid-area: right;
+      overflow-y: auto;
       width: 686px;
-      height: 100%;
-      position: fixed !important;
-      top: 70px;
-      right: 0px;
-      max-width: 686px;
+      height: auto;
+      // position: fixed !important;
+      // top: 70px;
+      // right: 0px;
+      // max-width: 686px;
     }
   }
 }

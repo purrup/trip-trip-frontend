@@ -169,6 +169,9 @@ export default {
   methods: {
     ...mapMutations('trip', ['DELETE_TRIP_date', 'ADD_TRIP_activity', 'DELETE_TRIP_activity', 'UPDATE_TRIP_note', 'UPDATE_TRIP_activity']),
     toggleCurrentActivity (currentActivity) {
+      if (currentActivity.geometry) {
+        this.$emit('showSiteOnMap', currentActivity.geometry)
+      }
       this.currentActivity = currentActivity
     },
     deleteDate () {
