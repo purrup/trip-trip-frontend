@@ -58,9 +58,9 @@
         ) 登入
         v-col.d-flex.justify-end.mt-12(cols="auto")
           router-link.body-2.mr-5(to="/signup") 註冊帳號
-          //- p.body-2(
-          //-   style="color: #1976d2; cursor: pointer;"
-          //-   @click="showForgetPassword = true") 忘記密碼？
+          p.body-2(
+            style="color: #1976d2; cursor: pointer;"
+            @click="showForgetPassword = true") 忘記密碼？
         v-dialog(
           v-model="showForgetPassword"
           width=430
@@ -150,6 +150,7 @@ export default {
     },
     issueForgotPassword (email) {
       this.forgotPassword({ email: email })
+      this.showForgetPassword = false
     }
   }
 }

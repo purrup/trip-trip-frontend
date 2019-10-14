@@ -165,7 +165,7 @@ const actions = {
   async forgotPassword ({ commit }, email) {
     try {
       console.log(email)
-      await axios('/forgot_password', {
+      await axios('/users/forgot_password', {
         method: 'post',
         data: email
       })

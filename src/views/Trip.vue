@@ -41,7 +41,7 @@
 import Overview from '@/components/trip/Overview.vue'
 import TripSchedule from '@/components/trip/TripSchedule.vue'
 import EditButtonsGroup from '@/components/trip/EditButtonsGroup.vue'
-import siteApis from '@/utils/apis/site.js'
+// import siteApis from '@/utils/apis/site.js'
 import { mapState, mapMutations } from 'vuex'
 
 /* eslint-disable */
