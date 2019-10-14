@@ -21,7 +21,6 @@ router.beforeResolve(async (to, from, next) => {
   if (isLogin === 'true') {
     if (expiration > currentDate) {
       await store.dispatch('account/getUser')
-      store.commit('account/SET_login')
     } else {
       store.commit('account/SET_logout')
     }

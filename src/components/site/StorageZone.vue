@@ -87,8 +87,9 @@ export default {
         ]
       }
       formData.append('data', JSON.stringify(basicFormat))
-
+      console.log(formData.get('data'))
       const trip = await this.createTrip(formData)
+      console.log('trip:', trip)
       this.CREATE_trip(trip)
       this.storageTrip = trip
 

@@ -113,7 +113,6 @@
         elevation="2")
         span.text-center.subtitle-1(style=" width: 100%; cursor: default; ") 景點資訊
       little-card(
-        v-if="currentActivity.placeId"
         :key="currentActivity.placeId"
         :item="currentActivity"
         :type="'site'")
@@ -121,7 +120,6 @@
 
 <script>
 import LittleCard from '@/components/LittleCard.vue'
-import siteApis from '@/utils/apis/site.js'
 import { mapState, mapMutations } from 'vuex'
 
 export default {
@@ -138,8 +136,7 @@ export default {
       showEditDailySchedulePanel: false,
       showEditActivityPanel: false,
       showTimePicker: false,
-      currentActivity: {},
-      currentSite: []
+      currentActivity: {}
     }
   },
   created () {
@@ -173,15 +170,6 @@ export default {
     ...mapMutations('trip', ['DELETE_TRIP_date', 'ADD_TRIP_activity', 'DELETE_TRIP_activity', 'UPDATE_TRIP_note', 'UPDATE_TRIP_activity']),
     toggleCurrentActivity (currentActivity) {
       this.currentActivity = currentActivity
-      if (currentActivity.placeId) {
-        this.getSitesByKeyword(currentActivity.name)
-        // console.log(this.currentSite[0].geometry)
-        let geometry = this.currentSite[0].geometry
-        this.$emit('showSiteOnMap', geometry)
-      }
-    },
-    async getSitesByKeyword (keyword) {
-      this.currentSite = await siteApis.getSitesByKeyword(keyword)
     },
     deleteDate () {
       // 刪除單一天的行程以及此行程內的活動

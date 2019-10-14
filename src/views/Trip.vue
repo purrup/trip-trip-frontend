@@ -61,8 +61,7 @@ export default {
       currentSite: []
     }
   },
-  async mounted () {
-    await this.getSitesByKeyword(this.trip.sites[0].name)
+  mounted () {
     this.initMap()
   },
   computed: {
@@ -109,11 +108,11 @@ export default {
     toggleContent (day) {
       this.isShowOverview = false
       this.dayOfTrip = day
-    },
-    async getSitesByKeyword (keyword) {
-      const site = await siteApis.getSitesByKeyword(keyword)
-      this.currentSite = site
-    },
+    }
+    // async getSitesByKeyword (keyword) {
+    //   const site = await siteApis.getSitesByKeyword(keyword)
+    //   this.currentSite = site
+    // },
   },
   watch: {
     async '$route' (to, from) {
