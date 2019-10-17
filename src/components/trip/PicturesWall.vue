@@ -81,7 +81,7 @@ export default {
         let image = e.target.files[i]
         // 要給後端的imageFile
         this.newImageFiles.push(image)
-        // 使用者上傳圖片後，將預覽圖片存在uploadWallImages，此時newImageFiles為空
+        // 使用者上傳圖片後，將預覽圖片存在uploadWallImages
         this.uploadWallImages.push(URL.createObjectURL(image))
       }
       e.target.value = ''
@@ -90,7 +90,12 @@ export default {
       this.$emit('closeEditImage', false)
       // deletedImages = 從originImages中找出不在trip.images的images
       this.deletedImages = this.originImages.filter(originImage => {
-        return !this.uploadWallImages.includes(originImage)
+        // this.uploadWallImages.forEach(img => {
+        //   console.log(img.search('imgur'))
+        // })
+        if (originImage.includes('imgur') === true) {
+          return !this.uploadWallImages.includes(originImage)
+        }
       })
       // 把deletedImages, newImageFiles傳到editButtonsGroup
       this.$emit('syncImageFiles', { newImageFiles: this.newImageFiles, deletedImages: this.deletedImages })
@@ -105,9 +110,9 @@ export default {
     },
     deleteImage (image) {
       // 刪除newImageFiles中的file
-      // 如果deletedimage 不在originImages中，表示是新upload的image，刪除file檔
-      if (this.originImages.includes(image) === false) {
-        // 刪除file檔中對應的照片
+      // 如果deletedimage 中沒有imgur，表示是新upload的image，刪除file檔
+      if (image.includes('imgur') === false) {
+        console.log(`${image} is not uploaded yet`)
         let deletedfileIndex = this.uploadWallImages.length - 1 - this.uploadWallImages.indexOf(image)
         this.newImageFiles.splice(deletedfileIndex, 1)
       }
