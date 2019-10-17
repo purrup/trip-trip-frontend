@@ -67,6 +67,7 @@ export default {
   methods: {
     ...mapMutations('account', ['CREATE_trip']),
     ...mapActions('trip', ['createTrip', 'updateTrip']),
+    ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     openExistingTrip (trip) {
       trip.contents.forEach(content => {
         content.activities = mergeSites(content.activities)
@@ -75,25 +76,29 @@ export default {
       this.isOnDraggable = true
     },
     async createNewTrip () {
-      const formData = new FormData()
-      const basicFormat = {
-        name: this.account.username + '的快樂之旅',
-        country: '臺灣',
-        contents: [
-          {
-            activities: [],
-            note: ''
-          }
-        ]
-      }
-      formData.append('data', JSON.stringify(basicFormat))
-      console.log(formData.get('data'))
-      const trip = await this.createTrip(formData)
-      console.log('trip:', trip)
-      this.CREATE_trip(trip)
-      this.storageTrip = trip
+      if (this.account.isLogin === 'false') {
+        return this.SET_ERROR_MSG('請先登入或註冊帳號喔')
+      } else {
+        const formData = new FormData()
+        const basicFormat = {
+          name: this.account.username + '的快樂之旅',
+          country: '臺灣',
+          contents: [
+            {
+              activities: [],
+              note: ''
+            }
+          ]
+        }
+        formData.append('data', JSON.stringify(basicFormat))
+        console.log(formData.get('data'))
+        const trip = await this.createTrip(formData)
+        console.log('trip:', trip)
+        this.CREATE_trip(trip)
+        this.storageTrip = trip
 
-      this.isOnDraggable = true
+        this.isOnDraggable = true
+      }
     },
     async storeTrip () {
       this.storageTrip.sites = this.storageTrip.contents.map(content => content.activities)
