@@ -149,6 +149,7 @@ const mutations = {
   DELETE_TRIP_date (state, dayOfTrip) {
     state.trip.days -= 1
     state.trip.contents.splice(dayOfTrip, 1)
+    state.trip.sites.splice(dayOfTrip, 1)
   },
   ADD_TRIP_activity (state, { newActivity, dayOfTrip }) {
     state.trip.contents[dayOfTrip].activities.push(newActivity)

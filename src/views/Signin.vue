@@ -58,9 +58,9 @@
         ) 登入
         v-col.d-flex.justify-end.mt-12(cols="auto")
           router-link.body-2.mr-5(to="/signup") 註冊帳號
-          p.body-2(
-            style="color: #1976d2; cursor: pointer;"
-            @click="showForgetPassword = true") 忘記密碼？
+          //- p.body-2(
+          //-   style="color: #1976d2; cursor: pointer;"
+          //-   @click="showForgetPassword = true") 忘記密碼？
         v-dialog(
           v-model="showForgetPassword"
           width=430
@@ -136,8 +136,8 @@ export default {
       } catch (error) {
         if (error.response.status === 422) {
           this.SET_ERROR_MSG('密碼有誤，請重新輸入')
-        } else {
-          this.SET_ERROR_MSG('密碼有誤，請重新輸入')
+        } else if (error.response.status === 404) {
+          this.SET_ERROR_MSG('此mail尚未註冊')
           console.log(error.response)
         }
       }

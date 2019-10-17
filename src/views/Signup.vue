@@ -99,8 +99,6 @@ export default {
             email: this.email,
             password: this.password
           })
-          this.$router.push('/')
-          this.SET_SUCCESS_MSG('註冊成功！開始規劃您的旅程吧！')
         }
       } catch (error) {
         console.log(error)

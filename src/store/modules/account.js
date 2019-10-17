@@ -1,6 +1,7 @@
 import axios from '../../utils/axios'
 import siteApis from '@/utils/apis/site'
 import trip from '@/store/modules/trip.js'
+import router from '@/router.js'
 import notification from '@/store/modules/notification.js'
 
 const state = {
@@ -96,6 +97,8 @@ const actions = {
       })
       commit('SET_user', data)
       commit('SET_login')
+      notification.mutations.SET_SUCCESS_MSG(notification.state, '註冊成功！開始規劃您的旅程吧！')
+      router.push({ path: '/' })
     } catch (error) {
       if (error.response.status === 409) {
         notification.mutations.SET_ERROR_MSG(notification.state, error.response.data.message)

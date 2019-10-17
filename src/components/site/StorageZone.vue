@@ -29,7 +29,7 @@
             :key="`daily-activity-${index + 1}`"
             :activities="day.activities"
             :day="index + 1"
-            @deleteOneDay="storageTrip.contents.splice(index, 1)"
+            @deleteOneDay="deleteOneDay"
             @deleteOneSite="deleteOneSite")
           v-btn(
             outlined
@@ -92,9 +92,7 @@ export default {
           ]
         }
         formData.append('data', JSON.stringify(basicFormat))
-        console.log(formData.get('data'))
         const trip = await this.createTrip(formData)
-        console.log('trip:', trip)
         this.CREATE_trip(trip)
         this.storageTrip = trip
 
@@ -132,10 +130,14 @@ export default {
       await this.storeTrip()
       this.$router.push({ path: `/trips/${this.storageTrip._id}` })
     },
-    deleteOneSite (name) {
+    deleteOneSite (name, placeId) {
       this.storageTrip.sites.forEach(item => {
         return item.filter(site => site.name !== name)
       })
+    },
+    deleteOneDay (index) {
+      this.storageTrip.sites.splice(index, 1)
+      this.storageTrip.contents.splice(index, 1)
     }
   }
 }
