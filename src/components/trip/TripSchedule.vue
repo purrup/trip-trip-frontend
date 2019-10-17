@@ -49,7 +49,7 @@
               :value="schedule.name"
               @change="updateAvtivity")
             .activity(v-else-if="currentActivity.placeId") {{schedule.name}}
-            v-icon.delete-activity(@click="DELETE_TRIP_activity({ schedule, dayOfTrip })") mdi-trash-can-outline
+            v-icon.delete-activity(@click="DELETE_TRIP_activity({ deletedActivity: schedule, dayOfTrip })") mdi-trash-can-outline
         v-sheet.d-flex.justify-center(width=370 height=47 elevation="2"
           v-if="isOnEditMode"
           style="opacity: 0.6")

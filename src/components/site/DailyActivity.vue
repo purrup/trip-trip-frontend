@@ -19,7 +19,7 @@
           :type="'site'"
           class="storage-site")
           div(slot="cancel" class="cancel-wrap")
-            v-icon(@click="activities.splice(index, 1)") close
+            v-icon(@click="deleteSite(site, index)") close
 </template>
 
 <script>
@@ -43,6 +43,11 @@ export default {
   methods: {
     add (e) { // Element is dropped into the list "from another" list
       this.isExpand = true
+    },
+    deleteSite (site, index) {
+      this.activities.splice(index, 1)
+      console.log(site)
+      this.$emit('deleteOneSite', { name: site.name })
     }
   }
 }

@@ -29,7 +29,8 @@
             :key="`daily-activity-${index + 1}`"
             :activities="day.activities"
             :day="index + 1"
-            @deleteOneDay="storageTrip.contents.splice(index, 1)")
+            @deleteOneDay="storageTrip.contents.splice(index, 1)"
+            @deleteOneSite="deleteOneSite")
           v-btn(
             outlined
             color="secondary"
@@ -102,6 +103,7 @@ export default {
     },
     async storeTrip () {
       this.storageTrip.sites = this.storageTrip.contents.map(content => content.activities)
+      this.storageTrip.sites = this.storageTrip.sites.map(item => item.map(site => site.name))
       this.storageTrip.contents.forEach(content => {
         content.activities = content.activities.map(site => ({
           placeId: site.placeId,
@@ -112,12 +114,12 @@ export default {
           endTime: site.endTime
         }))
       })
+      // 更新cities
       const cityOfSite = this.$route.query['cities[]']
-      this.storageTrip.cities.forEach(city => {
-        if (city !== cityOfSite) {
-          this.storageTrip.cities.push(cityOfSite)
-        }
-      })
+      if (this.storageTrip.cities.length === 0 || !this.storageTrip.cities.includes(cityOfSite)) {
+        this.storageTrip.cities.push(cityOfSite)
+        return
+      }
       const formData = new FormData()
       formData.append('data', JSON.stringify(this.storageTrip))
       await this.updateTrip({ tripId: this.storageTrip._id, formData })
@@ -129,6 +131,11 @@ export default {
     async goToEditPage () {
       await this.storeTrip()
       this.$router.push({ path: `/trips/${this.storageTrip._id}` })
+    },
+    deleteOneSite (name) {
+      this.storageTrip.sites.forEach(item => {
+        return item.filter(site => site.name !== name)
+      })
     }
   }
 }

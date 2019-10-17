@@ -121,9 +121,6 @@ const mutations = {
     state.isOnEditMode = !state.isOnEditMode
   },
   CHANGE_IMAGES_OF_OVERVIEW (state, data) {
-    // data.forEach(previewImage => {
-    //   state.trip.images.push(previewImage)
-    // })
     state.trip.images = data
   },
   UPDATE_TRIP_NAME (state, data) {
@@ -157,6 +154,10 @@ const mutations = {
     state.trip.contents[dayOfTrip].activities.push(newActivity)
   },
   DELETE_TRIP_activity (state, { deletedActivity, dayOfTrip }) {
+    // 把trip.sites中的景點同步刪除
+    state.trip.sites[dayOfTrip] = state.trip.sites[dayOfTrip].filter(site => {
+      return site !== deletedActivity.name
+    })
     const deletedIndex = state.trip.contents[dayOfTrip].activities.indexOf(deletedActivity)
     state.trip.contents[dayOfTrip].activities.splice(deletedIndex, 1)
   },

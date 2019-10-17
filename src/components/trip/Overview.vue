@@ -43,7 +43,7 @@
       .comments
         comment.d-flex.flex-wrap.justify-start(:comments="trip.comments" :tripId="trip._id")
       br
-      .rating.d-flex.flex-column
+      .rating.d-flex.flex-column(v-if="trip.userId !== account._id")
         v-row.d-flex.flex-column.align-center
           .headline.mb-3 評分
           p 分享您對此行程的看法供別人參考
@@ -88,16 +88,13 @@ export default {
   },
   async created () {
     this.rating = this.getTripRating(this.trip._id)
-    // if (this.trip.images.length !== 0) {
-    //   this.images = this.trip.images
-    // } else {
-    //   return
-    //   // this.images.push('https://source.unsplash.com/random/686x360')
-    // }
   },
   computed: {
     ...mapState('trip', {
       isOnEditMode: state => state.isOnEditMode
+    }),
+    ...mapState('account', {
+      account: state => state
     }),
     ...mapGetters('account', {
       getTripRating: 'getTripRating'
