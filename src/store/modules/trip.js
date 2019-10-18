@@ -266,13 +266,12 @@ const actions = {
   },
   async updateTrip ({ commit }, { tripId, formData }) {
     try {
-      const results = await axios(`/trips/${tripId}`, {
+      await axios(`/trips/${tripId}`, {
         method: 'patch',
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 0,
         data: formData
       })
-      console.log('trip:', results.data)
     } catch (error) {
       console.log(error)
     }

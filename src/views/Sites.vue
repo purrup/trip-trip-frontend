@@ -4,7 +4,7 @@
       search-result-bar(
         v-if="!loading"
         :resultWord="resultWord"
-        :sitesAmounts="sites.length"
+        :resultsAmounts="sites.length"
         @sortByRating="sortByRating"
         @sortByCollectingCounts="sortByCollectingCounts"
         @sortByCommentAmounts="sortByCommentAmounts")
