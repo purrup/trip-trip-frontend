@@ -6,36 +6,21 @@
       @changeAvatar="changeAvatar"
       @onEditMode="isOnEditMode = true")
     div(class="record-container")
-      div(v-if="user.collectingSites.length !== 0")
-        h5 {{user.username}}收藏的景點
-        div
-          little-card(
-            v-for="site in user.collectingSites.slice(indexs.idx1, equalOrLess2(user.collectingSites.length) + indexs.idx1)"
-            :key="`little-card-${site.name}`"
-            :item="site"
-            :type="'site'")
-        v-icon(@click="back('idx1')") arrow_back_ios
-        v-icon(@click="forward('idx1', user.collectingSites.length)") arrow_forward_ios
-      div(v-if="user.owningTrips.length !== 0")
-        h5 {{user.username}}建立的行程
-        div
-          little-card(
-            v-for="trip in user.owningTrips"
-            :key="`little-card-${trip.name}`"
-            :item="trip"
-            :type="'trip'")
-        v-icon(@click="back('idx2')") arrow_back_ios
-        v-icon(@click="forward('idx2', user.owningTrips.length)") arrow_forward_ios
-      div(v-if="user.collectingTrips.length !== 0")
-        h5 {{user.username}}收藏的行程
-        div
-          little-card(
-            v-for="trip in user.collectingTrips.slice(indexs.idx3, equalOrLess2(user.collectingTrips.length) + indexs.idx3)"
-            :key="`little-card-${trip.name}`"
-            :item="trip"
-            :type="'tirp'")
-        v-icon(@click="back('idx3')") arrow_back_ios
-        v-icon(@click="forward('idx3', user.collectingTrips.length)") arrow_forward_ios
+      record-scroll-container(
+        v-if="user.collectingSites.length !== 0"
+        :username="user.username"
+        :items="user.collectingSites"
+        :type="'site'")
+      record-scroll-container(
+        v-if="user.owningTrips.length !== 0"
+        :username="user.username"
+        :items="user.owningTrips"
+        :type="'trip'")
+      record-scroll-container(
+        v-if="user.collectingTrips.length !== 0"
+        :username="user.username"
+        :items="user.collectingTrips"
+        :type="'trip'")
     div(v-if="isOnEditMode" class="edit-container")
       v-card(min-width="400")
         h4 編輯你的個人資料
@@ -63,6 +48,7 @@
 
 <script>
 import UserProfile from '@/components/user/UserProfile.vue'
+import RecordScrollContainer from '@/components/user/RecordScrollContainer.vue'
 import LittleCard from '@/components/LittleCard.vue'
 
 import userApis from '@/utils/apis/user.js'
@@ -72,7 +58,8 @@ import { mergeSites } from '@/utils/apis/site.js'
 export default {
   components: {
     UserProfile,
-    LittleCard
+    LittleCard,
+    RecordScrollContainer
   },
   data () {
     return {
@@ -80,11 +67,6 @@ export default {
         collectingTrips: [],
         collectingSites: [],
         owningTrips: []
-      },
-      indexs: {
-        idx1: 0,
-        idx2: 0,
-        idx3: 0
       },
       isOnEditMode: false,
       valid: true,
@@ -115,19 +97,6 @@ export default {
   methods: {
     ...mapMutations('account', ['SET_avatar']),
     ...mapActions('account', ['editProfile']),
-    equalOrLess2 (length) {
-      return length >= 2 ? 2 : length
-    },
-    back (index) {
-      return (this.indexs[index] - 1) < 0
-        ? 0
-        : this.indexs[index]--
-    },
-    forward (index, length) {
-      return (this.indexs[index] + 1) > (length - this.equalOrLess2(length))
-        ? 0
-        : this.indexs[index]++
-    },
     changeAvatar (avatar) {
       this.user.avatar = URL.createObjectURL(avatar)
       this.SET_avatar(this.user.avatar)
@@ -162,39 +131,13 @@ export default {
 #user-root {
   margin-top: 14px;
   display: grid;
-  grid-template-columns: 140px 400px 145px 1fr 209px;
+  grid-template-columns: 9% 27% 8% 1fr 209px;
   grid-template-areas: ". profile . items .";
   .user-profile-root {
     grid-area: profile;
   }
   .record-container {
     grid-area: items;
-    > div {
-      position: relative;
-      > h5 {
-        font-size: 20px;
-        margin-bottom: 10px;
-      }
-      > div {
-        margin-left: 30px;
-        display: grid;
-        grid-auto-columns: 250px;
-        grid-auto-rows: 210px;
-        grid-auto-flow: column;
-        grid-column-gap: 15px;
-      }
-      i {
-        position: absolute;
-        top: 55%;
-        transform: translateY(-50%);
-        &:nth-child(3) {
-          left: 0px;
-        }
-        &:nth-child(4) {
-          right: -38px;
-        }
-      }
-    }
   }
   .edit-container {
     position: fixed;
