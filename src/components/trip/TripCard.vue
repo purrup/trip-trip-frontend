@@ -20,7 +20,7 @@
               li 旅遊天數： {{ trip.days }}
           v-col.pt-1(cols="6")
             ul(style="list-style: none;")
-              li 城市： {{ cities }}
+              li.city 城市： {{ cities }}
               li 預估花費： ${{ estimatedCost }}
 </template>
 
@@ -61,6 +61,11 @@ export default {
   .content {
     width: 80%;
     height: 95%;
+    .city {
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
   }
 }
 

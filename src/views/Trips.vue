@@ -2,6 +2,13 @@
   #trips-root
     main
       v-row#trips
+        search-result-bar(
+          :resultWord="resultWord"
+          :resultsAmounts="trips.length"
+          @sortByDays="sortByDays"
+          @sortBySitesAmounts="sortBySitesAmounts"
+          @sortByCollectingCounts="sortByCollectingCounts"
+        )
         v-col(cols="auto")
           trip-card(
             v-for="trip in trips"
@@ -17,28 +24,34 @@
 <script>
 import TripCard from '@/components/trip/TripCard.vue'
 import Overview from '@/components/trip/Overview.vue'
+import SearchResultBar from '@/components/site/SearchResultBar.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'trips',
   components: {
     TripCard,
-    Overview
+    Overview,
+    SearchResultBar
   },
   data () {
     return {
       currentTrip: {}, // 現在overview顯示的trip資料
       timeStamp: '',
-      timer: null
+      timer: null,
+      resultWord: ''
     }
   },
   async beforeRouteUpdate (to, from, next) {
     if (to.query.hasOwnProperty('keyword')) {
       const keyword = to.query.keyword
+      this.resultWord = keyword
       await this.$store.dispatch('trip/getTripsByKeyword', keyword)
     } else {
       const city = to.query['cities[]']
+      this.resultWord = city
       await this.$store.dispatch('trip/getTripByCountryAndCities', city)
+      this.currentTrip = {}
     }
     this.currentTrip = this.trips[0]
     next()
@@ -46,6 +59,7 @@ export default {
   created () {
     // overview預設資料
     this.currentTrip = this.trips[0]
+    this.resultWord = this.$route.query['cities[]']
   },
   computed: {
     ...mapState('trip', {
@@ -65,6 +79,15 @@ export default {
         return
       }
       this.currentTrip = trip
+    },
+    sortByDays () {
+      this.trips.sort((a, b) => b.days - a.days)
+    },
+    sortBySitesAmounts () {
+      this.trips.sort((a, b) => b.sites.length - a.sites.length)
+    },
+    sortByCollectingCounts () {
+      this.trips.sort((a, b) => b.collectingCounts - a.collectingCounts)
     }
   }
 }
@@ -83,6 +106,18 @@ export default {
     #trips {
       grid-area: left;
       height: 200vh;
+      display: grid;
+      grid-template-rows: 80px auto;
+      grid-template-areas:
+      "search-result"
+      "trips";
+      > :nth-child(1) {
+        margin-top: 20px;
+        grid-area: search-result;
+      }
+      > :nth-child(2) {
+        grid-area: trips;
+      }
       // margin-right: 736px;
     }
     #overview {
