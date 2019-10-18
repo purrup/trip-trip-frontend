@@ -28,7 +28,7 @@
             template(v-slot:item.name="{ item }")
               router-link(
                 tag="td"
-                :to="currentSelect === '使用者' ? `/users/${item.id}` : `/sites/${item.placeId}`"
+                :to="currentSelect === '使用者' ? `/users/${item._id}` : `/sites/${item.placeId}`"
                 :style="{ cursor: 'pointer' }") {{currentSelect === '使用者' ? item.username : item.name}}
             template(v-slot:item.url="{ item }")
               a(:href="item.url" target="_blank" class="a-link-text-overflow") {{item.url}}
@@ -96,7 +96,7 @@ export default {
 
       try {
         if (this.currentSelect === '使用者') {
-          await admimApis.deleteUser(item.id)
+          await admimApis.deleteUser(item._id)
         } else {
           await admimApis.deleteSite(item.placeId)
         }

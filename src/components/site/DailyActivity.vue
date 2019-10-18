@@ -45,7 +45,6 @@ export default {
       this.isExpand = true
     },
     deleteSite (site, index) {
-      // console.log(site.placeId)
       this.activities.splice(index, 1)
       this.$emit('deleteOneSite', { name: site.name, placeId: site.placeId })
     }

@@ -39,7 +39,7 @@ export default {
   padding: 5px 3px;
   height: 190px;
   display: grid;
-  grid-template-columns: 232px 1fr;
+  grid-template-columns: 35% 65%;
   .site-info-wrapper {
     padding: 15px 20px;
   }

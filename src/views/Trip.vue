@@ -4,7 +4,7 @@
       edit-buttons-group(class="edit-buttons-group")
       //- 左側切換欄
       #toggle-bar
-        v-list
+        v-list(style="padding: 0px")
           v-list-item-group(mandatory)
             v-list-item.leftTogglebarBlock(
               @click="isShowOverview = true")
@@ -33,7 +33,8 @@
           :dayOfTrip="dayOfTrip"
           :datesOfTrip="datesOfTrip"
           @toggleContent="toggleContent"
-          @showSiteOnMap="showSiteOnMap")
+          @showMarkerAnimation="showMarkerAnimation"
+          @clearMarkerAnimation="clearMarkerAnimation")
     #map
 </template>
 
@@ -57,7 +58,8 @@ export default {
       isShowOverview: true,
       dayOfTrip: 0,
       map: null,
-      marker: null
+      markers: [],
+      infoWindow: ''
     }
   },
   mounted () {
@@ -84,38 +86,87 @@ export default {
     ...mapMutations('trip', ['ADD_TRIP_date']),
     ...mapMutations('notification', ['SET_SUCCESS_MSG', 'SET_ERROR_MSG']),
     initMap () {
+      this.infoWindow = new google.maps.InfoWindow
       this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.trip.contents[0].activities[0].geometry,
-        zoom: 13,
+        center: this.center(),
+        zoom: 12,
         mapTypeControl: false,
         fullscreenControl: true,
         fullscreenControlOptions: {
           position: google.maps.ControlPosition.RIGHT_BOTTOM
         }
       })
-      this.marker = new google.maps.Marker({ map: this.map, position: this.trip.contents[0].activities[0].geometry })
-
-      this.marker.addListener('click', (e) => {
-        this.map.setZoom(8)
-        this.map.setCenter(this.myTainanHouse)
-      })
+      this.markAllSite()
     },
-    showSiteOnMap (pos) {
-      this.marker.setPosition(pos)
+    markAllSite () {
+      this.infoWindow.close()
+      this.markers = this.trip.contents
+        .map(content => content.activities)
+        .flat()
+        .map(site => {
+          const marker = new google.maps.Marker({ map: this.map, position: site.geometry, title: 't' })
+          marker.site = site
+          marker.addListener('mouseover', () => {
+            this.infoWindow.setContent(this.generateInfo(site))
+            this.infoWindow.open(this.map, marker)
+          })
+          marker.addListener('mouseout', () => {
+            this.infoWindow.close()
+          })
+          return marker
+        })
+    },
+    showMarkerAnimation (pos, placeId) {
       this.map.setCenter(pos)
+      const marker = this.markers.find(marker => marker.site.placeId === placeId)
+      marker.setAnimation(google.maps.Animation.BOUNCE)
+    },
+    clearMarkerAnimation (pos, placeId) {
+      const marker = this.markers.find(marker => marker.site.placeId === placeId)
+      marker.setAnimation(null)
     },
     toggleContent (day) {
       this.isShowOverview = false
       this.dayOfTrip = day
+    },
+    generateInfo (site) {
+      const infoContainer = document.createElement('div')
+      const title = document.createElement('h4')
+      title.textContent = site.name
+      infoContainer.appendChild(title)
+      infoContainer.appendChild(document.createElement('br'))
+
+      const address = document.createElement('p')
+      address.textContent = site.formatted_address
+      infoContainer.appendChild(address)
+      return infoContainer
+    },
+    center () {
+      const lat = []
+      const lng = []
+      this.trip.contents
+        .map(content => content.activities)
+        .flat()
+        .forEach(site => {
+          lat.push(site.geometry.lat)
+          lng.push(site.geometry.lng)
+        })
+      lat.sort((a, b) => a - b)
+      lng.sort((a, b) => a - b)
+      return {
+        lat: (lat[0] + lat[lat.length - 1]) / 2,
+        lng: (lng[0] + lng[lng.length - 1]) / 2
+      }
     }
-    // async getSitesByKeyword (keyword) {
-    //   const site = await siteApis.getSitesByKeyword(keyword)
-    //   this.currentSite = site
-    // },
   },
   watch: {
     async '$route' (to, from) {
       this.$router.go(0)
+    },
+    isShowOverview (newValue) {
+      if (newValue) {
+        this.initMap()
+      }
     }
   }
 }

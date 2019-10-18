@@ -16,7 +16,8 @@
         v-sheet.mb-3(width=370 height=47 color="white" elevation="2"
           v-for="(schedule, i) in trip.contents[dayOfTrip].activities"
           :key="`${schedule.startTime}-${i}`"
-          @mouseover.native="toggleCurrentActivity(schedule)")
+          @mouseover.native="toggleCurrentActivity(schedule)"
+          @mouseout.native="clearMarkerAnimation(schedule)")
           .schedule-card(v-if="!showEditActivityPanel")
             //- 切換每日行程內容的編輯模式
             v-icon.dots-vertical(
@@ -170,9 +171,14 @@ export default {
     ...mapMutations('trip', ['DELETE_TRIP_date', 'ADD_TRIP_activity', 'DELETE_TRIP_activity', 'UPDATE_TRIP_note', 'UPDATE_TRIP_activity']),
     toggleCurrentActivity (currentActivity) {
       if (currentActivity.geometry) {
-        this.$emit('showSiteOnMap', currentActivity.geometry)
+        this.$emit('showMarkerAnimation', currentActivity.geometry, currentActivity.placeId)
       }
       this.currentActivity = currentActivity
+    },
+    clearMarkerAnimation (currentActivity) {
+      if (currentActivity.geometry) {
+        this.$emit('clearMarkerAnimation', currentActivity.geometry, currentActivity.placeId)
+      }
     },
     deleteDate () {
       // 刪除單一天的行程以及此行程內的活動

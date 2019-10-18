@@ -78,7 +78,7 @@ export default {
     align-items: flex-start;
     font-size: 14px;
     line-height: 24px;
-    width: 367px;
+    width: 100%;
     white-space: nowrap;
     > a,
     span:nth-child(3) {

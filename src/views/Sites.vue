@@ -68,12 +68,6 @@ export default {
         }
       })
       this.marker = new google.maps.Marker({ map: this.map, position: this.sites[0].geometry })
-
-      this.marker.addListener('click', (e) => {
-        console.log(e)
-        this.map.setZoom(8)
-        this.map.setCenter(this.myTainanHouse)
-      })
     },
     showSiteOnMap (pos) {
       this.marker.setPosition(pos)
@@ -140,17 +134,17 @@ export default {
 <style lang="scss" scoped>
 #sites-root {
   .sites-container {
-    margin-right: 720px;
+    margin-right: 50%;
     padding: 20px 36.5px;
     > .sites-wrapper {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 100%;
       grid-template-rows: 190px;
       grid-row-gap: 29px;
     }
   }
   #map {
-    width: 720px;
+    width: 50%;
     height: 100vh;
     position: fixed !important;
     top: 70px;

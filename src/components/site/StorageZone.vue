@@ -100,8 +100,7 @@ export default {
       }
     },
     async storeTrip () {
-      this.storageTrip.sites = this.storageTrip.contents.map(content => content.activities)
-      this.storageTrip.sites = this.storageTrip.sites.map(item => item.map(site => site.name))
+      this.storageTrip.sites = [...new Set(this.storageTrip.contents.map(content => content.activities).map(site => site.name))]
       this.storageTrip.contents.forEach(content => {
         content.activities = content.activities.map(site => ({
           placeId: site.placeId,
