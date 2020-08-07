@@ -72,3 +72,4 @@ npm run serve
 * [purrup](https://github.com/purrup)
 
 ## preview
+![image](https://github.com/purrup/trip-trip-frontend/blob/master/public/img/preview/sites.png)
