@@ -39,7 +39,7 @@ export default {
     this.rating = this.item.rating
     this.collectingCounts = this.item.collectingCounts
     if (this.type === 'site') {
-      this.commentCounts = this.item.reviews.length ? this.item.reviews.length : 0
+      this.commentCounts = this.item.reviews ? this.item.reviews.length : 0
       this.id = this.item.placeId
     } else {
       this.commentCounts = this.item.comments.length

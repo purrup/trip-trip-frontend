@@ -149,7 +149,7 @@ export default {
         .flat()
         .forEach(site => {
           if (!site.geometry) {
-            console.error('no geometry found')
+            console.error(`no geometry found in ${site.name}`)
             return
           }
           lat.push(site.geometry.lat)

@@ -37,11 +37,11 @@ export default {
   },
   created () {
     if (this.type === 'site') {
-      this.images = this.item.photos
+      this.images = this.item.photos ? this.item.photos : []
     } else {
       this.images = this.item.images
     }
-    if (this.images.length === 0) {
+    if (this.images.length === 0 || !this.images) {
       this.images.push(require('@/assets/image/5.jpg'))
     }
   }
