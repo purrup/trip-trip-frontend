@@ -148,6 +148,10 @@ export default {
         .map(content => content.activities)
         .flat()
         .forEach(site => {
+          if (!site.geometry) {
+            console.error('no geometry found')
+            return
+          }
           lat.push(site.geometry.lat)
           lng.push(site.geometry.lng)
         })
