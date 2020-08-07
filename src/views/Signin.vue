@@ -109,9 +109,10 @@ export default {
         v => (v && v.length >= 4) || 'Password must be more than 6 characters'
       ],
       showPassword: false,
-      baseURL: process.env.NODE_ENV === 'production'
-        ? 'https://trip-trip-backend.herokuapp.com'
-        : 'http://localhost:3000',
+      // baseURL: process.env.NODE_ENV === 'production'
+      //   ? 'https://trip-trip-backend.herokuapp.com'
+      //   : 'http://localhost:3000',
+      baseURL: 'https://trip-trip-backend.herokuapp.com',
       showForgetPassword: false
     }
   },

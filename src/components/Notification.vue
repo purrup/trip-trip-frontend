@@ -7,12 +7,13 @@
     :timeout="timeout"
   )
     //- @close will be called whether snackbar is timed-out or is manually closed
-    p.message {{ message }}
-    v-btn(
-      icon
-      @click.native="DELETE_MESSAGE"
-    )
-      v-icon mdi-close
+    .content
+      p.message {{ message }}
+      v-btn(
+        icon
+        @click.native="DELETE_MESSAGE"
+      )
+        v-icon mdi-close
 </template>
 
 <script>
@@ -45,11 +46,11 @@ export default {
   watch: {
     showNotification (newValue) {
       // v-snackbar預設timeout是6000，6s過後showNotification不會自動變false，仍維持true
-      // 因此timeout為0取消掉預設的自動消失，改用watch去改變showNotification和清空msg
+      // 因此timeout為-1取消掉預設的自動消失，改用watch去改變showNotification和清空msg
       if (newValue === true) {
         setTimeout(() => {
           this.DELETE_MESSAGE()
-        }, 5000)
+        }, 5000000)
       }
     }
   }
@@ -57,7 +58,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.content {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
 .message {
-  font-size: 1.2em;
+  font-size: 1.1em;
 }
 </style>
