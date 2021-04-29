@@ -112,7 +112,7 @@ export default {
       // baseURL: process.env.NODE_ENV === 'production'
       //   ? 'https://trip-trip-backend.herokuapp.com'
       //   : 'http://localhost:3000',
-      baseURL: 'https://trip-trip-backend.herokuapp.com',
+      baseURL: 'https://trip-trip.herokuapp.com',
       showForgetPassword: false
     }
   },

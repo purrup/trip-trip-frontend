@@ -3,7 +3,7 @@ readme
 # TripTrip 你的旅行好夥伴
 
 TripTrip 是一個讓你能輕鬆、快速規劃行程的工具。
-此為前端專案，串接後端API：https://trip-trip-backend.herokuapp.com/
+此為前端專案，串接後端API：https://trip-trip.herokuapp.com/
 
 ## Features
 * 透過關鍵字或目的地快速搜尋景點、行程
