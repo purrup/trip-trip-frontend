@@ -1,5 +1,6 @@
 import Axios from 'axios'
 
+// cors setting
 const options = {
   baseURL: process.env.NODE_ENV === 'production'
     ? 'https://trip-trip.herokuapp.com/'
