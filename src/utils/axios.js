@@ -1,5 +1,6 @@
 import Axios from 'axios'
 
+Axios.defaults.headers.common = { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
 // cors setting
 const options = {
   baseURL: process.env.NODE_ENV === 'production'
@@ -17,6 +18,7 @@ const instance = Axios.create(options)
 instance.defaults.timeout = 5000
 /* config interceptors */
 instance.interceptors.request.use(request => {
+  request.headers.Authorization = 'Bearer ' + localStorage.getItem('token')
   return request
 })
 instance.interceptors.response.use(response => {

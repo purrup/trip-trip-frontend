@@ -12,20 +12,20 @@
         v-card-title Login
         v-card-text
           #third-party-btn.d-flex.flex-column.flex-wrap.justify-center.align-content-space-around
-            v-btn(
-              color="error"
-              outlined
-              large
-              min-width="380"
-              @click="googleLogin"
-            ) google
-            v-btn.mt-7(
-              color="info"
-              outlined
-              large
-              min-width="380"
-              @click="facebookLogin"
-            ) facebook
+            //- v-btn(
+            //-   color="error"
+            //-   outlined
+            //-   large
+            //-   min-width="380"
+            //-   @click="googleLogin"
+            //- ) google
+            //- v-btn.mt-7(
+            //-   color="info"
+            //-   outlined
+            //-   large
+            //-   min-width="380"
+            //-   @click="facebookLogin"
+            //- ) facebook
           v-divider.my-8.mx-auto
           v-form(
             ref="form"

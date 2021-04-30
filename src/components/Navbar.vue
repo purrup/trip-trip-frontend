@@ -2,7 +2,7 @@
   div(class="navbar-root")
     div(class="margin-top-space")
     v-app-bar(class="navbar-container" height="70px")
-      v-layout(wrap align-center)
+      v-layout(wrap align-center :style="{ position: 'relative' }")
         router-link.ml-2(to="/" style="text-decoration:none;")
           v-icon(large) mdi-alpha-t-circle-outline
         v-btn.ml-6(
@@ -18,18 +18,20 @@
           color="success"
           outlined
         ) 登入
-        v-avatar(v-else :style="{ position: 'relative' }" @click="isExpand = !isExpand")
+        v-avatar(v-else
+        @click="isExpand = !isExpand"
+        class="avatar")
           img(:src="account.avatar" :alt="account.username")
-          div(v-if="isExpand" class="dropdown-list-container")
-            router-link(tag="div" :to="`/users/${account._id}`")
-              v-icon mdi-account-circle
-              span 個人資料
-            router-link(v-if="account.isAdmin" tag="div" to="/admin")
-              v-icon mdi-settings
-              span 後台
-            div(@click="Logout")
-              v-icon mdi-logout
-              span 登出
+        div(v-if="isExpand" class="dropdown-list-container")
+          router-link(tag="div" :to="`/users/${account._id}`")
+            v-icon mdi-account-circle
+            span 個人資料
+          router-link(v-if="account.isAdmin" tag="div" to="/admin")
+            v-icon mdi-settings
+            span 後台
+          div(@click="Logout")
+            v-icon mdi-logout
+            span 登出
 </template>
 
 <script>
@@ -123,13 +125,18 @@ export default {
     .dropdown-list-container {
       cursor: pointer;
       position: absolute;
-      width: 120px;
+      width: 130px;
       background-color: white;
-      top: 59px;
-      right: -16px;
+      top: 65px;
+      right: -12px;
+      border-radius: 3px;
+      border: 1px solid #edeaea;
+      padding: 5px 0;
+      > :first-child {
+        border-bottom: 1px solid lightgray;
+      }
       > div {
         height: 36px;
-        border-bottom: 1px solid lightgray;
         display: flex;
         align-items: center;
         padding-left: 10px;
@@ -137,6 +144,7 @@ export default {
           padding-right: 6px;
         }
       }
+
     }
   }
 }

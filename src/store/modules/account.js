@@ -7,6 +7,7 @@ import notification from '@/store/modules/notification.js'
 const state = {
   isLogin: localStorage.getItem('isLogin') || false,
   expiration: new Date(localStorage.getItem('expiration')) || false,
+  token: localStorage.getItem('token') || '',
   /** ***********/
   _id: 1,
   isAdmin: false,
@@ -54,9 +55,10 @@ const mutations = {
       state[key] = data[key]
     })
   },
-  SET_login (state) {
+  SET_login (state, token) {
     localStorage.setItem('expiration', new Date(Date.now() + 1000 * 3600 * 24))
     localStorage.setItem('isLogin', true)
+    localStorage.setItem('token', token)
     state.isLogin = true
   },
   SET_logout (state) {
@@ -113,8 +115,8 @@ const actions = {
         method: 'post',
         data: params
       })
-      commit('SET_user', data)
-      commit('SET_login')
+      commit('SET_user', data.user)
+      commit('SET_login', data.token)
     } catch (error) {
       throw error
     }
@@ -130,8 +132,8 @@ const actions = {
       const { data } = await axios('/users', {
         method: 'get'
       })
-      commit('SET_user', data)
-      commit('SET_login')
+      commit('SET_user', data.user)
+      commit('SET_login', data.token)
     } catch (error) {
       commit('SET_logout')
       console.log(error)
